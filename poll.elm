@@ -1,4 +1,3 @@
---We're gonna use: Buttons, Radio-Buttons, and Text Fields
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes exposing (..)
@@ -210,7 +209,7 @@ question textValue newAnswerIndex =
           --beginning of radio button
           label
            [ style [("padding", "20px")]]
-           [ input [ type_ "radio", name "question", onClick (SetCorrectAnswer newAnswerIndex)] [], text textValue]
+           [ input [ type_ "radio", name "question", checked True, onClick (SetCorrectAnswer newAnswerIndex)] [], text textValue]
           --ending of radio button
         , input [ placeholder "Enter your answer here.", onInput (SetAnswer newAnswerIndex)] []
         ]
@@ -222,6 +221,6 @@ answer textValue newAnswerIndex =
           --beginning of radio button
           label
            [ style [("padding", "20px")]]
-           [ input [ type_ "radio", name "answer", onClick (SetChosenAnswer newAnswerIndex)] [], text textValue]
+           [ input [ type_ "radio", name "answer", checked True, onClick (SetChosenAnswer newAnswerIndex)] [], text textValue]
           --ending of radio button 
         ]
