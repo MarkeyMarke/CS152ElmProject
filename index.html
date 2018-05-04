@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <meta charset="utf-8"/>
+     <script src="jquery-3.3.1.slim.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+    <script src="./main.js"></script>
+    <script>
+        var app = Elm.Poll.fullscreen();
+
+        app.ports.clearAnswerButtons.subscribe(function() {
+            console.log("clearing answer buttons");
+            $(".answerButton").each(function(){$(this).prop('checked', false)});
+        });
+
+        app.ports.focusOnQuestionText.subscribe(function() {
+            // it's unfortunate that we need this timeout, but elm
+            // sends the message before the DOM has rendered.
+            setTimeout(function(){
+                console.log("focusing on question text");
+                $("#questionText").focus();
+            }, 50);
+        });
+
+        function submitCurrentVote() {
+            setTimeout(function() {
+                $("#voteButton").click();
+            }, 50);
+        }
+
+        function keyPressVote(event) {
+            var keyCode = event.keyCode;
+            if (keyCode == 65) {
+                $("#A").click();
+                submitCurrentVote();
+            }
+            else if (keyCode == 66) {
+                $("#B").click();
+                submitCurrentVote();
+            }
+            else if (keyCode == 67) {
+                $("#C").click();
+                submitCurrentVote();
+            }
+            else if (keyCode == 68) {
+                $("#D").click();
+                submitCurrentVote();
+            }
+        };
+
+        $(document).ready(function() {
+            document.addEventListener("keydown", keyPressVote, false);
+        });
+
+    </script>
+</body>
+</html>
