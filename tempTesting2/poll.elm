@@ -46,24 +46,13 @@ update action model =
 
 -- VIEW 
 -- Prints out the values of our model using html
---ERROR WITH THE TEXT BOX INPUT FUNCTION
+--Text box sends input value and replaces our model's string
 -- NO CLUE WHAT SIGNAL.ADDRESS IS
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div [] --View is literally one giant hierarchy of HTML. The first [] is for attributes, and the second [] is for content.
-    [ 
-    br [] [] --We use an empty br to break down into a new line, or provide spacing.
-    
-     --Beginning of Questioner's POV
-    , fieldset [] 
-        [
-        div [] [text "TEXTBOX HERE", input [ on "input" targetValue (SetStr) ]]
---        , div [] [text "Question ", input [placeholder "Enter your question here.", onInput SetStr] []]
-        , br [][]
-        , div [][text "Set one answer as the correct answer."]
-        , br [][]
-        ]
-    , br [] [] , br [] []
+  div []
+    [ input [placeholder "Enter seomthign ...", on "input" targetValue (Signal.message address << SetStr)] []
+        ,div [] [text (model.str)]
     ]
 
     
