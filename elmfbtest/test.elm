@@ -18,7 +18,7 @@ import ElmFire exposing
 
 -- You may want to change this url, but you don't have to
 url : String
-url = "https://testproj1-5fbcf.firebaseio.com/Answer1"
+url = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
 
 values : Mailbox JE.Value
 values = mailbox JE.null
@@ -55,6 +55,8 @@ view value =
       , input [ on "input" targetValue (message inputString.address) ] []
       ]
     ]
+  , div []
+    [ button [ on "input" targetChecked (\bool -> (submitButtonPressed bool)) ] [ text "Submit" ]]
   , div []
     [ label []
       [ text "query result: "
