@@ -18,14 +18,14 @@ init =
 
 --basic implementation of model with a string variable
 type alias Model = {
-  str : String
+  question : String
 }
 
 --MODEL (Data)
 --Set as Type Model
 model : Model
 --Instantiate Instance Variables
-model = Model "initiliazed"
+model = Model "Question"
 
 
 
@@ -51,8 +51,20 @@ update action model =
 view : Signal.Address Action -> Model -> Html
 view address model =
   div []
-    [ input [placeholder "Enter seomthign ...", on "input" targetValue (Signal.message address << SetStr)] []
-        ,div [] [text (model.str)]
+    [ 
+      div [] [text (model.question)]
+      , br [][], br [][]
+      , input [placeholder "Enter Question", on "input" targetValue (Signal.message address << SetStr)] []
+      , br [][], br [][]
+      , input [placeholder "Enter Answer A", on "input" targetValue (Signal.message address << SetStr)] []
+      , br [][], br [][]
+      , input [placeholder "Enter Answer B", on "input" targetValue (Signal.message address << SetStr)] []
+      , br [][], br [][]
+      , input [placeholder "Enter Answer C", on "input" targetValue (Signal.message address << SetStr)] []
+      , br [][], br [][]
+      , input [placeholder "Enter Answer D", on "input" targetValue (Signal.message address << SetStr)] []
+      , br [][], br [][]
+      , button [ onClick address (SetStr "I Love Cheese")] [ text "CLICK TO CHANGE" ]
     ]
 
     
