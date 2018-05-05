@@ -1,4 +1,5 @@
 import StartApp
+import Regex exposing (..)
 import Effects exposing (Effects)
 import Html exposing (..)
 import Html.Events exposing (..)
@@ -14,49 +15,11 @@ import ElmFire exposing
   , Reference, Snapshot, Subscription, Error
   )
 
-urlQ : String
-urlQ = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"
-
-urlA1 : String 
-urlA1 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
-        {-
-        1 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"
-        2 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
-        3 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2"
-        4 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3"
-        5 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4"
-        -}
-
---port broadcast : Signal (Task x (List ()))
---port broadcast =
---  let
---    tasks = List.map (uncurry Signal.send)
---  in
---    Signal.map (Task.sequence << tasks) inputString.signal
-
---    Signal.map
---      (\str -> set (string str) (fromUrl urlQ))
---      inputString.signal
-
-
-
---port runSet : Signal (Task x (List ()))
---port runSet = 
---    let
---        tasks = List.map (uncurry Signal.send)
---    in
---        Signal.map (Task.sequence << tasks) inputString.signal
+url : String
+url = "https://testproj1-5fbcf.firebaseio.com/Question"
 
 inputString : Mailbox String
 inputString = mailbox ""
-
-port runSet : Signal (Task Error Reference)
-port runSet = Signal.map
-  (\str -> set (string str) (fromUrl urlQ))
-  inputString.signal
-
-doNothing : a -> Task x ()
-doNothing = always (Task.succeed ())
 
 app =
     StartApp.start { init = init, update = update, view = view, inputs = [] }
@@ -79,7 +42,7 @@ type alias Model = {
   , choice4 : String
   , answerIndex : Int
 }
-
+   
 --MODEL (Data)
 --Set as Type Model
 model : Model
@@ -95,8 +58,6 @@ type Action =
   SetQuestion String --sets a new question string
   | SetAnswer Int String --sets a new answer string
   | SetCorrectAnswer Bool Int
-  --| SubmitTest String
-
 
 --Update takes an Action and a model then returns a tuple of a Model and an Effect (updated to Cmd in v18) with and Action (updated to Msg in Elm v18)
 update : Action -> Model -> (Model, Effects Action)
@@ -118,9 +79,6 @@ update action model =
                 ({model | answerIndex = num}, Effects.none)
             False ->
                 (model, Effects.none)
-    --SubmitTest str -> 
-    --    ({model | choice1 = str}, Effects.none)
-            
 
 -- VIEW 
 -- Prints out the values of our model using html
@@ -145,8 +103,8 @@ view address model =
         , br [][]
         , question address "D" 4
         , br [][]
-        --IMPLEMENT function to send all model variables into database
-        , button [ onClick inputString.address model.question] [ text "Submit" ]
+        --Sends one string to our database
+        , button [ onClick inputString.address appendAllStrings] [ text "Submit" ]
         ]
         
     , br [] [] , br [] []
@@ -158,10 +116,18 @@ view address model =
         , div [] [text ("C ) " ++ model.choice3)]
         , div [] [text ("D ) " ++ model.choice4)]
         , div [] [text ("The correct answer is " ++ (indexToLetter model.answerIndex) ++ ".")]
+        , div [] [text (appendAllStrings)]
+        --, div [] [text ((split All (regex "%") appendAllStrings))]  <---splits our string into parseable data
         ]
     , br [] []
     ]
 
+--appends all variables in our poll into a single string. we will send this to our database and parse it later through the answerer's POV
+appendAllStrings : String
+appendAllStrings = 
+    model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex)
+
+--converts an index of our answer choices to a corresponding letter
 indexToLetter : Int -> String
 indexToLetter index =
   case index of
@@ -170,6 +136,16 @@ indexToLetter index =
   3 -> "C"
   4 -> "D"
   _ -> ""
+
+
+--takes a string and replaces the url's value with it
+port runSet : Signal (Task Error Reference)
+port runSet = Signal.map
+  (\str -> set (string str) (fromUrl url))
+  inputString.signal
+
+doNothing : a -> Task x ()
+doNothing = always (Task.succeed ())
 
 
 {-(Radio Button + Text Box)
