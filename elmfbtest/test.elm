@@ -18,7 +18,7 @@ import ElmFire exposing
 
 -- You may want to change this url, but you don't have to
 url : String
-url = "https://testproj1-5fbcf.firebaseio.com/Users"
+url = "https://testproj1-5fbcf.firebaseio.com/Answer1"
 
 values : Mailbox JE.Value
 values = mailbox JE.null
