@@ -6,7 +6,7 @@ import Html.Attributes exposing (..)
 import Html exposing (Html, div, input, output, label, text, a)
 import Html.Events exposing (on, targetValue)
 import Html.Attributes exposing (href, target)
-import Signal exposing (Signal, Mailbox, mailbox, message)
+import Signal exposing (Address, Signal, Mailbox, mailbox, message)
 import Task exposing (Task)
 import Json.Encode as JE exposing (string, encode)
 import ElmFire exposing
@@ -14,31 +14,49 @@ import ElmFire exposing
   , Reference, Snapshot, Subscription, Error
   )
 
-url : String
-url = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
+urlQ : String
+urlQ = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"
 
-values : Mailbox JE.Value
-values = mailbox JE.null
+urlA1 : String 
+urlA1 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
+        {-
+        1 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"
+        2 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
+        3 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2"
+        4 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3"
+        5 -> "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4"
+        -}
+
+--port broadcast : Signal (Task x (List ()))
+--port broadcast =
+--  let
+--    tasks = List.map (uncurry Signal.send)
+--  in
+--    Signal.map (Task.sequence << tasks) inputString.signal
+
+--    Signal.map
+--      (\str -> set (string str) (fromUrl urlQ))
+--      inputString.signal
+
+
+
+--port runSet : Signal (Task x (List ()))
+--port runSet = 
+--    let
+--        tasks = List.map (uncurry Signal.send)
+--    in
+--        Signal.map (Task.sequence << tasks) inputString.signal
 
 inputString : Mailbox String
 inputString = mailbox ""
 
 port runSet : Signal (Task Error Reference)
 port runSet = Signal.map
-  (\str -> set (string str) (fromUrl url))
+  (\str -> set (string str) (fromUrl urlQ))
   inputString.signal
 
 doNothing : a -> Task x ()
 doNothing = always (Task.succeed ())
-
-port runQuery : Task Error Subscription
-port runQuery =
-    subscribe
-        (Signal.send values.address << .value)
-        doNothing
-        (valueChanged noOrder)
-        (fromUrl url)
-
 
 app =
     StartApp.start { init = init, update = update, view = view, inputs = [] }
@@ -77,6 +95,8 @@ type Action =
   SetQuestion String --sets a new question string
   | SetAnswer Int String --sets a new answer string
   | SetCorrectAnswer Bool Int
+  --| SubmitTest String
+
 
 --Update takes an Action and a model then returns a tuple of a Model and an Effect (updated to Cmd in v18) with and Action (updated to Msg in Elm v18)
 update : Action -> Model -> (Model, Effects Action)
@@ -98,12 +118,9 @@ update action model =
                 ({model | answerIndex = num}, Effects.none)
             False ->
                 (model, Effects.none)
-
-   {-} Submit bool -> 
-        case bool of
-            True -> (model, submitButtonPressed)
-            False -> (model, Effects.none)
-            -}
+    --SubmitTest str -> 
+    --    ({model | choice1 = str}, Effects.none)
+            
 
 -- VIEW 
 -- Prints out the values of our model using html
@@ -129,11 +146,10 @@ view address model =
         , question address "D" 4
         , br [][]
         --IMPLEMENT function to send all model variables into database
-        --, button [ on "input" targetChecked (\bool -> (submitButtonPressed bool)) ] [ text "Submit" ]
+        , button [ onClick inputString.address model.question] [ text "Submit" ]
         ]
-
+        
     , br [] [] , br [] []
-
     , fieldset []
         [
         div [] [text model.question]
@@ -155,14 +171,6 @@ indexToLetter index =
   4 -> "D"
   _ -> ""
 
-{-}
-submitButtonPressed bool = 
-    case bool of
-            True ->
-                message inputString.address model.choice1
-            False ->
-                message  ""
--}
 
 {-(Radio Button + Text Box)
 Radio Buttons use groupNames to exclude other button in the same group, textValue to provide a text paired up with it,
