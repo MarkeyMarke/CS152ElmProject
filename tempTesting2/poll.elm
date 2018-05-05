@@ -6,55 +6,64 @@ import Html.Attributes exposing (..)
 
 app =
     StartApp.start { init = init, update = update, view = view, inputs = [] }
-   --{ model = model, view = view, update = update }
 
 main = 
     app.html
 
---INITILIAZATION
+--INITILIAZATION of our poll elm application, initiliazes with a model and no effect
 init : ( Model, Effects Action )
 init =
     (model, Effects.none )
 
---Define Model. Model is similar to a struct in C, or an object in JS, but it is immutable. Elm gets around this by
---Generating a new copy of that object but which shares memory with the original record, except for the changed values.
+
+--basic implementation of model with a string variable
 type alias Model = {
   str : String
 }
+
 --MODEL (Data)
 --Set as Type Model
 model : Model
---Instance Variables , Instantiate
+--Instantiate Instance Variables
 model = Model "initiliazed"
 
 
 
---UPDATE (Change Data)
--- Define Msg
--- Msg is signal to the system, we use case matching to allow the view section to give a particular signal
+-- UPDATE (Change Data)
+-- Define Action (updated to Msg in Elm v18)
+-- Action is signal to the system, we use case matching to allow the view section to give a particular signal
 type Action = 
-  SetStr --Submits the current model values and updates it for the answerer's POV
+  SetStr String--Submits the current model values and updates it for the answerer's POV
 
---Update will take a message signal based on what kind of messgae the view section has given
---The common property with all of them is that they may pass parameters of their own, and they replace the model data with
---an updated copy of itself.
+--Update takes an Action and a model then returns a tuple of a Model and an Effect (updated to Cmd in v18) with and Action (updated to Msg in Elm v18)
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    SetStr -> 
-      (Model "CHANGED", Effects.none)
+    --SetStr will set the string of a model to the input string and pass no Effect thru
+    SetStr string -> 
+      (Model string, Effects.none)
 
 
-{-VIEW (Print out the data)
-View's job is to interpret the model every time it is updated. We will take the date from model and display it in GUI
-View's second job is to provide controls to the user to update the model. This is done through text fields and buttons
-of all kinds. They will take input, and then pass a message to update. It is up for us to decide what parameters are
-necessary and how it works. -}
+-- VIEW 
+-- Prints out the values of our model using html
+--ERROR WITH THE TEXT BOX INPUT FUNCTION
+-- NO CLUE WHAT SIGNAL.ADDRESS IS
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div [] [
-    button [ onClick address SetStr ] [ text "CLICK TO CHANGE" ]
-    , div [] [text (model.str)]
+  div [] --View is literally one giant hierarchy of HTML. The first [] is for attributes, and the second [] is for content.
+    [ 
+    br [] [] --We use an empty br to break down into a new line, or provide spacing.
+    
+     --Beginning of Questioner's POV
+    , fieldset [] 
+        [
+        div [] [text "TEXTBOX HERE", input [ on "input" targetValue (SetStr) ]]
+--        , div [] [text "Question ", input [placeholder "Enter your question here.", onInput SetStr] []]
+        , br [][]
+        , div [][text "Set one answer as the correct answer."]
+        , br [][]
+        ]
+    , br [] [] , br [] []
     ]
 
     
