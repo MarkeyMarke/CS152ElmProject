@@ -1,11 +1,20 @@
 import StartApp
+import Effects exposing (Effects)
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes exposing (..)
 
-main =
-  StartApp.start { model = model, view = view, update = update }
+app =
+    StartApp.start { init = init, update = update, view = view, inputs = [] }
+   --{ model = model, view = view, update = update }
 
+main = 
+    app.html
+
+--INITILIAZATION
+init : ( Model, Effects Action )
+init =
+    (model, Effects.none )
 
 --Define Model. Model is similar to a struct in C, or an object in JS, but it is immutable. Elm gets around this by
 --Generating a new copy of that object but which shares memory with the original record, except for the changed values.
@@ -16,7 +25,7 @@ type alias Model = {
 --Set as Type Model
 model : Model
 --Instance Variables , Instantiate
-model = "Hi"
+model = Model "initiliazed"
 
 
 
@@ -24,15 +33,16 @@ model = "Hi"
 -- Define Msg
 -- Msg is signal to the system, we use case matching to allow the view section to give a particular signal
 type Action = 
-  SetStr String --Submits the current model values and updates it for the answerer's POV
+  SetStr --Submits the current model values and updates it for the answerer's POV
 
 --Update will take a message signal based on what kind of messgae the view section has given
 --The common property with all of them is that they may pass parameters of their own, and they replace the model data with
 --an updated copy of itself.
-update actn model =
-  case actn of
-    SetStr string-> 
-      {model | str = string}
+update : Action -> Model -> (Model, Effects Action)
+update action model =
+  case action of
+    SetStr -> 
+      (Model "CHANGED", Effects.none)
 
 
 {-VIEW (Print out the data)
@@ -43,7 +53,8 @@ necessary and how it works. -}
 view : Signal.Address Action -> Model -> Html
 view address model =
   div [] [
-    text ("YOOFDSOFFAFA") 
+    button [ onClick address SetStr ] [ text "CLICK TO CHANGE" ]
+    , div [] [text (model.str)]
     ]
 
     
