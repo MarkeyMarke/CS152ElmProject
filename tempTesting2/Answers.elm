@@ -19,6 +19,7 @@ import String exposing (toInt, split)
 import Array exposing (get, fromList)
 import Maybe exposing (withDefault)
 import Result exposing (withDefault)
+import Regex exposing (..)
 
 import ElmFire exposing
   ( fromUrl, set, subscribe, valueChanged, noOrder, noLimit
@@ -68,7 +69,8 @@ view value =
       ]
     ]
   , div []
-    [ button [ onClick inputString.address (addTo outputText 3)] [ text "Submit" ]]
+              --outputText is displayed within quotatoin marks, so pass the string without quotes to the addTo function
+    [ button [ onClick inputString.address (addTo (String.slice 1 ((String.length outputText) - 1) outputText) 2)] [ text "Submit" ]]
   , div []
     [ label []
       [ text "query result: "
@@ -77,28 +79,38 @@ view value =
     ]
   ]
 
+--addTo function takes the answerChoice string and increments accordingly to the int parameter (index)
+--first grabs the index of the string needed to be incremented by 1, then pushes that value back into an array
+-- with the original components, then produce a string from that updated array
 addTo : String -> Int -> String
 addTo inputString index = 
-        (if index == 0 then
-            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 0 (Array.fromList (String.split "%" inputString)))))) + 1)
-         else
-            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 0 (Array.fromList (String.split "%" inputString))))))
-        )
-        ++ "%" ++ 
-        (if index == 1 then
-            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (String.split "%" inputString)))))) + 1)
-         else
-            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (String.split "%" inputString))))))
-        )
-        ++ "%" ++ 
-        (if index == 2 then
-            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (String.split "%" inputString)))))) + 1)
-         else
-            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (String.split "%" inputString))))))
-        )
-        ++ "%" ++ 
-        (if index == 3 then
-            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (String.split "%" inputString)))))) + 1)
-         else
-            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (String.split "%" inputString))))))
-        )
+  case index of 
+    1 -> 
+      let 
+        num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 0 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
+        array = (Array.fromList (Regex.split All (regex "%") inputString))
+      in
+        --String.concat (Array.toList (Array.set 0 num array)))
+        String.join "%" (Array.toList (Array.set 0 num array))
+    2 -> 
+      let 
+        num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
+        array = (Array.fromList (Regex.split All (regex "%") inputString))
+      in
+        --String.concat (Array.toList (Array.set 0 num array)))
+        String.join "%" (Array.toList (Array.set 1 num array))
+    3 -> 
+      let 
+        num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
+        array = (Array.fromList (Regex.split All (regex "%") inputString))
+      in
+        --String.concat (Array.toList (Array.set 0 num array)))
+        String.join "%" (Array.toList (Array.set 2 num array))
+    4 -> 
+      let 
+        num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
+        array = (Array.fromList (Regex.split All (regex "%") inputString))
+      in
+        --String.concat (Array.toList (Array.set 0 num array)))
+        String.join "%" (Array.toList (Array.set 3 num array))
+    _ -> inputString
