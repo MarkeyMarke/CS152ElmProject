@@ -68,7 +68,7 @@ view value =
       ]
     ]
   , div []
-    [ button [ onClick inputString.address (addTo outputText 0)] [ text "Submit" ]]
+    [ button [ onClick inputString.address (addTo outputText 3)] [ text "Submit" ]]
   , div []
     [ label []
       [ text "query result: "
@@ -80,25 +80,25 @@ view value =
 addTo : String -> Int -> String
 addTo inputString index = 
         (if index == 0 then
-            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 0 (Array.fromList (String.split "%" inputString))))) + 1)
+            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 0 (Array.fromList (String.split "%" inputString)))))) + 1)
          else
             toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 0 (Array.fromList (String.split "%" inputString))))))
         )
         ++ "%" ++ 
         (if index == 1 then
-            toString (Result.withDefault 1 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (String.split "%" inputString))))) + 1)
+            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (String.split "%" inputString)))))) + 1)
          else
-            toString (Result.withDefault 1 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (String.split "%" inputString))))))
+            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (String.split "%" inputString))))))
         )
         ++ "%" ++ 
         (if index == 2 then
-            toString (Result.withDefault 2 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (String.split "%" inputString))))) + 1)
+            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (String.split "%" inputString)))))) + 1)
          else
-            toString (Result.withDefault 2 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (String.split "%" inputString))))))
+            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (String.split "%" inputString))))))
         )
         ++ "%" ++ 
         (if index == 3 then
-            toString (Result.withDefault 3 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (String.split "%" inputString))))) + 1)
+            toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (String.split "%" inputString)))))) + 1)
          else
-            toString (Result.withDefault 3 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (String.split "%" inputString))))))
+            toString (Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (String.split "%" inputString))))))
         )
