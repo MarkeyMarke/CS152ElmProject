@@ -1,5 +1,5 @@
-{- Basic ElmFire Example App
 
+{- Basic ElmFire Example App
 Write the text from a input field to a Firebase location.
 Query that same location and display the result.
 Use the displayed link to show the Firebase bashboard for the location.
@@ -31,7 +31,7 @@ main = Signal.map view values.signal
 
 -- You may want to change this url, but you don't have to
 url : String
-url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks/"
+url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks"
 
 values : Mailbox JE.Value
 values = mailbox JE.null
@@ -90,27 +90,23 @@ addTo inputString index =
         num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 0 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
         array = (Array.fromList (Regex.split All (regex "%") inputString))
       in
-        --String.concat (Array.toList (Array.set 0 num array)))
         String.join "%" (Array.toList (Array.set 0 num array))
     2 -> 
       let 
         num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 1 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
         array = (Array.fromList (Regex.split All (regex "%") inputString))
       in
-        --String.concat (Array.toList (Array.set 0 num array)))
         String.join "%" (Array.toList (Array.set 1 num array))
     3 -> 
       let 
         num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 2 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
         array = (Array.fromList (Regex.split All (regex "%") inputString))
       in
-        --String.concat (Array.toList (Array.set 0 num array)))
         String.join "%" (Array.toList (Array.set 2 num array))
     4 -> 
       let 
         num = toString ((Result.withDefault 0 (String.toInt (Maybe.withDefault "0" (Array.get 3 (Array.fromList (Regex.split All (regex "%") inputString)))))) + 1)
         array = (Array.fromList (Regex.split All (regex "%") inputString))
       in
-        --String.concat (Array.toList (Array.set 0 num array)))
         String.join "%" (Array.toList (Array.set 3 num array))
     _ -> inputString

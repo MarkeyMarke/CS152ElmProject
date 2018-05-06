@@ -11916,7 +11916,7 @@ Elm.Main.make = function (_elm) {
    var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
    var inputString = $Signal.mailbox("");
    var values = $Signal.mailbox($Json$Encode.$null);
-   var url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks/";
+   var url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks";
    var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
    A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(url));},inputString.signal));
    var runQuery = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
