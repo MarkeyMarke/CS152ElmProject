@@ -104,7 +104,7 @@ view address model =
         , question address "D" 4
         , br [][]
         --Sends one string to our database
-        , button [ onClick inputString.address appendAllStrings] [ text "Submit" ]
+        , button [ onClick inputString.address (model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex))] [ text "Submit" ]
         ]
         
     , br [] [] , br [] []
@@ -116,7 +116,7 @@ view address model =
         , div [] [text ("C ) " ++ model.choice3)]
         , div [] [text ("D ) " ++ model.choice4)]
         , div [] [text ("The correct answer is " ++ (indexToLetter model.answerIndex) ++ ".")]
-        , div [] [text (appendAllStrings)]
+        , div [] [text (model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex))]
         --, div [] [text ((split All (regex "%") appendAllStrings))]  <---splits our string into parseable data
         ]
     , br [] []
@@ -125,7 +125,7 @@ view address model =
 --appends all variables in our poll into a single string. we will send this to our database and parse it later through the answerer's POV
 appendAllStrings : String
 appendAllStrings = 
-    model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex)
+    (model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex))
 
 --converts an index of our answer choices to a corresponding letter
 indexToLetter : Int -> String
