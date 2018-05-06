@@ -54,32 +54,32 @@ port broadcast =
 
 inputStringQ : Mailbox String
 inputStringQ =
-    mailbox ""
+    mailbox "Your question will show here."
 
 
 inputStringA1 : Mailbox String
 inputStringA1 =
-    mailbox ""
+    mailbox "A goes here."
 
 
 inputStringA2 : Mailbox String
 inputStringA2 =
-    mailbox ""
+    mailbox "B goes here."
 
 
 inputStringA3 : Mailbox String
 inputStringA3 =
-    mailbox ""
+    mailbox "C goes here."
 
 
 inputStringA4 : Mailbox String
 inputStringA4 =
-    mailbox ""
+    mailbox "D goes here."
 
 
 inputStringAI : Mailbox String
 inputStringAI =
-    mailbox ""
+    mailbox "4"
 
 
 
