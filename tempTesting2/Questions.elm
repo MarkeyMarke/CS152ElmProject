@@ -45,46 +45,48 @@ port broadcast =
 
 
 
---DATA FOR QUESTION KEY FOR FIREBASE
---Each mailbox has its own values called signals which are updated over time. Addresses point to that signal.
---Im guessing were initializing a mailbox to have an empty string, then setting that string to a specific firebase url within the port function
---Later on, we can update the signals within our mailboxes using the Signal.map function and the mailboxe's address. I THINK
 --MAIL BOXES INITIALIZED FOR ALL THE KEYS FROM DATABASE
+{- Each mailbox is initialized by using the port functions to a specific URL/key to the Firebase DB. The string argument for the mailbox
+   is the initial value that the specified key will have upon refreshing the questioner's browser as well as upon initial load of the browser.
+-}
 
 
 inputStringQ : Mailbox String
 inputStringQ =
-    mailbox "Your question will show here."
+    mailbox model.question
 
 
 inputStringA1 : Mailbox String
 inputStringA1 =
-    mailbox "A goes here."
+    mailbox model.choice1
 
 
 inputStringA2 : Mailbox String
 inputStringA2 =
-    mailbox "B goes here."
+    mailbox model.choice2
 
 
 inputStringA3 : Mailbox String
 inputStringA3 =
-    mailbox "C goes here."
+    mailbox model.choice3
 
 
 inputStringA4 : Mailbox String
 inputStringA4 =
-    mailbox "D goes here."
+    mailbox model.choice4
 
 
 inputStringAI : Mailbox String
 inputStringAI =
-    mailbox "4"
+    mailbox (toString model.answerIndex)
 
 
 
 --END OF MAILBOXES
 --PORTS FOR EVERY DATA
+{- These port functions allow the mailboxes initialized earlier to be linked with a correponding key in the Firebase DB, the url specifies each location
+   of the stated key.
+-}
 
 
 port runSet : Signal (Task Error Reference)
@@ -152,10 +154,8 @@ init =
 
 
 
---basic implementation of model with a string variable
 --MODEL (Data)
---Set as Type Model
---Instantiate Instance Variables
+--Type alias is similar to defining a struct in C. Everything is enclosed in a 'record' with given data types.
 
 
 type alias Model =
@@ -168,6 +168,10 @@ type alias Model =
     }
 
 
+
+--Here, we create a variable called model, and define it as type model. We then initialize it with default values.
+
+
 model : Model
 model =
     Model "Your question will show here." "A goes here." "B goes here." "C goes here." "D goes here." 4
@@ -177,7 +181,7 @@ model =
 -- UPDATE (Change Data)
 -- Define Action (updated to Msg in Elm v18)
 -- Action is signal to the system, we use case matching to allow the view section to give a particular signal
---Update takes an Action and a model then returns a tuple of a Model and an Effect (updated to Cmd in v18) with and Action (updated to Msg in Elm v18)
+-- Update takes an Action and a model then returns a tuple of a Model and an Effect (updated to Cmd in v18). The Effect comes with an Action (updated to Msg in Elm v18)
 
 
 type Action
@@ -215,24 +219,26 @@ update action model =
 
         SetCorrectAnswer bool num ->
             case bool of
+                --In 0.16, Elm didn't provide a library such that the listeners were chcked for input for us. So we have do check if the input worked ourselves.
                 True ->
+                    --If the action worked, change the model.
                     ( { model | answerIndex = num }, Effects.none )
 
                 False ->
+                    --Otherwise, keep the model the same.
                     ( model, Effects.none )
 
 
 
--- VIEW (CONVERT DATA INTO HTML DISPLAY)
--- Prints out the values of our model using html
+-- VIEW (Converts data from our model into an HTML display)
 --Text box sends input value and replaces our model's string
 -- NO CLUE WHAT SIGNAL.ADDRESS IS
 
 
 view : Signal.Address Action -> Model -> Html
 view address model =
+    --View is literally one giant hierarchy of HTML. The first [] is for attributes, and the second [] is for content.
     div []
-        --View is literally one giant hierarchy of HTML. The first [] is for attributes, and the second [] is for content.
         [ br [] []
           --We use an empty br to break down into a new line, or provide spacing.
           --Beginning of Questioner's POV
@@ -295,14 +301,12 @@ indexToLetter index =
             "D"
 
         _ ->
-            ""
+            "Answer out of bounds."
 
 
 
-{- (Radio Button + Text Box)
-   Radio Buttons use groupNames to exclude other button in the same group, textValue to provide a text paired up with it,
+{- Radio Buttons use groupNames to exclude other button in the same group, textValue to provide a text paired up with it,
    and newAnswerIndex which takes an int for the new answer index
-   Takes in groupName to pass into radio, takes in a textValue to assign that button, newAnswerIndex is the new answer
 -}
 
 

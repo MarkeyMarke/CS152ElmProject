@@ -26,7 +26,7 @@ Elm.Main.make = function (_elm) {
          case 2: return "B";
          case 3: return "C";
          case 4: return "D";
-         default: return "";}
+         default: return "Answer out of bounds.";}
    };
    var update = F2(function (action,model) {
       var _p1 = action;
@@ -119,7 +119,7 @@ Elm.Main.make = function (_elm) {
    "D goes here.",
    4);
    var init = {ctor: "_Tuple2",_0: model,_1: $Effects.none};
-   var inputStringAI = $Signal.mailbox("4");
+   var inputStringAI = $Signal.mailbox($Basics.toString(model.answerIndex));
    var runSetAI = Elm.Native.Task.make(_elm).performSignal("runSetAI",
    A2($Signal.map,
    function (str) {
@@ -128,7 +128,7 @@ Elm.Main.make = function (_elm) {
       $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/AnswerIndex"));
    },
    inputStringAI.signal));
-   var inputStringA4 = $Signal.mailbox("D goes here.");
+   var inputStringA4 = $Signal.mailbox(model.choice4);
    var runSetA4 = Elm.Native.Task.make(_elm).performSignal("runSetA4",
    A2($Signal.map,
    function (str) {
@@ -137,7 +137,7 @@ Elm.Main.make = function (_elm) {
       $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4"));
    },
    inputStringA4.signal));
-   var inputStringA3 = $Signal.mailbox("C goes here.");
+   var inputStringA3 = $Signal.mailbox(model.choice3);
    var runSetA3 = Elm.Native.Task.make(_elm).performSignal("runSetA3",
    A2($Signal.map,
    function (str) {
@@ -146,7 +146,7 @@ Elm.Main.make = function (_elm) {
       $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3"));
    },
    inputStringA3.signal));
-   var inputStringA2 = $Signal.mailbox("B goes here.");
+   var inputStringA2 = $Signal.mailbox(model.choice2);
    var runSetA2 = Elm.Native.Task.make(_elm).performSignal("runSetA2",
    A2($Signal.map,
    function (str) {
@@ -155,7 +155,7 @@ Elm.Main.make = function (_elm) {
       $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2"));
    },
    inputStringA2.signal));
-   var inputStringA1 = $Signal.mailbox("A goes here.");
+   var inputStringA1 = $Signal.mailbox(model.choice1);
    var runSetA1 = Elm.Native.Task.make(_elm).performSignal("runSetA1",
    A2($Signal.map,
    function (str) {
@@ -164,7 +164,7 @@ Elm.Main.make = function (_elm) {
       $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"));
    },
    inputStringA1.signal));
-   var inputStringQ = $Signal.mailbox("Your question will show here.");
+   var inputStringQ = $Signal.mailbox(model.question);
    var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
    A2($Signal.map,
    function (str) {
