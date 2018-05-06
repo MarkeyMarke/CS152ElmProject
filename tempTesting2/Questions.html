@@ -8249,6 +8249,163 @@ Elm.Json.Decode.make = function (_elm) {
                                     ,andThen: andThen
                                     ,value: value
                                     ,customDecoder: customDecoder};
+};Elm.Native.Regex = {};
+Elm.Native.Regex.make = function(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Regex = localRuntime.Native.Regex || {};
+	if (localRuntime.Native.Regex.values)
+	{
+		return localRuntime.Native.Regex.values;
+	}
+	if ('values' in Elm.Native.Regex)
+	{
+		return localRuntime.Native.Regex.values = Elm.Native.Regex.values;
+	}
+
+	var List = Elm.Native.List.make(localRuntime);
+	var Maybe = Elm.Maybe.make(localRuntime);
+
+	function escape(str)
+	{
+		return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+	}
+	function caseInsensitive(re)
+	{
+		return new RegExp(re.source, 'gi');
+	}
+	function regex(raw)
+	{
+		return new RegExp(raw, 'g');
+	}
+
+	function contains(re, string)
+	{
+		return string.match(re) !== null;
+	}
+
+	function find(n, re, str)
+	{
+		n = n.ctor === 'All' ? Infinity : n._0;
+		var out = [];
+		var number = 0;
+		var string = str;
+		var lastIndex = re.lastIndex;
+		var prevLastIndex = -1;
+		var result;
+		while (number++ < n && (result = re.exec(string)))
+		{
+			if (prevLastIndex === re.lastIndex) break;
+			var i = result.length - 1;
+			var subs = new Array(i);
+			while (i > 0)
+			{
+				var submatch = result[i];
+				subs[--i] = submatch === undefined
+					? Maybe.Nothing
+					: Maybe.Just(submatch);
+			}
+			out.push({
+				match: result[0],
+				submatches: List.fromArray(subs),
+				index: result.index,
+				number: number
+			});
+			prevLastIndex = re.lastIndex;
+		}
+		re.lastIndex = lastIndex;
+		return List.fromArray(out);
+	}
+
+	function replace(n, re, replacer, string)
+	{
+		n = n.ctor === 'All' ? Infinity : n._0;
+		var count = 0;
+		function jsReplacer(match)
+		{
+			if (count++ >= n)
+			{
+				return match;
+			}
+			var i = arguments.length - 3;
+			var submatches = new Array(i);
+			while (i > 0)
+			{
+				var submatch = arguments[i];
+				submatches[--i] = submatch === undefined
+					? Maybe.Nothing
+					: Maybe.Just(submatch);
+			}
+			return replacer({
+				match: match,
+				submatches: List.fromArray(submatches),
+				index: arguments[i - 1],
+				number: count
+			});
+		}
+		return string.replace(re, jsReplacer);
+	}
+
+	function split(n, re, str)
+	{
+		n = n.ctor === 'All' ? Infinity : n._0;
+		if (n === Infinity)
+		{
+			return List.fromArray(str.split(re));
+		}
+		var string = str;
+		var result;
+		var out = [];
+		var start = re.lastIndex;
+		while (n--)
+		{
+			if (!(result = re.exec(string))) break;
+			out.push(string.slice(start, result.index));
+			start = re.lastIndex;
+		}
+		out.push(string.slice(start));
+		return List.fromArray(out);
+	}
+
+	return Elm.Native.Regex.values = {
+		regex: regex,
+		caseInsensitive: caseInsensitive,
+		escape: escape,
+
+		contains: F2(contains),
+		find: F3(find),
+		replace: F4(replace),
+		split: F3(split)
+	};
+};
+Elm.Regex = Elm.Regex || {};
+Elm.Regex.make = function (_elm) {
+   "use strict";
+   _elm.Regex = _elm.Regex || {};
+   if (_elm.Regex.values) return _elm.Regex.values;
+   var _U = Elm.Native.Utils.make(_elm),$Maybe = Elm.Maybe.make(_elm),$Native$Regex = Elm.Native.Regex.make(_elm);
+   var _op = {};
+   var split = $Native$Regex.split;
+   var replace = $Native$Regex.replace;
+   var find = $Native$Regex.find;
+   var AtMost = function (a) {    return {ctor: "AtMost",_0: a};};
+   var All = {ctor: "All"};
+   var Match = F4(function (a,b,c,d) {    return {match: a,submatches: b,index: c,number: d};});
+   var contains = $Native$Regex.contains;
+   var caseInsensitive = $Native$Regex.caseInsensitive;
+   var regex = $Native$Regex.regex;
+   var escape = $Native$Regex.escape;
+   var Regex = {ctor: "Regex"};
+   return _elm.Regex.values = {_op: _op
+                              ,regex: regex
+                              ,escape: escape
+                              ,caseInsensitive: caseInsensitive
+                              ,contains: contains
+                              ,find: find
+                              ,replace: replace
+                              ,split: split
+                              ,Match: Match
+                              ,All: All
+                              ,AtMost: AtMost};
 };Elm.Native.Effects = {};
 Elm.Native.Effects.make = function(localRuntime) {
 
@@ -11717,6 +11874,7 @@ Elm.Main.make = function (_elm) {
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
    $ElmFire = Elm.ElmFire.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
@@ -11726,38 +11884,255 @@ Elm.Main.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $StartApp = Elm.StartApp.make(_elm),
    $Task = Elm.Task.make(_elm);
    var _op = {};
-   var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
-   var inputString = $Signal.mailbox("");
-   var values = $Signal.mailbox($Json$Encode.$null);
-   var url = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1";
-   var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
-   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(url));},inputString.signal));
-   var runQuery = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
-   function (_p0) {
-      return A2($Signal.send,values.address,function (_) {    return _.value;}(_p0));
-   },
-   doNothing,
-   $ElmFire.valueChanged($ElmFire.noOrder),
-   $ElmFire.fromUrl(url)));
-   var view = function (value) {
-      var outputText = A2($Json$Encode.encode,0,value);
+   var indexToLetter = function (index) {
+      var _p0 = index;
+      switch (_p0)
+      {case 1: return "A";
+         case 2: return "B";
+         case 3: return "C";
+         case 4: return "D";
+         default: return "";}
+   };
+   var update = F2(function (action,model) {
+      var _p1 = action;
+      switch (_p1.ctor)
+      {case "SetQuestion": return {ctor: "_Tuple2",_0: _U.update(model,{question: _p1._0}),_1: $Effects.none};
+         case "SetAnswer": var _p3 = _p1._1;
+           var _p2 = _p1._0;
+           switch (_p2)
+           {case 1: return {ctor: "_Tuple2",_0: _U.update(model,{choice1: _p3}),_1: $Effects.none};
+              case 2: return {ctor: "_Tuple2",_0: _U.update(model,{choice2: _p3}),_1: $Effects.none};
+              case 3: return {ctor: "_Tuple2",_0: _U.update(model,{choice3: _p3}),_1: $Effects.none};
+              case 4: return {ctor: "_Tuple2",_0: _U.update(model,{choice4: _p3}),_1: $Effects.none};
+              default: return {ctor: "_Tuple2",_0: _U.update(model,{choice1: _p3}),_1: $Effects.none};}
+         default: var _p4 = _p1._0;
+           if (_p4 === true) {
+                 return {ctor: "_Tuple2",_0: _U.update(model,{answerIndex: _p1._1}),_1: $Effects.none};
+              } else {
+                 return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+              }}
+   });
+   var SetCorrectAnswer = F2(function (a,b) {    return {ctor: "SetCorrectAnswer",_0: a,_1: b};});
+   var answer = F3(function (address,textValue,newAnswerIndex) {
       return A2($Html.div,
       _U.list([]),
-      _U.list([$Html.text("ElmFire test at: ")
-              ,A2($Html.a,_U.list([$Html$Attributes.href(url),$Html$Attributes.target("_blank")]),_U.list([$Html.text(url)]))
-              ,A2($Html.div,
+      _U.list([A2($Html.label,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "padding",_1: "20px"}]))]),
+      _U.list([A2($Html.input,
+              _U.list([$Html$Attributes.type$("radio")
+                      ,$Html$Attributes.name("answer")
+                      ,A3($Html$Events.on,
+                      "input",
+                      $Html$Events.targetChecked,
+                      function (bool) {
+                         return A2($Signal.message,address,A2(SetCorrectAnswer,bool,newAnswerIndex));
+                      })]),
+              _U.list([]))
+              ,$Html.text(textValue)]))]));
+   });
+   var SetAnswer = F2(function (a,b) {    return {ctor: "SetAnswer",_0: a,_1: b};});
+   var question = F3(function (address,textValue,newAnswerIndex) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.label,
+              _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "padding",_1: "20px"}]))]),
+              _U.list([A2($Html.input,
+                      _U.list([$Html$Attributes.type$("radio")
+                              ,$Html$Attributes.name("question")
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetChecked,
+                              function (bool) {
+                                 return A2($Signal.message,address,A2(SetCorrectAnswer,bool,newAnswerIndex));
+                              })]),
+                      _U.list([]))
+                      ,$Html.text(textValue)]))
+              ,A2($Html.input,
+              _U.list([$Html$Attributes.placeholder("Enter your answer here.")
+                      ,A3($Html$Events.on,
+                      "input",
+                      $Html$Events.targetValue,
+                      function (str) {
+                         return A2($Signal.message,address,A2(SetAnswer,newAnswerIndex,str));
+                      })]),
+              _U.list([]))]));
+   });
+   var SetQuestion = function (a) {    return {ctor: "SetQuestion",_0: a};};
+   var Model = F6(function (a,b,c,d,e,f) {    return {question: a,choice1: b,choice2: c,choice3: d,choice4: e,answerIndex: f};});
+   var model = A6(Model,"Your question will show here.","A goes here.","B goes here.","C goes here.","D goes here.",1);
+   var appendAllStrings = A2($Basics._op["++"],
+   model.question,
+   A2($Basics._op["++"],
+   "%",
+   A2($Basics._op["++"],
+   model.choice1,
+   A2($Basics._op["++"],
+   "%",
+   A2($Basics._op["++"],
+   model.choice2,
+   A2($Basics._op["++"],
+   "%",
+   A2($Basics._op["++"],
+   model.choice3,
+   A2($Basics._op["++"],"%",A2($Basics._op["++"],model.choice4,A2($Basics._op["++"],"%",$Basics.toString(model.answerIndex)))))))))));
+   var init = {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+   var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
+   var inputStringAI = $Signal.mailbox("");
+   var urlAI = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/AnswerIndex";
+   var runSetAI = Elm.Native.Task.make(_elm).performSignal("runSetAI",
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(urlAI));},inputStringAI.signal));
+   var inputStringA4 = $Signal.mailbox("");
+   var urlA4 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4";
+   var runSetA4 = Elm.Native.Task.make(_elm).performSignal("runSetA4",
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(urlA4));},inputStringA4.signal));
+   var inputStringA3 = $Signal.mailbox("");
+   var urlA3 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3";
+   var runSetA3 = Elm.Native.Task.make(_elm).performSignal("runSetA3",
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(urlA3));},inputStringA3.signal));
+   var inputStringA2 = $Signal.mailbox("");
+   var urlA2 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2";
+   var runSetA2 = Elm.Native.Task.make(_elm).performSignal("runSetA2",
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(urlA2));},inputStringA2.signal));
+   var inputStringA1 = $Signal.mailbox("");
+   var urlA1 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1";
+   var runSetA1 = Elm.Native.Task.make(_elm).performSignal("runSetA1",
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(urlA1));},inputStringA1.signal));
+   var inputStringQ = $Signal.mailbox("");
+   var urlQ = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question";
+   var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(urlQ));},inputStringQ.signal));
+   var proxy = $Signal.mailbox(_U.list([]));
+   var broadcast = Elm.Native.Task.make(_elm).performSignal("broadcast",
+   function () {
+      var tasks = $List.map($Basics.uncurry($Signal.send));
+      return A2($Signal.map,function (_p5) {    return $Task.sequence(tasks(_p5));},proxy.signal);
+   }());
+   var view = F2(function (address,model) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.fieldset,
               _U.list([]),
-              _U.list([A2($Html.label,
+              _U.list([A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text("Question ")
+                              ,A2($Html.input,
+                              _U.list([$Html$Attributes.placeholder("Enter your question here.")
+                                      ,A3($Html$Events.on,
+                                      "input",
+                                      $Html$Events.targetValue,
+                                      function (str) {
+                                         return A2($Signal.message,address,SetQuestion(str));
+                                      })]),
+                              _U.list([]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text("Set one answer as the correct answer.")]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,address,"A",1)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,address,"B",2)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,address,"C",3)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,address,"D",4)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      proxy.address,
+                      _U.list([{ctor: "_Tuple2",_0: inputStringQ.address,_1: model.question}
+                              ,{ctor: "_Tuple2",_0: inputStringA1.address,_1: model.choice1}
+                              ,{ctor: "_Tuple2",_0: inputStringA2.address,_1: model.choice2}
+                              ,{ctor: "_Tuple2",_0: inputStringA3.address,_1: model.choice3}
+                              ,{ctor: "_Tuple2",_0: inputStringA4.address,_1: model.choice4}
+                              ,{ctor: "_Tuple2",_0: inputStringAI.address,_1: $Basics.toString(model.answerIndex)}]))]),
+                      _U.list([$Html.text("Submit")]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.fieldset,
               _U.list([]),
-              _U.list([$Html.text("set value: ")
-                      ,A2($Html.input,_U.list([A3($Html$Events.on,"input",$Html$Events.targetValue,$Signal.message(inputString.address))]),_U.list([]))]))]))
-              ,A2($Html.div,_U.list([]),_U.list([A2($Html.button,_U.list([]),_U.list([$Html.text("Submit")]))]))
-              ,A2($Html.div,
+              _U.list([A2($Html.div,_U.list([]),_U.list([$Html.text(model.question)]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"A ) ",model.choice1))]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"B ) ",model.choice2))]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"C ) ",model.choice3))]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"D ) ",model.choice4))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],"The correct answer is ",A2($Basics._op["++"],indexToLetter(model.answerIndex),".")))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      model.question,
+                      A2($Basics._op["++"],
+                      "%",
+                      A2($Basics._op["++"],
+                      model.choice1,
+                      A2($Basics._op["++"],
+                      "%",
+                      A2($Basics._op["++"],
+                      model.choice2,
+                      A2($Basics._op["++"],
+                      "%",
+                      A2($Basics._op["++"],
+                      model.choice3,
+                      A2($Basics._op["++"],"%",A2($Basics._op["++"],model.choice4,A2($Basics._op["++"],"%",$Basics.toString(model.answerIndex))))))))))))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.fieldset,
               _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("query result: "),A2($Html.output,_U.list([]),_U.list([$Html.text(outputText)]))]))]))]));
-   };
-   var main = A2($Signal.map,view,values.signal);
-   return _elm.Main.values = {_op: _op,url: url,values: values,inputString: inputString,doNothing: doNothing,view: view,main: main};
+              _U.list([A2($Html.div,_U.list([]),_U.list([$Html.text(model.question)]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"A ) ",model.choice1),1)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"B ) ",model.choice2),2)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"C ) ",model.choice3),3)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"D ) ",model.choice4),4)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      proxy.address,
+                      _U.list([{ctor: "_Tuple2",_0: inputStringQ.address,_1: model.question}
+                              ,{ctor: "_Tuple2",_0: inputStringA1.address,_1: model.choice1}
+                              ,{ctor: "_Tuple2",_0: inputStringA2.address,_1: model.choice2}
+                              ,{ctor: "_Tuple2",_0: inputStringA3.address,_1: model.choice3}
+                              ,{ctor: "_Tuple2",_0: inputStringA4.address,_1: model.choice4}
+                              ,{ctor: "_Tuple2",_0: inputStringAI.address,_1: $Basics.toString(model.answerIndex)}]))]),
+                      _U.list([$Html.text("Submit")]))]))]));
+   });
+   var app = $StartApp.start({init: init,update: update,view: view,inputs: _U.list([])});
+   var main = app.html;
+   return _elm.Main.values = {_op: _op
+                             ,proxy: proxy
+                             ,urlQ: urlQ
+                             ,inputStringQ: inputStringQ
+                             ,urlA1: urlA1
+                             ,inputStringA1: inputStringA1
+                             ,urlA2: urlA2
+                             ,inputStringA2: inputStringA2
+                             ,urlA3: urlA3
+                             ,inputStringA3: inputStringA3
+                             ,urlA4: urlA4
+                             ,inputStringA4: inputStringA4
+                             ,urlAI: urlAI
+                             ,inputStringAI: inputStringAI
+                             ,doNothing: doNothing
+                             ,app: app
+                             ,main: main
+                             ,init: init
+                             ,Model: Model
+                             ,model: model
+                             ,SetQuestion: SetQuestion
+                             ,SetAnswer: SetAnswer
+                             ,SetCorrectAnswer: SetCorrectAnswer
+                             ,update: update
+                             ,view: view
+                             ,appendAllStrings: appendAllStrings
+                             ,indexToLetter: indexToLetter
+                             ,question: question
+                             ,answer: answer};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>

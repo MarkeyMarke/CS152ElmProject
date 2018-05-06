@@ -15,99 +15,30 @@ import ElmFire exposing
   , Reference, Snapshot, Subscription, Error
   )
 
---MAILBOX FOR SENDING OUT SIGNALS TO MULTIPLE ADDRESSES, this is used to update signals for all of our URL mailboxes at once
-proxy : Mailbox (List (Address a, a))
-proxy =
-  mailbox []
+url : String
+url = "https://testproj1-5fbcf.firebaseio.com/Question"
 
-port broadcast : Signal (Task x (List ()))
-port broadcast =
-  let
-    tasks = List.map (uncurry Signal.send)
-  in
-    Signal.map (Task.sequence << tasks) proxy.signal
+values : Mailbox JE.Value
+values = mailbox JE.null
 
-
---DATA FOR QUESTION KEY FOR FIREBASE
---Each mailbox has its own values called signals which are updated over time. Addresses point to that signal. 
---Im guessing were initializing a mailbox to have an empty string, then setting that string to a specific firebase url within the port function
---Later on, we can update the signals within our mailboxes using the Signal.map function and the mailboxe's address. I THINK
-urlQ : String
-urlQ = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"
-
-inputStringQ : Mailbox String
-inputStringQ = mailbox ""
+inputString : Mailbox String
+inputString = mailbox ""
 
 port runSet : Signal (Task Error Reference)
 port runSet = Signal.map
-  (\str -> set (string str) (fromUrl urlQ))
-  inputStringQ.signal
-
---DATA FOR ANSWER1 KEY FOR FIREBASE
-urlA1 : String
-urlA1 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
-
-inputStringA1 : Mailbox String
-inputStringA1 = mailbox ""
-
-port runSetA1 : Signal (Task Error Reference)
-port runSetA1 = Signal.map
-  (\str -> set (string str) (fromUrl urlA1))
-  inputStringA1.signal
-
---DATA FOR ANSWER2 KEY FOR FIREBASE
-urlA2 : String
-urlA2 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2"
-
-inputStringA2 : Mailbox String
-inputStringA2 = mailbox ""
-
-port runSetA2 : Signal (Task Error Reference)
-port runSetA2 = Signal.map
-  (\str -> set (string str) (fromUrl urlA2))
-  inputStringA2.signal
-
---DATA FOR ANSWER3 KEY FOR FIREBASE
-urlA3 : String
-urlA3 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3"
-
-inputStringA3 : Mailbox String
-inputStringA3 = mailbox ""
-
-port runSetA3 : Signal (Task Error Reference)
-port runSetA3 = Signal.map
-  (\str -> set (string str) (fromUrl urlA3))
-  inputStringA3.signal
-
-
---DATA FOR ANSWER4 KEY FOR FIREBASE
-urlA4 : String
-urlA4 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4"
-
-inputStringA4 : Mailbox String
-inputStringA4 = mailbox ""
-
-port runSetA4 : Signal (Task Error Reference)
-port runSetA4 = Signal.map
-  (\str -> set (string str) (fromUrl urlA4))
-  inputStringA4.signal
-
---DATA FOR ANSWER INDEX KEY FOR FIREBASE
-urlAI : String
-urlAI = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/AnswerIndex"
-
-inputStringAI : Mailbox String
-inputStringAI = mailbox ""
-
-port runSetAI : Signal (Task Error Reference)
-port runSetAI = Signal.map
-  (\str -> set (string str) (fromUrl urlAI))
-  inputStringAI.signal
-
-
+  (\str -> set (string str) (fromUrl url))
+  inputString.signal
 
 doNothing : a -> Task x ()
 doNothing = always (Task.succeed ())
+
+port runQuery : Task Error Subscription
+port runQuery =
+    subscribe
+        (Signal.send values.address << .value)
+        doNothing
+        (valueChanged noOrder)
+        (fromUrl url)
 
 app =
     StartApp.start { init = init, update = update, view = view, inputs = [] }
@@ -121,21 +52,17 @@ init =
     (model, Effects.none )
 
 
+
 --basic implementation of model with a string variable
 type alias Model = {
-  question : String
-  , choice1 : String
-  , choice2 : String
-  , choice3 : String
-  , choice4 : String
-  , answerIndex : Int
+  chosenAnswer : Int
 }
    
 --MODEL (Data)
 --Set as Type Model
 model : Model
 --Instantiate Instance Variables
-model = Model "Your question will show here." "A goes here." "B goes here." "C goes here." "D goes here." 1
+model = Model 1
 
 
 
@@ -192,9 +119,8 @@ view address model =
         , question address "D" 4
         , br [][]
         --Sends one string to our database
-        , button [ onClick proxy.address [(inputStringQ.address, model.question), (inputStringA1.address, model.choice1), 
-        (inputStringA2.address, model.choice2), (inputStringA3.address, model.choice3), 
-        (inputStringA4.address, model.choice4), (inputStringAI.address, toString (model.answerIndex))]] [ text "Submit" ]
+        , button [ onClick inputString.address appendAllStrings] [ text "Vote" ]
+        , button [ onClick inputString.address appendAllStrings] [ text "Done" ]
         ]
         
     , br [] [] , br [] []
@@ -206,39 +132,21 @@ view address model =
         , div [] [text ("C ) " ++ model.choice3)]
         , div [] [text ("D ) " ++ model.choice4)]
         , div [] [text ("The correct answer is " ++ (indexToLetter model.answerIndex) ++ ".")]
-        , div [] [text (model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex))]
+        , div [] [text (appendAllStrings)]
         --, div [] [text ((split All (regex "%") appendAllStrings))]  <---splits our string into parseable data
-        , br [] []
         ]
-
--- Answerers POV 
-    , br [] [] , br [] []
-    , fieldset []
-        [
-        div [] [text model.question]
-        , br [][]
-        , answer address ("A ) " ++ model.choice1) 1
-        , br [][]
-        , answer address ("B ) " ++ model.choice2) 2
-        , br [][]
-        , answer address ("C ) " ++ model.choice3) 3
-        , br [][]
-        , answer address ("D ) " ++ model.choice4) 4
-        , br [][]
-        , button [ onClick proxy.address [(inputStringQ.address, model.question), (inputStringA1.address, model.choice1), 
-        (inputStringA2.address, model.choice2), (inputStringA3.address, model.choice3), 
-        (inputStringA4.address, model.choice4), (inputStringAI.address, toString (model.answerIndex))]] [ text "Submit" ]
-        ]
-      ]
+    , br [] []
+    ]
 
 
+getStringFromDB : String
+getStringFromDB = 
 
 
---MIGHT HAVE TO REMOVE THIS
 --appends all variables in our poll into a single string. we will send this to our database and parse it later through the answerer's POV
 appendAllStrings : String
 appendAllStrings = 
-    (model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex))
+    model.question ++ "%" ++ model.choice1 ++ "%" ++ model.choice2 ++ "%" ++ model.choice3 ++ "%" ++ model.choice4 ++ "%" ++ toString(model.answerIndex) ++ "%0%0%0%0"
 
 --converts an index of our answer choices to a corresponding letter
 indexToLetter : Int -> String
@@ -267,13 +175,6 @@ question address textValue newAnswerIndex =
         , input [ placeholder "Enter your answer here.", on "input" targetValue (\str -> Signal.message address (SetAnswer newAnswerIndex str))] []
         ]
 
-answer : Signal.Address Action -> String -> Int -> Html
-answer address textValue newAnswerIndex =
-  div []
-        [ 
-          --beginning of radio button
-          label
-           [ style [("padding", "20px")]]
-           [ input [ type' "radio", name "answer", on "input" targetChecked (\bool -> Signal.message address (SetCorrectAnswer bool newAnswerIndex))] [], text textValue]
-          --ending of radio button
-        ]
+
+
+    
