@@ -139,65 +139,58 @@ Elm.Main.make = function (_elm) {
    "D goes here.",
    1);
    var init = {ctor: "_Tuple2",_0: model,_1: $Effects.none};
-   var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
    var inputStringAI = $Signal.mailbox("");
-   var urlAI = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/AnswerIndex";
    var runSetAI = Elm.Native.Task.make(_elm).performSignal("runSetAI",
    A2($Signal.map,
    function (str) {
       return A2($ElmFire.set,
       $Json$Encode.string(str),
-      $ElmFire.fromUrl(urlAI));
+      $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/AnswerIndex"));
    },
    inputStringAI.signal));
    var inputStringA4 = $Signal.mailbox("");
-   var urlA4 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4";
    var runSetA4 = Elm.Native.Task.make(_elm).performSignal("runSetA4",
    A2($Signal.map,
    function (str) {
       return A2($ElmFire.set,
       $Json$Encode.string(str),
-      $ElmFire.fromUrl(urlA4));
+      $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4"));
    },
    inputStringA4.signal));
    var inputStringA3 = $Signal.mailbox("");
-   var urlA3 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3";
    var runSetA3 = Elm.Native.Task.make(_elm).performSignal("runSetA3",
    A2($Signal.map,
    function (str) {
       return A2($ElmFire.set,
       $Json$Encode.string(str),
-      $ElmFire.fromUrl(urlA3));
+      $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3"));
    },
    inputStringA3.signal));
    var inputStringA2 = $Signal.mailbox("");
-   var urlA2 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2";
    var runSetA2 = Elm.Native.Task.make(_elm).performSignal("runSetA2",
    A2($Signal.map,
    function (str) {
       return A2($ElmFire.set,
       $Json$Encode.string(str),
-      $ElmFire.fromUrl(urlA2));
+      $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2"));
    },
    inputStringA2.signal));
    var inputStringA1 = $Signal.mailbox("");
-   var urlA1 = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1";
    var runSetA1 = Elm.Native.Task.make(_elm).performSignal("runSetA1",
    A2($Signal.map,
    function (str) {
       return A2($ElmFire.set,
       $Json$Encode.string(str),
-      $ElmFire.fromUrl(urlA1));
+      $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"));
    },
    inputStringA1.signal));
    var inputStringQ = $Signal.mailbox("");
-   var urlQ = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question";
    var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
    A2($Signal.map,
    function (str) {
       return A2($ElmFire.set,
       $Json$Encode.string(str),
-      $ElmFire.fromUrl(urlQ));
+      $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"));
    },
    inputStringQ.signal));
    var proxy = $Signal.mailbox(_U.list([]));
@@ -298,19 +291,12 @@ Elm.Main.make = function (_elm) {
    var main = app.html;
    return _elm.Main.values = {_op: _op
                              ,proxy: proxy
-                             ,urlQ: urlQ
                              ,inputStringQ: inputStringQ
-                             ,urlA1: urlA1
                              ,inputStringA1: inputStringA1
-                             ,urlA2: urlA2
                              ,inputStringA2: inputStringA2
-                             ,urlA3: urlA3
                              ,inputStringA3: inputStringA3
-                             ,urlA4: urlA4
                              ,inputStringA4: inputStringA4
-                             ,urlAI: urlAI
                              ,inputStringAI: inputStringAI
-                             ,doNothing: doNothing
                              ,app: app
                              ,main: main
                              ,init: init

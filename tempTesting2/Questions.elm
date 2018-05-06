@@ -49,11 +49,7 @@ port broadcast =
 --Each mailbox has its own values called signals which are updated over time. Addresses point to that signal.
 --Im guessing were initializing a mailbox to have an empty string, then setting that string to a specific firebase url within the port function
 --Later on, we can update the signals within our mailboxes using the Signal.map function and the mailboxe's address. I THINK
-
-
-urlQ : String
-urlQ =
-    "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"
+--MAIL BOXES INITIALIZED FOR ALL THE KEYS FROM DATABASE
 
 
 inputStringQ : Mailbox String
@@ -61,41 +57,9 @@ inputStringQ =
     mailbox ""
 
 
-port runSet : Signal (Task Error Reference)
-port runSet =
-    Signal.map
-        (\str -> set (string str) (fromUrl urlQ))
-        inputStringQ.signal
-
-
-
---DATA FOR ANSWER1 KEY FOR FIREBASE
-
-
-urlA1 : String
-urlA1 =
-    "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"
-
-
 inputStringA1 : Mailbox String
 inputStringA1 =
     mailbox ""
-
-
-port runSetA1 : Signal (Task Error Reference)
-port runSetA1 =
-    Signal.map
-        (\str -> set (string str) (fromUrl urlA1))
-        inputStringA1.signal
-
-
-
---DATA FOR ANSWER2 KEY FOR FIREBASE
-
-
-urlA2 : String
-urlA2 =
-    "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2"
 
 
 inputStringA2 : Mailbox String
@@ -103,41 +67,9 @@ inputStringA2 =
     mailbox ""
 
 
-port runSetA2 : Signal (Task Error Reference)
-port runSetA2 =
-    Signal.map
-        (\str -> set (string str) (fromUrl urlA2))
-        inputStringA2.signal
-
-
-
---DATA FOR ANSWER3 KEY FOR FIREBASE
-
-
-urlA3 : String
-urlA3 =
-    "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3"
-
-
 inputStringA3 : Mailbox String
 inputStringA3 =
     mailbox ""
-
-
-port runSetA3 : Signal (Task Error Reference)
-port runSetA3 =
-    Signal.map
-        (\str -> set (string str) (fromUrl urlA3))
-        inputStringA3.signal
-
-
-
---DATA FOR ANSWER4 KEY FOR FIREBASE
-
-
-urlA4 : String
-urlA4 =
-    "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4"
 
 
 inputStringA4 : Mailbox String
@@ -145,37 +77,61 @@ inputStringA4 =
     mailbox ""
 
 
-port runSetA4 : Signal (Task Error Reference)
-port runSetA4 =
-    Signal.map
-        (\str -> set (string str) (fromUrl urlA4))
-        inputStringA4.signal
-
-
-
---DATA FOR ANSWER INDEX KEY FOR FIREBASE
-
-
-urlAI : String
-urlAI =
-    "https://testproj1-5fbcf.firebaseio.com/QuestionBody/AnswerIndex"
-
-
 inputStringAI : Mailbox String
 inputStringAI =
     mailbox ""
 
 
+
+--END OF MAILBOXES
+--PORTS FOR EVERY DATA
+
+
+port runSet : Signal (Task Error Reference)
+port runSet =
+    Signal.map
+        (\str -> set (string str) (fromUrl "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question"))
+        inputStringQ.signal
+
+
+port runSetA1 : Signal (Task Error Reference)
+port runSetA1 =
+    Signal.map
+        (\str -> set (string str) (fromUrl "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1"))
+        inputStringA1.signal
+
+
+port runSetA2 : Signal (Task Error Reference)
+port runSetA2 =
+    Signal.map
+        (\str -> set (string str) (fromUrl "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2"))
+        inputStringA2.signal
+
+
+port runSetA3 : Signal (Task Error Reference)
+port runSetA3 =
+    Signal.map
+        (\str -> set (string str) (fromUrl "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3"))
+        inputStringA3.signal
+
+
+port runSetA4 : Signal (Task Error Reference)
+port runSetA4 =
+    Signal.map
+        (\str -> set (string str) (fromUrl "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4"))
+        inputStringA4.signal
+
+
 port runSetAI : Signal (Task Error Reference)
 port runSetAI =
     Signal.map
-        (\str -> set (string str) (fromUrl urlAI))
+        (\str -> set (string str) (fromUrl "https://testproj1-5fbcf.firebaseio.com/QuestionBody/AnswerIndex"))
         inputStringAI.signal
 
 
-doNothing : a -> Task x ()
-doNothing =
-    always (Task.succeed ())
+
+--END OF PORTS
+--MAIN PROGRAM STARTS HERE
 
 
 app =
@@ -197,6 +153,9 @@ init =
 
 
 --basic implementation of model with a string variable
+--MODEL (Data)
+--Set as Type Model
+--Instantiate Instance Variables
 
 
 type alias Model =
@@ -209,18 +168,7 @@ type alias Model =
     }
 
 
-
---MODEL (Data)
---Set as Type Model
-
-
 model : Model
-
-
-
---Instantiate Instance Variables
-
-
 model =
     Model "Your question will show here." "A goes here." "B goes here." "C goes here." "D goes here." 1
 
@@ -229,6 +177,7 @@ model =
 -- UPDATE (Change Data)
 -- Define Action (updated to Msg in Elm v18)
 -- Action is signal to the system, we use case matching to allow the view section to give a particular signal
+--Update takes an Action and a model then returns a tuple of a Model and an Effect (updated to Cmd in v18) with and Action (updated to Msg in Elm v18)
 
 
 type Action
@@ -237,10 +186,6 @@ type Action
     | SetAnswer Int String
       --sets a new answer string
     | SetCorrectAnswer Bool Int
-
-
-
---Update takes an Action and a model then returns a tuple of a Model and an Effect (updated to Cmd in v18) with and Action (updated to Msg in Elm v18)
 
 
 update : Action -> Model -> ( Model, Effects Action )
@@ -278,7 +223,7 @@ update action model =
 
 
 
--- VIEW
+-- VIEW (CONVERT DATA INTO HTML DISPLAY)
 -- Prints out the values of our model using html
 --Text box sends input value and replaces our model's string
 -- NO CLUE WHAT SIGNAL.ADDRESS IS
