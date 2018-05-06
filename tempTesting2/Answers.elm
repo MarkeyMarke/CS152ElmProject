@@ -31,7 +31,12 @@ main = Signal.map view values.signal
 
 -- You may want to change this url, but you don't have to
 url : String
+<<<<<<< HEAD
 url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks"
+=======
+url = "https://testproj1-5fbcf.firebaseio.co/AnswerPicks/"
+
+>>>>>>> f8c59b4032c93660a1f0fc4625e4c2ce8b5a1f22
 
 values : Mailbox JE.Value
 values = mailbox JE.null
