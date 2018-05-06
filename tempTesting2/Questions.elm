@@ -170,7 +170,7 @@ type alias Model =
 
 model : Model
 model =
-    Model "Your question will show here." "A goes here." "B goes here." "C goes here." "D goes here." 1
+    Model "Your question will show here." "A goes here." "B goes here." "C goes here." "D goes here." 4
 
 
 
@@ -312,18 +312,7 @@ question address textValue newAnswerIndex =
         [ --beginning of radio button
           label
             [ style [ ( "padding", "20px" ) ] ]
-            [ input [ type' "radio", name "question", on "input" targetChecked (\bool -> Signal.message address (SetCorrectAnswer bool newAnswerIndex)) ] [], text textValue ]
+            [ input [ type' "radio", name "question", checked True, on "input" targetChecked (\bool -> Signal.message address (SetCorrectAnswer bool newAnswerIndex)) ] [], text textValue ]
           --ending of radio button
         , input [ placeholder "Enter your answer here.", on "input" targetValue (\str -> Signal.message address (SetAnswer newAnswerIndex str)) ] []
-        ]
-
-
-answer : Signal.Address Action -> String -> Int -> Html
-answer address textValue newAnswerIndex =
-    div []
-        [ --beginning of radio button
-          label
-            [ style [ ( "padding", "20px" ) ] ]
-            [ input [ type' "radio", name "answer", on "input" targetChecked (\bool -> Signal.message address (SetCorrectAnswer bool newAnswerIndex)) ] [], text textValue ]
-          --ending of radio button
         ]

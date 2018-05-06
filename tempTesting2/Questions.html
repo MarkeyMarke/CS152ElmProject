@@ -11932,27 +11932,6 @@ Elm.Main.make = function (_elm) {
    var SetCorrectAnswer = F2(function (a,b) {
       return {ctor: "SetCorrectAnswer",_0: a,_1: b};
    });
-   var answer = F3(function (address,textValue,newAnswerIndex) {
-      return A2($Html.div,
-      _U.list([]),
-      _U.list([A2($Html.label,
-      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
-                                               ,_0: "padding"
-                                               ,_1: "20px"}]))]),
-      _U.list([A2($Html.input,
-              _U.list([$Html$Attributes.type$("radio")
-                      ,$Html$Attributes.name("answer")
-                      ,A3($Html$Events.on,
-                      "input",
-                      $Html$Events.targetChecked,
-                      function (bool) {
-                         return A2($Signal.message,
-                         address,
-                         A2(SetCorrectAnswer,bool,newAnswerIndex));
-                      })]),
-              _U.list([]))
-              ,$Html.text(textValue)]))]));
-   });
    var SetAnswer = F2(function (a,b) {
       return {ctor: "SetAnswer",_0: a,_1: b};
    });
@@ -11966,6 +11945,7 @@ Elm.Main.make = function (_elm) {
               _U.list([A2($Html.input,
                       _U.list([$Html$Attributes.type$("radio")
                               ,$Html$Attributes.name("question")
+                              ,$Html$Attributes.checked(true)
                               ,A3($Html$Events.on,
                               "input",
                               $Html$Events.targetChecked,
@@ -12005,7 +11985,7 @@ Elm.Main.make = function (_elm) {
    "B goes here.",
    "C goes here.",
    "D goes here.",
-   1);
+   4);
    var init = {ctor: "_Tuple2",_0: model,_1: $Effects.none};
    var inputStringAI = $Signal.mailbox("");
    var runSetAI = Elm.Native.Task.make(_elm).performSignal("runSetAI",
@@ -12176,6 +12156,5 @@ Elm.Main.make = function (_elm) {
                              ,update: update
                              ,view: view
                              ,indexToLetter: indexToLetter
-                             ,question: question
-                             ,answer: answer};
+                             ,question: question};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>
