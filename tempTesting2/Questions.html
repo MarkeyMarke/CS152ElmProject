@@ -11916,6 +11916,23 @@ Elm.Main.make = function (_elm) {
               }}
    });
    var SetCorrectAnswer = F2(function (a,b) {    return {ctor: "SetCorrectAnswer",_0: a,_1: b};});
+   var answer = F3(function (address,textValue,newAnswerIndex) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.label,
+      _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "padding",_1: "20px"}]))]),
+      _U.list([A2($Html.input,
+              _U.list([$Html$Attributes.type$("radio")
+                      ,$Html$Attributes.name("answer")
+                      ,A3($Html$Events.on,
+                      "input",
+                      $Html$Events.targetChecked,
+                      function (bool) {
+                         return A2($Signal.message,address,A2(SetCorrectAnswer,bool,newAnswerIndex));
+                      })]),
+              _U.list([]))
+              ,$Html.text(textValue)]))]));
+   });
    var SetAnswer = F2(function (a,b) {    return {ctor: "SetAnswer",_0: a,_1: b};});
    var question = F3(function (address,textValue,newAnswerIndex) {
       return A2($Html.div,
@@ -12061,7 +12078,31 @@ Elm.Main.make = function (_elm) {
                       A2($Basics._op["++"],
                       model.choice3,
                       A2($Basics._op["++"],"%",A2($Basics._op["++"],model.choice4,A2($Basics._op["++"],"%",$Basics.toString(model.answerIndex))))))))))))]))
-                      ,A2($Html.br,_U.list([]),_U.list([]))]))]));
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.fieldset,
+              _U.list([]),
+              _U.list([A2($Html.div,_U.list([]),_U.list([$Html.text(model.question)]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"A ) ",model.choice1),1)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"B ) ",model.choice2),2)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"C ) ",model.choice3),3)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(answer,address,A2($Basics._op["++"],"D ) ",model.choice4),4)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      proxy.address,
+                      _U.list([{ctor: "_Tuple2",_0: inputStringQ.address,_1: model.question}
+                              ,{ctor: "_Tuple2",_0: inputStringA1.address,_1: model.choice1}
+                              ,{ctor: "_Tuple2",_0: inputStringA2.address,_1: model.choice2}
+                              ,{ctor: "_Tuple2",_0: inputStringA3.address,_1: model.choice3}
+                              ,{ctor: "_Tuple2",_0: inputStringA4.address,_1: model.choice4}
+                              ,{ctor: "_Tuple2",_0: inputStringAI.address,_1: $Basics.toString(model.answerIndex)}]))]),
+                      _U.list([$Html.text("Submit")]))]))]));
    });
    var app = $StartApp.start({init: init,update: update,view: view,inputs: _U.list([])});
    var main = app.html;
@@ -12092,5 +12133,6 @@ Elm.Main.make = function (_elm) {
                              ,view: view
                              ,appendAllStrings: appendAllStrings
                              ,indexToLetter: indexToLetter
-                             ,question: question};
+                             ,question: question
+                             ,answer: answer};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>

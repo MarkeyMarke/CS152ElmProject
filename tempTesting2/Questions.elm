@@ -210,7 +210,27 @@ view address model =
         --, div [] [text ((split All (regex "%") appendAllStrings))]  <---splits our string into parseable data
         , br [] []
         ]
+
+-- Answerers POV 
+    , br [] [] , br [] []
+    , fieldset []
+        [
+        div [] [text model.question]
+        , br [][]
+        , answer address ("A ) " ++ model.choice1) 1
+        , br [][]
+        , answer address ("B ) " ++ model.choice2) 2
+        , br [][]
+        , answer address ("C ) " ++ model.choice3) 3
+        , br [][]
+        , answer address ("D ) " ++ model.choice4) 4
+        , br [][]
+        , button [ onClick proxy.address [(inputStringQ.address, model.question), (inputStringA1.address, model.choice1), 
+        (inputStringA2.address, model.choice2), (inputStringA3.address, model.choice3), 
+        (inputStringA4.address, model.choice4), (inputStringAI.address, toString (model.answerIndex))]] [ text "Submit" ]
+        ]
       ]
+
 
 
 
@@ -245,4 +265,15 @@ question address textValue newAnswerIndex =
            [ input [ type' "radio", name "question", on "input" targetChecked (\bool -> Signal.message address (SetCorrectAnswer bool newAnswerIndex))] [], text textValue]
           --ending of radio button
         , input [ placeholder "Enter your answer here.", on "input" targetValue (\str -> Signal.message address (SetAnswer newAnswerIndex str))] []
+        ]
+
+answer : Signal.Address Action -> String -> Int -> Html
+answer address textValue newAnswerIndex =
+  div []
+        [ 
+          --beginning of radio button
+          label
+           [ style [("padding", "20px")]]
+           [ input [ type' "radio", name "answer", on "input" targetChecked (\bool -> Signal.message address (SetCorrectAnswer bool newAnswerIndex))] [], text textValue]
+          --ending of radio button
         ]
