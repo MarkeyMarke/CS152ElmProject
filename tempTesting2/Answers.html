@@ -11916,22 +11916,22 @@ Elm.Main.make = function (_elm) {
    var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
    var inputString = $Signal.mailbox("");
    var values = $Signal.mailbox($Json$Encode.$null);
-   var url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks/";
+   var url2 = "https://testproj1-5fbcf.firebaseio.co/AnswerPicks/";
    var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
-   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(url));},inputString.signal));
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(url2));},inputString.signal));
    var runQuery = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p1) {
       return A2($Signal.send,values.address,function (_) {    return _.value;}(_p1));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
-   $ElmFire.fromUrl(url)));
+   $ElmFire.fromUrl(url2)));
    var view = function (value) {
       var outputText = A2($Json$Encode.encode,0,value);
       return A2($Html.div,
       _U.list([]),
       _U.list([$Html.text("ElmFire test at: ")
-              ,A2($Html.a,_U.list([$Html$Attributes.href(url),$Html$Attributes.target("_blank")]),_U.list([$Html.text(url)]))
+              ,A2($Html.a,_U.list([$Html$Attributes.href(url2),$Html$Attributes.target("_blank")]),_U.list([$Html.text(url2)]))
               ,A2($Html.div,
               _U.list([]),
               _U.list([A2($Html.label,
@@ -11947,6 +11947,7 @@ Elm.Main.make = function (_elm) {
               _U.list([]),
               _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("query result: "),A2($Html.output,_U.list([]),_U.list([$Html.text(outputText)]))]))]))]));
    };
+   var url = "https://testproj1-5fbcf.firebaseio.co/AnswerPicks/";
    var main = A2($Signal.map,view,values.signal);
-   return _elm.Main.values = {_op: _op,main: main,url: url,values: values,inputString: inputString,doNothing: doNothing,view: view,addTo: addTo};
+   return _elm.Main.values = {_op: _op,main: main,url: url,url2: url2,values: values,inputString: inputString,doNothing: doNothing,view: view,addTo: addTo};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>

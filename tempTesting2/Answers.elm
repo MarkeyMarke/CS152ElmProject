@@ -31,7 +31,9 @@ main = Signal.map view values.signal
 
 -- You may want to change this url, but you don't have to
 url : String
-url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks/"
+url = "https://testproj1-5fbcf.firebaseio.co/AnswerPicks/"
+url2 : String
+url2 = "https://testproj1-5fbcf.firebaseio.co/AnswerPicks/"
 
 values : Mailbox JE.Value
 values = mailbox JE.null
@@ -41,7 +43,7 @@ inputString = mailbox ""
 
 port runSet : Signal (Task Error Reference)
 port runSet = Signal.map
-  (\str -> set (string str) (fromUrl url))
+  (\str -> set (string str) (fromUrl url2))
   inputString.signal
 
 doNothing : a -> Task x ()
@@ -53,7 +55,7 @@ port runQuery =
         (Signal.send values.address << .value)
         doNothing
         (valueChanged noOrder)
-        (fromUrl url)
+        (fromUrl url2)
 
 view : JE.Value -> Html
 view value =
@@ -61,7 +63,7 @@ view value =
   in
   div []
   [ text "ElmFire test at: "
-  , a [href url, target "_blank"] [text url]
+  , a [href url2, target "_blank"] [text url2]
   , div []
     [ label []
       [ text "set value: "
