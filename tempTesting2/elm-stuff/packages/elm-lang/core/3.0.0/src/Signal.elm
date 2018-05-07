@@ -1,7 +1,7 @@
 module Signal
     ( Signal
     , merge, mergeMany
-    , map, map2, map3, map4, map5
+    , map, map2, map3, map4, map5, map6
     , constant
     , dropRepeats, filter, filterMap, sampleOn
     , foldp
@@ -123,6 +123,10 @@ map4 =
 map5 : (a -> b -> c -> d -> e -> result) -> Signal a -> Signal b -> Signal c -> Signal d -> Signal e -> Signal result
 map5 =
   Native.Signal.map5
+
+map6 : (a -> b -> c -> d -> e -> f -> result) -> Signal a -> Signal b -> Signal c -> Signal d -> Signal e -> Signal f -> Signal result
+map6 =
+  Native.Signal.map6
 
 
 {-| Create a past-dependent signal. Each update from the incoming signals will

@@ -31,12 +31,13 @@ Elm.Signal.make = function (_elm) {
    var mergeMany = function (signalList) {
       var _p7 = $List.reverse(signalList);
       if (_p7.ctor === "[]") {
-            return _U.crashCase("Signal",{start: {line: 184,column: 3},end: {line: 189,column: 40}},_p7)("mergeMany was given an empty list!");
+            return _U.crashCase("Signal",{start: {line: 188,column: 3},end: {line: 193,column: 40}},_p7)("mergeMany was given an empty list!");
          } else {
             return A3($List.foldl,merge,_p7._0,_p7._1);
          }
    };
    var foldp = $Native$Signal.foldp;
+   var map6 = $Native$Signal.map6;
    var map5 = $Native$Signal.map5;
    var map4 = $Native$Signal.map4;
    var map3 = $Native$Signal.map3;
@@ -52,6 +53,7 @@ Elm.Signal.make = function (_elm) {
                                ,map3: map3
                                ,map4: map4
                                ,map5: map5
+                               ,map6: map6
                                ,constant: constant
                                ,dropRepeats: dropRepeats
                                ,filter: filter
