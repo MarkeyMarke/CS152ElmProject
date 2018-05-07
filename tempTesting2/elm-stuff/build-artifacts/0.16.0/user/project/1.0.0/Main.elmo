@@ -9,8 +9,6 @@ Elm.Main.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $ElmFire = Elm.ElmFire.make(_elm),
    $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
    $Json$Encode = Elm.Json.Encode.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
@@ -23,77 +21,287 @@ Elm.Main.make = function (_elm) {
    var addTo = F2(function (inputString,index) {
       var _p0 = index;
       switch (_p0)
-      {case 1: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+      {case 1: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,0,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,0,num,array)));
-         case 2: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           0,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,0,num,array)));
+         case 2: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,1,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,1,num,array)));
-         case 3: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           1,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,1,num,array)));
+         case 3: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,2,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,2,num,array)));
-         case 4: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           2,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,2,num,array)));
+         case 4: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,3,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,3,num,array)));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           3,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,3,num,array)));
          default: return inputString;}
    });
+   var view = F6(function (value1,
+   value2,
+   value3,
+   value4,
+   value5,
+   value6) {
+      var answerPicks = A2($Json$Encode.encode,0,value6);
+      var a4Text = A2($Json$Encode.encode,0,value5);
+      var a3Text = A2($Json$Encode.encode,0,value4);
+      var a2Text = A2($Json$Encode.encode,0,value3);
+      var a1Text = A2($Json$Encode.encode,0,value2);
+      var questionText = A2($Json$Encode.encode,0,value1);
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.fieldset,
+      _U.list([]),
+      _U.list([A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text("Question: ")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(questionText)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" A ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a1Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($String.dropLeft,
+                              1,
+                              A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              0,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks))))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" B ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a2Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              1,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks)))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" C ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a3Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              2,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks)))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" D ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a4Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($String.dropRight,
+                              1,
+                              A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              3,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks))))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))]))]));
+   });
    var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
-   var inputString = $Signal.mailbox("0%0%0%0");
-   var values = $Signal.mailbox($Json$Encode.$null);
-   var url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks";
-   var runOnce = Elm.Native.Task.make(_elm).perform(A2($ElmFire.once,$ElmFire.valueChanged($ElmFire.noOrder),$ElmFire.fromUrl(url)));
-   var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
-   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(url));},inputString.signal));
-   var runQuery = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   var a4Box = $Signal.mailbox($Json$Encode.$null);
+   var a3Box = $Signal.mailbox($Json$Encode.$null);
+   var a2Box = $Signal.mailbox($Json$Encode.$null);
+   var a1Box = $Signal.mailbox($Json$Encode.$null);
+   var questionBox = $Signal.mailbox($Json$Encode.$null);
+   var answerPicksBoxRead = $Signal.mailbox($Json$Encode.$null);
+   var runQueryAnswerPicks = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p1) {
-      return A2($Signal.send,values.address,function (_) {    return _.value;}(_p1));
+      return A2($Signal.send,
+      answerPicksBoxRead.address,
+      function (_) {
+         return _.value;
+      }(_p1));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
-   $ElmFire.fromUrl(url)));
-   var view = function (value) {
-      var outputText = A2($Json$Encode.encode,0,value);
-      return A2($Html.div,
-      _U.list([]),
-      _U.list([$Html.text("ElmFire test at: ")
-              ,A2($Html.a,_U.list([$Html$Attributes.href(url),$Html$Attributes.target("_blank")]),_U.list([$Html.text(url)]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),1))]),
-              _U.list([$Html.text("Submit 1")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),2))]),
-              _U.list([$Html.text("Submit 2")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),3))]),
-              _U.list([$Html.text("Submit 3")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),4))]),
-              _U.list([$Html.text("Submit 4")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("query result: "),A2($Html.output,_U.list([]),_U.list([$Html.text(outputText)]))]))]))]));
-   };
-   var main = A2($Signal.map,view,values.signal);
-   return _elm.Main.values = {_op: _op,main: main,url: url,values: values,inputString: inputString,doNothing: doNothing,view: view,addTo: addTo};
+   $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/AnswerPicks")));
+   var a4URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4";
+   var runQueryA4 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p2) {
+      return A2($Signal.send,
+      a4Box.address,
+      function (_) {
+         return _.value;
+      }(_p2));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a4URL)));
+   var a3URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3";
+   var runQueryA3 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p3) {
+      return A2($Signal.send,
+      a3Box.address,
+      function (_) {
+         return _.value;
+      }(_p3));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a3URL)));
+   var a2URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2";
+   var runQueryA2 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p4) {
+      return A2($Signal.send,
+      a2Box.address,
+      function (_) {
+         return _.value;
+      }(_p4));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a2URL)));
+   var a1URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1";
+   var runQueryA1 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p5) {
+      return A2($Signal.send,
+      a1Box.address,
+      function (_) {
+         return _.value;
+      }(_p5));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a1URL)));
+   var questionURL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question";
+   var runQueryQuestion = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p6) {
+      return A2($Signal.send,
+      questionBox.address,
+      function (_) {
+         return _.value;
+      }(_p6));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(questionURL)));
+   var main = A7($Signal.map6,
+   view,
+   questionBox.signal,
+   a1Box.signal,
+   a2Box.signal,
+   a3Box.signal,
+   a4Box.signal,
+   answerPicksBoxRead.signal);
+   return _elm.Main.values = {_op: _op
+                             ,main: main
+                             ,questionURL: questionURL
+                             ,a1URL: a1URL
+                             ,a2URL: a2URL
+                             ,a3URL: a3URL
+                             ,a4URL: a4URL
+                             ,answerPicksBoxRead: answerPicksBoxRead
+                             ,questionBox: questionBox
+                             ,a1Box: a1Box
+                             ,a2Box: a2Box
+                             ,a3Box: a3Box
+                             ,a4Box: a4Box
+                             ,doNothing: doNothing
+                             ,view: view
+                             ,addTo: addTo};
 };

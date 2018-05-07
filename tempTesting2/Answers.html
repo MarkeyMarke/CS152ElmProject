@@ -3463,6 +3463,15 @@ Elm.Native.Signal.make = function(localRuntime) {
 		return mapMany(refreshValue, [a, b, c, d, e]);
 	}
 
+	function map6(func, a, b, c, d, e, f)
+	{
+		function refreshValue()
+		{
+			return A6( func, a.value, b.value, c.value, d.value, e.value, f.value );
+		}
+		return mapMany(refreshValue, [a, b, c, d, e, f]);
+	}
+
 
 	// FOLD
 
@@ -3719,6 +3728,7 @@ Elm.Native.Signal.make = function(localRuntime) {
 		map3: F4(map3),
 		map4: F5(map4),
 		map5: F6(map5),
+		map6: F7(map6),
 		foldp: F3(foldp),
 		genericMerge: F3(genericMerge),
 		filterMap: F3(filterMap),
@@ -6566,12 +6576,13 @@ Elm.Signal.make = function (_elm) {
    var mergeMany = function (signalList) {
       var _p7 = $List.reverse(signalList);
       if (_p7.ctor === "[]") {
-            return _U.crashCase("Signal",{start: {line: 184,column: 3},end: {line: 189,column: 40}},_p7)("mergeMany was given an empty list!");
+            return _U.crashCase("Signal",{start: {line: 188,column: 3},end: {line: 193,column: 40}},_p7)("mergeMany was given an empty list!");
          } else {
             return A3($List.foldl,merge,_p7._0,_p7._1);
          }
    };
    var foldp = $Native$Signal.foldp;
+   var map6 = $Native$Signal.map6;
    var map5 = $Native$Signal.map5;
    var map4 = $Native$Signal.map4;
    var map3 = $Native$Signal.map3;
@@ -6587,6 +6598,7 @@ Elm.Signal.make = function (_elm) {
                                ,map3: map3
                                ,map4: map4
                                ,map5: map5
+                               ,map6: map6
                                ,constant: constant
                                ,dropRepeats: dropRepeats
                                ,filter: filter
@@ -10753,308 +10765,6 @@ Elm.Html.Events.make = function (_elm) {
                                     ,targetChecked: targetChecked
                                     ,keyCode: keyCode
                                     ,Options: Options};
-};Elm.Native.Http = {};
-Elm.Native.Http.make = function(localRuntime) {
-
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Http = localRuntime.Native.Http || {};
-	if (localRuntime.Native.Http.values)
-	{
-		return localRuntime.Native.Http.values;
-	}
-
-	var Dict = Elm.Dict.make(localRuntime);
-	var List = Elm.List.make(localRuntime);
-	var Maybe = Elm.Maybe.make(localRuntime);
-	var Task = Elm.Native.Task.make(localRuntime);
-
-
-	function send(settings, request)
-	{
-		return Task.asyncFunction(function(callback) {
-			var req = new XMLHttpRequest();
-
-			// start
-			if (settings.onStart.ctor === 'Just')
-			{
-				req.addEventListener('loadStart', function() {
-					var task = settings.onStart._0;
-					Task.spawn(task);
-				});
-			}
-
-			// progress
-			if (settings.onProgress.ctor === 'Just')
-			{
-				req.addEventListener('progress', function(event) {
-					var progress = !event.lengthComputable
-						? Maybe.Nothing
-						: Maybe.Just({
-							_: {},
-							loaded: event.loaded,
-							total: event.total
-						});
-					var task = settings.onProgress._0(progress);
-					Task.spawn(task);
-				});
-			}
-
-			// end
-			req.addEventListener('error', function() {
-				return callback(Task.fail({ ctor: 'RawNetworkError' }));
-			});
-
-			req.addEventListener('timeout', function() {
-				return callback(Task.fail({ ctor: 'RawTimeout' }));
-			});
-
-			req.addEventListener('load', function() {
-				return callback(Task.succeed(toResponse(req)));
-			});
-
-			req.open(request.verb, request.url, true);
-
-			// set all the headers
-			function setHeader(pair) {
-				req.setRequestHeader(pair._0, pair._1);
-			}
-			A2(List.map, setHeader, request.headers);
-
-			// set the timeout
-			req.timeout = settings.timeout;
-
-			// enable this withCredentials thing
-			req.withCredentials = settings.withCredentials;
-
-			// ask for a specific MIME type for the response
-			if (settings.desiredResponseType.ctor === 'Just')
-			{
-				req.overrideMimeType(settings.desiredResponseType._0);
-			}
-
-			// actuall send the request
-			if(request.body.ctor === "BodyFormData")
-			{
-				req.send(request.body.formData)
-			}
-			else
-			{
-				req.send(request.body._0);
-			}
-		});
-	}
-
-
-	// deal with responses
-
-	function toResponse(req)
-	{
-		var tag = req.responseType === 'blob' ? 'Blob' : 'Text'
-		var response = tag === 'Blob' ? req.response : req.responseText;
-		return {
-			_: {},
-			status: req.status,
-			statusText: req.statusText,
-			headers: parseHeaders(req.getAllResponseHeaders()),
-			url: req.responseURL,
-			value: { ctor: tag, _0: response }
-		};
-	}
-
-
-	function parseHeaders(rawHeaders)
-	{
-		var headers = Dict.empty;
-
-		if (!rawHeaders)
-		{
-			return headers;
-		}
-
-		var headerPairs = rawHeaders.split('\u000d\u000a');
-		for (var i = headerPairs.length; i--; )
-		{
-			var headerPair = headerPairs[i];
-			var index = headerPair.indexOf('\u003a\u0020');
-			if (index > 0)
-			{
-				var key = headerPair.substring(0, index);
-				var value = headerPair.substring(index + 2);
-
-				headers = A3(Dict.update, key, function(oldValue) {
-					if (oldValue.ctor === 'Just')
-					{
-						return Maybe.Just(value + ', ' + oldValue._0);
-					}
-					return Maybe.Just(value);
-				}, headers);
-			}
-		}
-
-		return headers;
-	}
-
-
-	function multipart(dataList)
-	{
-		var formData = new FormData();
-
-		while (dataList.ctor !== '[]')
-		{
-			var data = dataList._0;
-			if (data.ctor === 'StringData')
-			{
-				formData.append(data._0, data._1);
-			}
-			else
-			{
-				var fileName = data._1.ctor === 'Nothing'
-					? undefined
-					: data._1._0;
-				formData.append(data._0, data._2, fileName);
-			}
-			dataList = dataList._1;
-		}
-
-		return { ctor: 'BodyFormData', formData: formData };
-	}
-
-
-	function uriEncode(string)
-	{
-		return encodeURIComponent(string);
-	}
-
-	function uriDecode(string)
-	{
-		return decodeURIComponent(string);
-	}
-
-	return localRuntime.Native.Http.values = {
-		send: F2(send),
-		multipart: multipart,
-		uriEncode: uriEncode,
-		uriDecode: uriDecode
-	};
-};
-Elm.Http = Elm.Http || {};
-Elm.Http.make = function (_elm) {
-   "use strict";
-   _elm.Http = _elm.Http || {};
-   if (_elm.Http.values) return _elm.Http.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Dict = Elm.Dict.make(_elm),
-   $Json$Decode = Elm.Json.Decode.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Native$Http = Elm.Native.Http.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $String = Elm.String.make(_elm),
-   $Task = Elm.Task.make(_elm),
-   $Time = Elm.Time.make(_elm);
-   var _op = {};
-   var send = $Native$Http.send;
-   var BadResponse = F2(function (a,b) {    return {ctor: "BadResponse",_0: a,_1: b};});
-   var UnexpectedPayload = function (a) {    return {ctor: "UnexpectedPayload",_0: a};};
-   var handleResponse = F2(function (handle,response) {
-      if (_U.cmp(200,response.status) < 1 && _U.cmp(response.status,300) < 0) {
-            var _p0 = response.value;
-            if (_p0.ctor === "Text") {
-                  return handle(_p0._0);
-               } else {
-                  return $Task.fail(UnexpectedPayload("Response body is a blob, expecting a string."));
-               }
-         } else return $Task.fail(A2(BadResponse,response.status,response.statusText));
-   });
-   var NetworkError = {ctor: "NetworkError"};
-   var Timeout = {ctor: "Timeout"};
-   var promoteError = function (rawError) {    var _p1 = rawError;if (_p1.ctor === "RawTimeout") {    return Timeout;} else {    return NetworkError;}};
-   var fromJson = F2(function (decoder,response) {
-      var decode = function (str) {
-         var _p2 = A2($Json$Decode.decodeString,decoder,str);
-         if (_p2.ctor === "Ok") {
-               return $Task.succeed(_p2._0);
-            } else {
-               return $Task.fail(UnexpectedPayload(_p2._0));
-            }
-      };
-      return A2($Task.andThen,A2($Task.mapError,promoteError,response),handleResponse(decode));
-   });
-   var RawNetworkError = {ctor: "RawNetworkError"};
-   var RawTimeout = {ctor: "RawTimeout"};
-   var Blob = function (a) {    return {ctor: "Blob",_0: a};};
-   var Text = function (a) {    return {ctor: "Text",_0: a};};
-   var Response = F5(function (a,b,c,d,e) {    return {status: a,statusText: b,headers: c,url: d,value: e};});
-   var defaultSettings = {timeout: 0,onStart: $Maybe.Nothing,onProgress: $Maybe.Nothing,desiredResponseType: $Maybe.Nothing,withCredentials: false};
-   var post = F3(function (decoder,url,body) {
-      var request = {verb: "POST",headers: _U.list([]),url: url,body: body};
-      return A2(fromJson,decoder,A2(send,defaultSettings,request));
-   });
-   var Settings = F5(function (a,b,c,d,e) {    return {timeout: a,onStart: b,onProgress: c,desiredResponseType: d,withCredentials: e};});
-   var multipart = $Native$Http.multipart;
-   var FileData = F3(function (a,b,c) {    return {ctor: "FileData",_0: a,_1: b,_2: c};});
-   var BlobData = F3(function (a,b,c) {    return {ctor: "BlobData",_0: a,_1: b,_2: c};});
-   var blobData = BlobData;
-   var StringData = F2(function (a,b) {    return {ctor: "StringData",_0: a,_1: b};});
-   var stringData = StringData;
-   var BodyBlob = function (a) {    return {ctor: "BodyBlob",_0: a};};
-   var BodyFormData = {ctor: "BodyFormData"};
-   var ArrayBuffer = {ctor: "ArrayBuffer"};
-   var BodyString = function (a) {    return {ctor: "BodyString",_0: a};};
-   var string = BodyString;
-   var Empty = {ctor: "Empty"};
-   var empty = Empty;
-   var getString = function (url) {
-      var request = {verb: "GET",headers: _U.list([]),url: url,body: empty};
-      return A2($Task.andThen,A2($Task.mapError,promoteError,A2(send,defaultSettings,request)),handleResponse($Task.succeed));
-   };
-   var get = F2(function (decoder,url) {
-      var request = {verb: "GET",headers: _U.list([]),url: url,body: empty};
-      return A2(fromJson,decoder,A2(send,defaultSettings,request));
-   });
-   var Request = F4(function (a,b,c,d) {    return {verb: a,headers: b,url: c,body: d};});
-   var uriDecode = $Native$Http.uriDecode;
-   var uriEncode = $Native$Http.uriEncode;
-   var queryEscape = function (string) {    return A2($String.join,"+",A2($String.split,"%20",uriEncode(string)));};
-   var queryPair = function (_p3) {    var _p4 = _p3;return A2($Basics._op["++"],queryEscape(_p4._0),A2($Basics._op["++"],"=",queryEscape(_p4._1)));};
-   var url = F2(function (baseUrl,args) {
-      var _p5 = args;
-      if (_p5.ctor === "[]") {
-            return baseUrl;
-         } else {
-            return A2($Basics._op["++"],baseUrl,A2($Basics._op["++"],"?",A2($String.join,"&",A2($List.map,queryPair,args))));
-         }
-   });
-   var TODO_implement_file_in_another_library = {ctor: "TODO_implement_file_in_another_library"};
-   var TODO_implement_blob_in_another_library = {ctor: "TODO_implement_blob_in_another_library"};
-   return _elm.Http.values = {_op: _op
-                             ,getString: getString
-                             ,get: get
-                             ,post: post
-                             ,send: send
-                             ,url: url
-                             ,uriEncode: uriEncode
-                             ,uriDecode: uriDecode
-                             ,empty: empty
-                             ,string: string
-                             ,multipart: multipart
-                             ,stringData: stringData
-                             ,defaultSettings: defaultSettings
-                             ,fromJson: fromJson
-                             ,Request: Request
-                             ,Settings: Settings
-                             ,Response: Response
-                             ,Text: Text
-                             ,Blob: Blob
-                             ,Timeout: Timeout
-                             ,NetworkError: NetworkError
-                             ,UnexpectedPayload: UnexpectedPayload
-                             ,BadResponse: BadResponse
-                             ,RawTimeout: RawTimeout
-                             ,RawNetworkError: RawNetworkError};
 };/*! @license Firebase v2.4.2
     License: https://www.firebase.com/terms/terms-of-service.html */
 (function() {var h,n=this;function p(a){return void 0!==a}function aa(){}function ba(a){a.yb=function(){return a.zf?a.zf:a.zf=new a}}
@@ -12179,7 +11889,6 @@ Elm.Main.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $ElmFire = Elm.ElmFire.make(_elm),
    $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
    $Json$Encode = Elm.Json.Encode.make(_elm),
    $List = Elm.List.make(_elm),
@@ -12193,77 +11902,273 @@ Elm.Main.make = function (_elm) {
    var addTo = F2(function (inputString,index) {
       var _p0 = index;
       switch (_p0)
-      {case 1: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+      {case 1: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,0,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,0,num,array)));
-         case 2: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           0,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,0,num,array)));
+         case 2: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,1,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,1,num,array)));
-         case 3: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           1,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,1,num,array)));
+         case 3: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,2,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,2,num,array)));
-         case 4: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           2,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,2,num,array)));
+         case 4: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,3,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,3,num,array)));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           3,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,3,num,array)));
          default: return inputString;}
    });
    var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
-   var inputString = $Signal.mailbox("0%0%0%0");
-   var values = $Signal.mailbox($Json$Encode.$null);
-   var url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks";
-   var runOnce = Elm.Native.Task.make(_elm).perform(A2($ElmFire.once,$ElmFire.valueChanged($ElmFire.noOrder),$ElmFire.fromUrl(url)));
-   var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
-   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(url));},inputString.signal));
-   var runQuery = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   var a4Box = $Signal.mailbox($Json$Encode.$null);
+   var a3Box = $Signal.mailbox($Json$Encode.$null);
+   var a2Box = $Signal.mailbox($Json$Encode.$null);
+   var a1Box = $Signal.mailbox($Json$Encode.$null);
+   var questionBox = $Signal.mailbox($Json$Encode.$null);
+   var answerPicksBoxRead = $Signal.mailbox($Json$Encode.$null);
+   var runQueryAnswerPicks = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p1) {
-      return A2($Signal.send,values.address,function (_) {    return _.value;}(_p1));
+      return A2($Signal.send,
+      answerPicksBoxRead.address,
+      function (_) {
+         return _.value;
+      }(_p1));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
-   $ElmFire.fromUrl(url)));
-   var view = function (value) {
-      var outputText = A2($Json$Encode.encode,0,value);
+   $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/AnswerPicks")));
+   var answerPicksBoxWrite = $Signal.mailbox("0%0%0%0");
+   var runSetAnswerPicks = Elm.Native.Task.make(_elm).performSignal("runSetAnswerPicks",
+   A2($Signal.map,
+   function (str) {
+      return A2($ElmFire.set,
+      $Json$Encode.string(str),
+      $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/AnswerPicks"));
+   },
+   answerPicksBoxWrite.signal));
+   var view = F6(function (value1,
+   value2,
+   value3,
+   value4,
+   value5,
+   value6) {
+      var answerPicks = A2($Json$Encode.encode,0,value6);
+      var a4Text = A2($Json$Encode.encode,0,value5);
+      var a3Text = A2($Json$Encode.encode,0,value4);
+      var a2Text = A2($Json$Encode.encode,0,value3);
+      var a1Text = A2($Json$Encode.encode,0,value2);
+      var questionText = A2($Json$Encode.encode,0,value1);
       return A2($Html.div,
       _U.list([]),
-      _U.list([$Html.text("ElmFire test at: ")
-              ,A2($Html.a,_U.list([$Html$Attributes.href(url),$Html$Attributes.target("_blank")]),_U.list([$Html.text(url)]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
+      _U.list([A2($Html.fieldset,
+      _U.list([]),
+      _U.list([A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text("Question: ")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(questionText)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
               ,A2($Html.div,
               _U.list([]),
               _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),1))]),
-              _U.list([$Html.text("Submit 1")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,
+                      A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),
+                      1))]),
+                      _U.list([$Html.text("Vote A")]))
+                      ,A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" A ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a1Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
               ,A2($Html.div,
               _U.list([]),
               _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),2))]),
-              _U.list([$Html.text("Submit 2")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,
+                      A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),
+                      2))]),
+                      _U.list([$Html.text("Vote B")]))
+                      ,A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" B ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a2Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
               ,A2($Html.div,
               _U.list([]),
               _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),3))]),
-              _U.list([$Html.text("Submit 3")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,
+                      A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),
+                      3))]),
+                      _U.list([$Html.text("Vote C")]))
+                      ,A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" C ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a3Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
               ,A2($Html.div,
               _U.list([]),
               _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),4))]),
-              _U.list([$Html.text("Submit 4")]))]))
-              ,A2($Html.br,_U.list([]),_U.list([]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("query result: "),A2($Html.output,_U.list([]),_U.list([$Html.text(outputText)]))]))]))]));
-   };
-   var main = A2($Signal.map,view,values.signal);
-   return _elm.Main.values = {_op: _op,main: main,url: url,values: values,inputString: inputString,doNothing: doNothing,view: view,addTo: addTo};
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,
+                      A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),
+                      4))]),
+                      _U.list([$Html.text("Vote D")]))
+                      ,A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" D ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a4Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))]))]));
+   });
+   var a4URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4";
+   var runQueryA4 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p2) {
+      return A2($Signal.send,
+      a4Box.address,
+      function (_) {
+         return _.value;
+      }(_p2));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a4URL)));
+   var a3URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3";
+   var runQueryA3 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p3) {
+      return A2($Signal.send,
+      a3Box.address,
+      function (_) {
+         return _.value;
+      }(_p3));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a3URL)));
+   var a2URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2";
+   var runQueryA2 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p4) {
+      return A2($Signal.send,
+      a2Box.address,
+      function (_) {
+         return _.value;
+      }(_p4));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a2URL)));
+   var a1URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1";
+   var runQueryA1 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p5) {
+      return A2($Signal.send,
+      a1Box.address,
+      function (_) {
+         return _.value;
+      }(_p5));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(a1URL)));
+   var questionURL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question";
+   var runQueryQuestion = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p6) {
+      return A2($Signal.send,
+      questionBox.address,
+      function (_) {
+         return _.value;
+      }(_p6));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(questionURL)));
+   var main = A7($Signal.map6,
+   view,
+   questionBox.signal,
+   a1Box.signal,
+   a2Box.signal,
+   a3Box.signal,
+   a4Box.signal,
+   answerPicksBoxRead.signal);
+   return _elm.Main.values = {_op: _op
+                             ,main: main
+                             ,questionURL: questionURL
+                             ,a1URL: a1URL
+                             ,a2URL: a2URL
+                             ,a3URL: a3URL
+                             ,a4URL: a4URL
+                             ,answerPicksBoxWrite: answerPicksBoxWrite
+                             ,answerPicksBoxRead: answerPicksBoxRead
+                             ,questionBox: questionBox
+                             ,a1Box: a1Box
+                             ,a2Box: a2Box
+                             ,a3Box: a3Box
+                             ,a4Box: a4Box
+                             ,doNothing: doNothing
+                             ,view: view
+                             ,addTo: addTo};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>

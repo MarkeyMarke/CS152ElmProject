@@ -203,6 +203,15 @@ Elm.Native.Signal.make = function(localRuntime) {
 		return mapMany(refreshValue, [a, b, c, d, e]);
 	}
 
+	function map6(func, a, b, c, d, e, f)
+	{
+		function refreshValue()
+		{
+			return A6( func, a.value, b.value, c.value, d.value, e.value, f.value );
+		}
+		return mapMany(refreshValue, [a, b, c, d, e, f]);
+	}
+
 
 	// FOLD
 
@@ -459,6 +468,7 @@ Elm.Native.Signal.make = function(localRuntime) {
 		map3: F4(map3),
 		map4: F5(map4),
 		map5: F6(map5),
+		map6: F7(map6),
 		foldp: F3(foldp),
 		genericMerge: F3(genericMerge),
 		filterMap: F3(filterMap),
