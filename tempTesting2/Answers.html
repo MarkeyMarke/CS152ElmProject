@@ -12333,6 +12333,9 @@ Elm.Main.make = function (_elm) {
    var inputString = $Signal.mailbox("0%0%0%0");
    var values = $Signal.mailbox($Json$Encode.$null);
    var url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks";
+   var runOnce = Elm.Native.Task.make(_elm).perform(A2($ElmFire.once,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl(url)));
    var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
    A2($Signal.map,
    function (str) {

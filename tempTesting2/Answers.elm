@@ -22,7 +22,7 @@ import Result exposing (withDefault)
 import Regex exposing (..)
 import ElmFire exposing
   ( fromUrl, set, subscribe, valueChanged, noOrder, noLimit
-  , Reference, Snapshot, Subscription, Error
+  , Reference, Snapshot, Subscription, Error, once
   )
 import Http
 
@@ -38,6 +38,12 @@ values = mailbox JE.null
 
 inputString : Mailbox String
 inputString = mailbox "0%0%0%0"
+
+port runOnce : Task Error Snapshot
+port runOnce =
+    once
+        (valueChanged noOrder)
+        (fromUrl url)
 
 port runSet : Signal (Task Error Reference)
 port runSet = Signal.map (\str -> set (string str) (fromUrl url)) inputString.signal
