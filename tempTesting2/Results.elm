@@ -130,7 +130,7 @@ view value1 value2 value3 value4 value5 value6 =
         [ 
         fieldset [] [
             div []
-                [ label [] [ text "Question: ", output [] [ text (questionText) ]] ]
+                [ label [] [ text "Question: ", output [] [ text (questionText) ]], br [][], br [][] ]
             , div []
                 [ label [] [ text " A ) ", output [] [ text (a1Text) ], br [][], text "Votes:",  output [] [ text (String.dropLeft 1 (Maybe.withDefault "0" (Array.get 0 (Array.fromList (Regex.split All (regex "%") answerPicks)))))]]
                 , br [][], br [][]
