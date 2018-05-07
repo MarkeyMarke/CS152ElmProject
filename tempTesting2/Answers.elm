@@ -20,34 +20,27 @@ import Array exposing (get, fromList)
 import Maybe exposing (withDefault)
 import Result exposing (withDefault)
 import Regex exposing (..)
-
 import ElmFire exposing
   ( fromUrl, set, subscribe, valueChanged, noOrder, noLimit
   , Reference, Snapshot, Subscription, Error
   )
+import Http
 
 main : Signal Html
 main = Signal.map view values.signal
 
 -- You may want to change this url, but you don't have to
 url : String
-<<<<<<< HEAD
 url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks"
-=======
-url = "https://testproj1-5fbcf.firebaseio.co/AnswerPicks/"
-
->>>>>>> f8c59b4032c93660a1f0fc4625e4c2ce8b5a1f22
 
 values : Mailbox JE.Value
 values = mailbox JE.null
 
 inputString : Mailbox String
-inputString = mailbox ""
+inputString = mailbox "0%0%0%0"
 
 port runSet : Signal (Task Error Reference)
-port runSet = Signal.map
-  (\str -> set (string str) (fromUrl url))
-  inputString.signal
+port runSet = Signal.map (\str -> set (string str) (fromUrl url)) inputString.signal
 
 doNothing : a -> Task x ()
 doNothing = always (Task.succeed ())
@@ -67,12 +60,12 @@ view value =
   div []
   [ text "ElmFire test at: "
   , a [href url, target "_blank"] [text url]
-  , div []
-    [ label []
-      [ text "set value: "
-      , input [ on "input" targetValue (message inputString.address) ] []
-      ]
-    ]
+  --, div []
+    --[ label []
+      --[ text "set value: "
+      --, input [ on "input" targetValue (message inputString.address) ] []
+      --]
+    --]
   , div []
               --outputText is displayed within quotatoin marks, so pass the string without quotes to the addTo function
     [ button [ onClick inputString.address (addTo (String.slice 1 ((String.length outputText) - 1) outputText) 2)] [ text "Submit" ]]
