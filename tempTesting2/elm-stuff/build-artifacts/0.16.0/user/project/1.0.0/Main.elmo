@@ -9,7 +9,6 @@ Elm.Main.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $ElmFire = Elm.ElmFire.make(_elm),
    $Html = Elm.Html.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
    $Json$Encode = Elm.Json.Encode.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
@@ -22,50 +21,82 @@ Elm.Main.make = function (_elm) {
    var addTo = F2(function (inputString,index) {
       var _p0 = index;
       switch (_p0)
-      {case 1: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+      {case 1: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,0,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,0,num,array)));
-         case 2: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           0,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,0,num,array)));
+         case 2: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,1,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,1,num,array)));
-         case 3: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           1,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,1,num,array)));
+         case 3: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,2,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,2,num,array)));
-         case 4: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           2,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,2,num,array)));
+         case 4: var array = $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,3,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
-           return A2($String.join,"%",$Array.toList(A3($Array.set,3,num,array)));
+           $String.toInt(A2($Maybe.withDefault,
+           "0",
+           A2($Array.get,
+           3,
+           $Array.fromList(A3($Regex.split,
+           $Regex.All,
+           $Regex.regex("%"),
+           inputString)))))) + 1);
+           return A2($String.join,
+           "%",
+           $Array.toList(A3($Array.set,3,num,array)));
          default: return inputString;}
    });
-   var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
-   var a4Box = $Signal.mailbox($Json$Encode.$null);
-   var a3Box = $Signal.mailbox($Json$Encode.$null);
-   var a2Box = $Signal.mailbox($Json$Encode.$null);
-   var a1Box = $Signal.mailbox($Json$Encode.$null);
-   var questionBox = $Signal.mailbox($Json$Encode.$null);
-   var answerPicksBoxRead = $Signal.mailbox($Json$Encode.$null);
-   var runQueryAnswerPicks = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
-   function (_p1) {
-      return A2($Signal.send,answerPicksBoxRead.address,function (_) {    return _.value;}(_p1));
-   },
-   doNothing,
-   $ElmFire.valueChanged($ElmFire.noOrder),
-   $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/AnswerPicks")));
-   var answerPicksBoxWrite = $Signal.mailbox("0%0%0%0");
-   var runSetAnswerPicks = Elm.Native.Task.make(_elm).performSignal("runSetAnswerPicks",
-   A2($Signal.map,
-   function (str) {
-      return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/AnswerPicks"));
-   },
-   answerPicksBoxWrite.signal));
-   var view = F6(function (value1,value2,value3,value4,value5,value6) {
+   var view = F6(function (value1,
+   value2,
+   value3,
+   value4,
+   value5,
+   value6) {
       var answerPicks = A2($Json$Encode.encode,0,value6);
       var a4Text = A2($Json$Encode.encode,0,value5);
       var a3Text = A2($Json$Encode.encode,0,value4);
@@ -78,48 +109,123 @@ Elm.Main.make = function (_elm) {
       _U.list([]),
       _U.list([A2($Html.div,
               _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("Question: "),A2($Html.output,_U.list([]),_U.list([$Html.text(questionText)]))]))]))
+              _U.list([A2($Html.label,
+              _U.list([]),
+              _U.list([$Html.text("Question: ")
+                      ,A2($Html.output,
+                      _U.list([]),
+                      _U.list([$Html.text(questionText)]))]))]))
               ,A2($Html.div,
               _U.list([]),
-              _U.list([A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),1))]),
-                      _U.list([$Html.text("Vote A")]))
-                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" A ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a1Text)]))]))
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" A ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a1Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($String.dropLeft,
+                              1,
+                              A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              0,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks))))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))]))
               ,A2($Html.div,
               _U.list([]),
-              _U.list([A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),2))]),
-                      _U.list([$Html.text("Vote B")]))
-                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" B ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a2Text)]))]))
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" B ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a2Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              1,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks)))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))]))
               ,A2($Html.div,
               _U.list([]),
-              _U.list([A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),3))]),
-                      _U.list([$Html.text("Vote C")]))
-                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" C ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a3Text)]))]))
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" C ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a3Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              2,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks)))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))]))
               ,A2($Html.div,
               _U.list([]),
-              _U.list([A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),4))]),
-                      _U.list([$Html.text("Vote D")]))
-                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" D ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a4Text)]))]))
+              _U.list([A2($Html.label,
+                      _U.list([]),
+                      _U.list([$Html.text(" D ) ")
+                              ,A2($Html.output,_U.list([]),_U.list([$Html.text(a4Text)]))
+                              ,A2($Html.br,_U.list([]),_U.list([]))
+                              ,$Html.text("Votes:")
+                              ,A2($Html.output,
+                              _U.list([]),
+                              _U.list([$Html.text(A2($String.dropRight,
+                              1,
+                              A2($Maybe.withDefault,
+                              "0",
+                              A2($Array.get,
+                              3,
+                              $Array.fromList(A3($Regex.split,
+                              $Regex.All,
+                              $Regex.regex("%"),
+                              answerPicks))))))]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))]))]))]));
    });
+   var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
+   var a4Box = $Signal.mailbox($Json$Encode.$null);
+   var a3Box = $Signal.mailbox($Json$Encode.$null);
+   var a2Box = $Signal.mailbox($Json$Encode.$null);
+   var a1Box = $Signal.mailbox($Json$Encode.$null);
+   var questionBox = $Signal.mailbox($Json$Encode.$null);
+   var answerPicksBoxRead = $Signal.mailbox($Json$Encode.$null);
+   var runQueryAnswerPicks = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
+   function (_p1) {
+      return A2($Signal.send,
+      answerPicksBoxRead.address,
+      function (_) {
+         return _.value;
+      }(_p1));
+   },
+   doNothing,
+   $ElmFire.valueChanged($ElmFire.noOrder),
+   $ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/AnswerPicks")));
    var a4URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4";
    var runQueryA4 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p2) {
-      return A2($Signal.send,a4Box.address,function (_) {    return _.value;}(_p2));
+      return A2($Signal.send,
+      a4Box.address,
+      function (_) {
+         return _.value;
+      }(_p2));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
@@ -127,7 +233,11 @@ Elm.Main.make = function (_elm) {
    var a3URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer3";
    var runQueryA3 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p3) {
-      return A2($Signal.send,a3Box.address,function (_) {    return _.value;}(_p3));
+      return A2($Signal.send,
+      a3Box.address,
+      function (_) {
+         return _.value;
+      }(_p3));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
@@ -135,7 +245,11 @@ Elm.Main.make = function (_elm) {
    var a2URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer2";
    var runQueryA2 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p4) {
-      return A2($Signal.send,a2Box.address,function (_) {    return _.value;}(_p4));
+      return A2($Signal.send,
+      a2Box.address,
+      function (_) {
+         return _.value;
+      }(_p4));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
@@ -143,7 +257,11 @@ Elm.Main.make = function (_elm) {
    var a1URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer1";
    var runQueryA1 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p5) {
-      return A2($Signal.send,a1Box.address,function (_) {    return _.value;}(_p5));
+      return A2($Signal.send,
+      a1Box.address,
+      function (_) {
+         return _.value;
+      }(_p5));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
@@ -151,12 +269,23 @@ Elm.Main.make = function (_elm) {
    var questionURL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Question";
    var runQueryQuestion = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p6) {
-      return A2($Signal.send,questionBox.address,function (_) {    return _.value;}(_p6));
+      return A2($Signal.send,
+      questionBox.address,
+      function (_) {
+         return _.value;
+      }(_p6));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
    $ElmFire.fromUrl(questionURL)));
-   var main = A7($Signal.map6,view,questionBox.signal,a1Box.signal,a2Box.signal,a3Box.signal,a4Box.signal,answerPicksBoxRead.signal);
+   var main = A7($Signal.map6,
+   view,
+   questionBox.signal,
+   a1Box.signal,
+   a2Box.signal,
+   a3Box.signal,
+   a4Box.signal,
+   answerPicksBoxRead.signal);
    return _elm.Main.values = {_op: _op
                              ,main: main
                              ,questionURL: questionURL
@@ -164,7 +293,6 @@ Elm.Main.make = function (_elm) {
                              ,a2URL: a2URL
                              ,a3URL: a3URL
                              ,a4URL: a4URL
-                             ,answerPicksBoxWrite: answerPicksBoxWrite
                              ,answerPicksBoxRead: answerPicksBoxRead
                              ,questionBox: questionBox
                              ,a1Box: a1Box
