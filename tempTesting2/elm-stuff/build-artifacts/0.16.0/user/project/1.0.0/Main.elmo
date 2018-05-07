@@ -9,7 +9,6 @@ Elm.Main.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $ElmFire = Elm.ElmFire.make(_elm),
    $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
    $Json$Encode = Elm.Json.Encode.make(_elm),
    $List = Elm.List.make(_elm),
@@ -66,6 +65,57 @@ Elm.Main.make = function (_elm) {
       return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl("https://testproj1-5fbcf.firebaseio.com/AnswerPicks"));
    },
    answerPicksBoxWrite.signal));
+   var view = F6(function (value1,value2,value3,value4,value5,value6) {
+      var answerPicks = A2($Json$Encode.encode,0,value6);
+      var a4Text = A2($Json$Encode.encode,0,value5);
+      var a3Text = A2($Json$Encode.encode,0,value4);
+      var a2Text = A2($Json$Encode.encode,0,value3);
+      var a1Text = A2($Json$Encode.encode,0,value2);
+      var questionText = A2($Json$Encode.encode,0,value1);
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.fieldset,
+      _U.list([]),
+      _U.list([A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("Question: "),A2($Html.output,_U.list([]),_U.list([$Html.text(questionText)]))]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),1))]),
+                      _U.list([$Html.text("Vote A")]))
+                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" A ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a1Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),2))]),
+                      _U.list([$Html.text("Vote B")]))
+                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" B ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a2Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),3))]),
+                      _U.list([$Html.text("Vote C")]))
+                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" C ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a3Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      answerPicksBoxWrite.address,
+                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),4))]),
+                      _U.list([$Html.text("Vote D")]))
+                      ,A2($Html.label,_U.list([]),_U.list([$Html.text(" D ) "),A2($Html.output,_U.list([]),_U.list([$Html.text(a4Text)]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))]))]));
+   });
    var a4URL = "https://testproj1-5fbcf.firebaseio.com/QuestionBody/Answer4";
    var runQueryA4 = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p2) {
@@ -106,64 +156,6 @@ Elm.Main.make = function (_elm) {
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
    $ElmFire.fromUrl(questionURL)));
-   var view = F6(function (value1,value2,value3,value4,value5,value6) {
-      var answerPicks = A2($Json$Encode.encode,0,value6);
-      var a4Text = A2($Json$Encode.encode,0,value5);
-      var a3Text = A2($Json$Encode.encode,0,value4);
-      var a2Text = A2($Json$Encode.encode,0,value3);
-      var a1Text = A2($Json$Encode.encode,0,value2);
-      var questionText = A2($Json$Encode.encode,0,value1);
-      return A2($Html.div,
-      _U.list([]),
-      _U.list([A2($Html.fieldset,
-      _U.list([]),
-      _U.list([$Html.text("ElmFire test at: ")
-              ,A2($Html.a,_U.list([$Html$Attributes.href(questionURL),$Html$Attributes.target("_blank")]),_U.list([$Html.text(questionURL)]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("Question: "),A2($Html.output,_U.list([]),_U.list([$Html.text(questionText)]))]))]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("A: "),A2($Html.output,_U.list([]),_U.list([$Html.text(a1Text)]))]))
-                      ,A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),1))]),
-                      _U.list([$Html.text("Vote A")]))
-                      ,A2($Html.br,_U.list([]),_U.list([]))]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("B: "),A2($Html.output,_U.list([]),_U.list([$Html.text(a2Text)]))]))
-                      ,A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),2))]),
-                      _U.list([$Html.text("Vote B")]))
-                      ,A2($Html.br,_U.list([]),_U.list([]))]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("C: "),A2($Html.output,_U.list([]),_U.list([$Html.text(a3Text)]))]))
-                      ,A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),3))]),
-                      _U.list([$Html.text("Vote C")]))
-                      ,A2($Html.br,_U.list([]),_U.list([]))]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("D: "),A2($Html.output,_U.list([]),_U.list([$Html.text(a4Text)]))]))
-                      ,A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,
-                      answerPicksBoxWrite.address,
-                      A2(addTo,A3($String.slice,1,$String.length(answerPicks) - 1,answerPicks),4))]),
-                      _U.list([$Html.text("Vote D")]))
-                      ,A2($Html.br,_U.list([]),_U.list([]))]))
-              ,A2($Html.div,
-              _U.list([]),
-              _U.list([A2($Html.label,
-              _U.list([]),
-              _U.list([$Html.text("ANSWERPICKS "),A2($Html.output,_U.list([]),_U.list([$Html.text(answerPicks)]))]))]))]))]));
-   });
    var main = A7($Signal.map6,view,questionBox.signal,a1Box.signal,a2Box.signal,a3Box.signal,a4Box.signal,answerPicksBoxRead.signal);
    return _elm.Main.values = {_op: _op
                              ,main: main
