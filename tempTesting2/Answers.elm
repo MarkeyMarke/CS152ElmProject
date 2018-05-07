@@ -72,9 +72,23 @@ view value =
       --, input [ on "input" targetValue (message inputString.address) ] []
       --]
     --]
+  , br [][]
   , div []
               --outputText is displayed within quotatoin marks, so pass the string without quotes to the addTo function
-    [ button [ onClick inputString.address (addTo (String.slice 1 ((String.length outputText) - 1) outputText) 2)] [ text "Submit" ]]
+    [ button [ onClick inputString.address (addTo (String.slice 1 ((String.length outputText) - 1) outputText) 1)] [ text "Submit 1" ]]
+  , br [][]
+  , div []
+              --outputText is displayed within quotatoin marks, so pass the string without quotes to the addTo function
+    [ button [ onClick inputString.address (addTo (String.slice 1 ((String.length outputText) - 1) outputText) 2)] [ text "Submit 2" ]]
+  , br [][]
+  , div []
+              --outputText is displayed within quotatoin marks, so pass the string without quotes to the addTo function
+    [ button [ onClick inputString.address (addTo (String.slice 1 ((String.length outputText) - 1) outputText) 3)] [ text "Submit 3" ]]
+  , br [][]
+  , div []
+              --outputText is displayed within quotatoin marks, so pass the string without quotes to the addTo function
+    [ button [ onClick inputString.address (addTo (String.slice 1 ((String.length outputText) - 1) outputText) 4)] [ text "Submit 4" ]]
+  , br [][]
   , div []
     [ label []
       [ text "query result: "

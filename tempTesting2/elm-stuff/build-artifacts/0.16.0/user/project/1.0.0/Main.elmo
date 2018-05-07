@@ -23,98 +23,38 @@ Elm.Main.make = function (_elm) {
    var addTo = F2(function (inputString,index) {
       var _p0 = index;
       switch (_p0)
-      {case 1: var array = $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString));
+      {case 1: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,
-           "0",
-           A2($Array.get,
-           0,
-           $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString)))))) + 1);
-           return A2($String.join,
-           "%",
-           $Array.toList(A3($Array.set,0,num,array)));
-         case 2: var array = $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString));
+           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,0,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
+           return A2($String.join,"%",$Array.toList(A3($Array.set,0,num,array)));
+         case 2: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,
-           "0",
-           A2($Array.get,
-           1,
-           $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString)))))) + 1);
-           return A2($String.join,
-           "%",
-           $Array.toList(A3($Array.set,1,num,array)));
-         case 3: var array = $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString));
+           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,1,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
+           return A2($String.join,"%",$Array.toList(A3($Array.set,1,num,array)));
+         case 3: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,
-           "0",
-           A2($Array.get,
-           2,
-           $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString)))))) + 1);
-           return A2($String.join,
-           "%",
-           $Array.toList(A3($Array.set,2,num,array)));
-         case 4: var array = $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString));
+           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,2,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
+           return A2($String.join,"%",$Array.toList(A3($Array.set,2,num,array)));
+         case 4: var array = $Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString));
            var num = $Basics.toString(A2($Result.withDefault,
            0,
-           $String.toInt(A2($Maybe.withDefault,
-           "0",
-           A2($Array.get,
-           3,
-           $Array.fromList(A3($Regex.split,
-           $Regex.All,
-           $Regex.regex("%"),
-           inputString)))))) + 1);
-           return A2($String.join,
-           "%",
-           $Array.toList(A3($Array.set,3,num,array)));
+           $String.toInt(A2($Maybe.withDefault,"0",A2($Array.get,3,$Array.fromList(A3($Regex.split,$Regex.All,$Regex.regex("%"),inputString)))))) + 1);
+           return A2($String.join,"%",$Array.toList(A3($Array.set,3,num,array)));
          default: return inputString;}
    });
    var doNothing = $Basics.always($Task.succeed({ctor: "_Tuple0"}));
    var inputString = $Signal.mailbox("0%0%0%0");
    var values = $Signal.mailbox($Json$Encode.$null);
    var url = "https://testproj1-5fbcf.firebaseio.com/AnswerPicks";
-   var runOnce = Elm.Native.Task.make(_elm).perform(A2($ElmFire.once,
-   $ElmFire.valueChanged($ElmFire.noOrder),
-   $ElmFire.fromUrl(url)));
+   var runOnce = Elm.Native.Task.make(_elm).perform(A2($ElmFire.once,$ElmFire.valueChanged($ElmFire.noOrder),$ElmFire.fromUrl(url)));
    var runSet = Elm.Native.Task.make(_elm).performSignal("runSet",
-   A2($Signal.map,
-   function (str) {
-      return A2($ElmFire.set,
-      $Json$Encode.string(str),
-      $ElmFire.fromUrl(url));
-   },
-   inputString.signal));
+   A2($Signal.map,function (str) {    return A2($ElmFire.set,$Json$Encode.string(str),$ElmFire.fromUrl(url));},inputString.signal));
    var runQuery = Elm.Native.Task.make(_elm).perform(A4($ElmFire.subscribe,
    function (_p1) {
-      return A2($Signal.send,
-      values.address,
-      function (_) {
-         return _.value;
-      }(_p1));
+      return A2($Signal.send,values.address,function (_) {    return _.value;}(_p1));
    },
    doNothing,
    $ElmFire.valueChanged($ElmFire.noOrder),
@@ -124,35 +64,36 @@ Elm.Main.make = function (_elm) {
       return A2($Html.div,
       _U.list([]),
       _U.list([$Html.text("ElmFire test at: ")
-              ,A2($Html.a,
-              _U.list([$Html$Attributes.href(url)
-                      ,$Html$Attributes.target("_blank")]),
-              _U.list([$Html.text(url)]))
+              ,A2($Html.a,_U.list([$Html$Attributes.href(url),$Html$Attributes.target("_blank")]),_U.list([$Html.text(url)]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
               ,A2($Html.div,
               _U.list([]),
               _U.list([A2($Html.button,
-              _U.list([A2($Html$Events.onClick,
-              inputString.address,
-              A2(addTo,
-              A3($String.slice,1,$String.length(outputText) - 1,outputText),
-              2))]),
-              _U.list([$Html.text("Submit")]))]))
+              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),1))]),
+              _U.list([$Html.text("Submit 1")]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
               ,A2($Html.div,
               _U.list([]),
-              _U.list([A2($Html.label,
+              _U.list([A2($Html.button,
+              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),2))]),
+              _U.list([$Html.text("Submit 2")]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.div,
               _U.list([]),
-              _U.list([$Html.text("query result: ")
-                      ,A2($Html.output,
-                      _U.list([]),
-                      _U.list([$Html.text(outputText)]))]))]))]));
+              _U.list([A2($Html.button,
+              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),3))]),
+              _U.list([$Html.text("Submit 3")]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.button,
+              _U.list([A2($Html$Events.onClick,inputString.address,A2(addTo,A3($String.slice,1,$String.length(outputText) - 1,outputText),4))]),
+              _U.list([$Html.text("Submit 4")]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.div,
+              _U.list([]),
+              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("query result: "),A2($Html.output,_U.list([]),_U.list([$Html.text(outputText)]))]))]))]));
    };
    var main = A2($Signal.map,view,values.signal);
-   return _elm.Main.values = {_op: _op
-                             ,main: main
-                             ,url: url
-                             ,values: values
-                             ,inputString: inputString
-                             ,doNothing: doNothing
-                             ,view: view
-                             ,addTo: addTo};
+   return _elm.Main.values = {_op: _op,main: main,url: url,values: values,inputString: inputString,doNothing: doNothing,view: view,addTo: addTo};
 };
