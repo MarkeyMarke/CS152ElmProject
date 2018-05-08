@@ -12397,6 +12397,15 @@ Elm.Main.make = function (_elm) {
    "D goes here.",
    4);
    var init = {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+   var inputStringVoteCount = $Signal.mailbox("0%0%0%0");
+   var runSetVoteCount = Elm.Native.Task.make(_elm).performSignal("runSetVoteCount",
+   A2($Signal.map,
+   function (str) {
+      return A2($ElmFire.set,
+      $Json$Encode.string(str),
+      $ElmFire.fromUrl("https://elmproj.firebaseio.com/AnswerPicks"));
+   },
+   inputStringVoteCount.signal));
    var inputStringAI = $Signal.mailbox($Basics.toString(model.answerIndex));
    var runSetAI = Elm.Native.Task.make(_elm).performSignal("runSetAI",
    A2($Signal.map,
@@ -12504,7 +12513,10 @@ Elm.Main.make = function (_elm) {
                               ,{ctor: "_Tuple2",_0: inputStringA4.address,_1: model.choice4}
                               ,{ctor: "_Tuple2"
                                ,_0: inputStringAI.address
-                               ,_1: $Basics.toString(model.answerIndex)}]))]),
+                               ,_1: $Basics.toString(model.answerIndex)}
+                              ,{ctor: "_Tuple2"
+                               ,_0: inputStringVoteCount.address
+                               ,_1: "0%0%0%0"}]))]),
                       _U.list([$Html.text("Submit")]))]))
               ,A2($Html.br,_U.list([]),_U.list([]))
               ,A2($Html.br,_U.list([]),_U.list([]))
@@ -12555,6 +12567,7 @@ Elm.Main.make = function (_elm) {
                              ,inputStringA3: inputStringA3
                              ,inputStringA4: inputStringA4
                              ,inputStringAI: inputStringAI
+                             ,inputStringVoteCount: inputStringVoteCount
                              ,app: app
                              ,main: main
                              ,init: init

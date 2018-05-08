@@ -81,6 +81,11 @@ inputStringAI =
     mailbox (toString model.answerIndex)
 
 
+inputStringVoteCount : Mailbox String
+inputStringVoteCount =
+    mailbox "0%0%0%0"
+
+
 
 --END OF MAILBOXES
 --PORTS FOR EVERY DATA
@@ -129,6 +134,13 @@ port runSetAI =
     Signal.map
         (\str -> set (string str) (fromUrl "https://elmproj.firebaseio.com/QuestionBody/AnswerIndex"))
         inputStringAI.signal
+
+
+port runSetVoteCount : Signal (Task Error Reference)
+port runSetVoteCount =
+    Signal.map
+        (\str -> set (string str) (fromUrl "https://elmproj.firebaseio.com/AnswerPicks"))
+        inputStringVoteCount.signal
 
 
 
@@ -264,6 +276,7 @@ view address model =
                     , ( inputStringA3.address, model.choice3 )
                     , ( inputStringA4.address, model.choice4 )
                     , ( inputStringAI.address, toString (model.answerIndex) )
+                    , ( inputStringVoteCount.address, "0%0%0%0" )
                     ]
                 ]
                 [ text "Submit" ]
