@@ -27,6 +27,7 @@ import ElmFire
     exposing
         ( fromUrl
         , set
+        , update
         , subscribe
         , valueChanged
         , noOrder
@@ -74,7 +75,7 @@ a4URL =
 
 answerPicksBoxWrite : Mailbox String
 answerPicksBoxWrite =
-    mailbox "0%0%0%0"
+    mailbox "UPDATE PLS"
 
 
 answerPicksBoxRead : Mailbox JE.Value
@@ -116,7 +117,7 @@ port runSetAnswerPicks : Signal (Task Error Reference)
 port runSetAnswerPicks =
     Signal.map
         (\str ->
-            set (string str)
+            ElmFire.update (string str)
                 (fromUrl "https://elmproj.firebaseio.com/AnswerPicks")
         )
         answerPicksBoxWrite.signal
