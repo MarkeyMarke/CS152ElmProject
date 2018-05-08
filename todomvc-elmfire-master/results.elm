@@ -19,8 +19,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Lazy exposing (lazy, lazy2, lazy3)
-import Json.Decode as JD exposing ((:=))
-import Json.Encode as JE
+import Json.Decode as JD exposing (..)
+import Json.Encode as JE exposing (..)
 import Signal exposing (Mailbox, Address, mailbox, message)
 import Task exposing (Task, andThen)
 import Effects exposing (Effects, Never)
@@ -28,7 +28,9 @@ import Array exposing (..)
 import Basics exposing (..)
 import StartApp
 import String
-
+import Http
+import Json.Decode as Json exposing ((:=))
+import Task exposing (..)
 import ElmFire
 import ElmFire.Dict
 import ElmFire.Op
@@ -46,7 +48,7 @@ firebase_foreign = "https://elmproj.firebaseio.com/Questions"
 firebase_test : String
 firebase_test = "https://elmproj.firebaseio.com/Questions"
 
--- But lets use our own
+ --But lets use our own
 firebaseUrl : String
 firebaseUrl = firebase_test
 
@@ -86,14 +88,9 @@ type alias Model =
 type alias Items = Dict Id Item
 
 type alias Id = String
-type alias Item =
-  { question: Content
-  , choice1: Content
-  , choice2: Content
-  , choice3: Content
-  , choice4: Content
-  , votes: Content
-  }
+
+
+
 
 type alias Content = String
 
@@ -124,29 +121,41 @@ initialEffect = initialTask |> kickOff
 
 --------------------------------------------------------------------------------
 
+type alias Item =
+  { choice1: String
+  , choice2: String
+  , choice3: String
+  , choice4: String
+  , c1Votes: List String
+  , c2Votes: List String
+  , c3Votes: List String
+  , c4Votes: List String
+  }
+
 syncConfig : ElmFire.Dict.Config Item
 syncConfig =
   { location = ElmFire.fromUrl (firebaseUrl)
   , orderOptions = ElmFire.noOrder
   , encoder =
       \item -> JE.object
-        [ ("Question", JE.string item.question)
-        , ("Choice1", JE.string item.choice1)
+        [ ("Choice1", JE.string item.choice1)
         , ("Choice2", JE.string item.choice2)
         , ("Choice3", JE.string item.choice3)
         , ("Choice4", JE.string item.choice4)
-        , ("Votes", JE.object item.votes)
         ]
   , decoder =
-      ( JD.object6 Item
-          ("Question" := JD.string)
+      ( JD.object8 Item
           ("Choice1" := JD.string)
           ("Choice2" := JD.string)
           ("Choice3" := JD.string)
-          ("Choice4" := JD.string)
-          ("Votes" := JD.object)
-      )
+          ("Choice4" := JD.string))
+          (JD.at [ "Votes", "C1"] (JD.keyValuePairs (JD.succeed ()) |> JD.map (List.map Basics.fst)))
+          (JD.at [ "Votes", "C2"] (JD.keyValuePairs (JD.succeed ()) |> JD.map (List.map Basics.fst)))
+          (JD.at [ "Votes", "C3"] (JD.keyValuePairs (JD.succeed ()) |> JD.map (List.map Basics.fst)))
+          (JD.at [ "Votes", "C4"] (JD.keyValuePairs (JD.succeed ()) |> JD.map (List.map Basics.fst)))
+
   }
+
 
 --syncConfigVotes : String -> String -> ElmFire.Dict.Config Item2
 --syncConfigVotes apiKey choiceIndex =
@@ -235,19 +244,16 @@ view actionAddress model =
     --filters input list for id that matches input code key -> code list will be list size 1 with the input key values as the item
     codeList = List.filter codeChecker itemList
     array = Array.fromList codeList
-    tuple = Maybe.withDefault ("", {question = "", choice1 = "", choice2 = "", choice3 = "", choice4 = ""}) (Array.get 0 array)
+    tuple = Maybe.withDefault ("", {choice1 = "", choice2 = "", choice3 = "", choice4 = "", c1Votes = [], c2Votes = [], c3Votes = [], c4Votes = []}) (Array.get 0 array)
     item = Basics.snd tuple
-    question = item.question
     choice1 = item.choice1
     choice2 = item.choice2
     choice3 = item.choice3
     choice4 = item.choice4
-
-
-
-
-
-
+    c1Votes = item.c1Votes
+    c2Votes = item.c2Votes
+    c3Votes = item.c3Votes
+    c4Votes = item.c4Votes
 
 
     --(initialTasks2, inputs) = ElmFire.Dict.mirror (syncConfigVotes code "1")
@@ -273,20 +279,26 @@ view actionAddress model =
       , br [] []
       , br [] []
       , fieldset []
-       [ div []
-          [ label [] [ text "Question: ", output [] [ text (question) ] ]
-          , br [] []
-          , br [] []
-          ]
         --, div [] [ text ("A) " ++ toString (List.length c1List))]
+        [ div [] [ text ("A) " ++ choice1)]
+        , div [] [ text ("# of Votes: " ++ toString (List.length c1Votes))]
         , br [] []
         , br [] []
-        , div [] [ text ("codelist) " ++ toString (List.length codeList))]
+        , div [] [ text ("B) " ++ choice2)]
+        , div [] [ text ("# of Votes: " ++ toString (List.length c2Votes))]
         , br [] []
         , br [] []
-        , div [] [ text ("itemlist) " ++ toString (List.length itemList))]
+        , div [] [ text ("C) " ++ choice3)]
+        , div [] [ text ("# of Votes: " ++ toString (List.length c3Votes))]
+        , br [] []
+        , br [] []
+        , div [] [ text ("D) " ++ choice4)]
+        , div [] [ text ("# of Votes: " ++ toString (List.length c4Votes))]
+
       ]
     ]
+
+
 
 customListFilter : String -> (String, b) -> Bool
 customListFilter index (a , b) =
