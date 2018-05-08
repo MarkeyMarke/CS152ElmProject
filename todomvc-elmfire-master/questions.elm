@@ -37,12 +37,12 @@ import ElmFire.Op
 
 -- URL of the Firebase to use
 firebase_foreign : String
-firebase_foreign = "https://elmproj.firebaseio.com/todos"
+firebase_foreign = "https://elmproj.firebaseio.com/Questions"
 
 -- This app uses the same data format as the firebase-angular implementation.
 -- So we could use also their Firebase for testing
 firebase_test : String
-firebase_test = "https://elmproj.firebaseio.com/todos"
+firebase_test = "https://elmproj.firebaseio.com/Questions"
 
 -- But lets use our own
 firebaseUrl : String
@@ -78,13 +78,24 @@ type alias Model =
   , filter: Filter
   , addField: Content
   , editingItem: EditingItem
+  , apiKey: Content
+  , modQuestion: Content
+  , modChoice1: Content
+  , modChoice2: Content
+  , modChoice3: Content
+  , modChoice4: Content
+  , modAnswerIndex: Int
   }
 
 type alias Items = Dict Id Item
 type alias Id = String
 type alias Item =
-  { title: Content
-  , completed: Bool
+  { question: Content
+  , choice1: Content
+  , choice2: Content
+  , choice3: Content
+  , choice4: Content
+  , answerIndex: Content
   }
 type alias Content = String
 
@@ -98,32 +109,35 @@ initialModel =
   , filter = All
   , addField = ""
   , editingItem = Nothing
+  , apiKey = ""
+  , modQuestion = ""
+  , modChoice1 = ""
+  , modChoice2 = ""
+  , modChoice3 = ""
+  , modChoice4 = ""
+  , modAnswerIndex = 0
   }
 
-type Action
-  = FromGui GuiEvent
-  | FromServer Items
-  | FromEffect -- no specific actions from effects here
 
 --------------------------------------------------------------------------------
 
 -- Events originating from the user interacting with the html page
 
-type GuiEvent
-  = NoGuiEvent
-    -- operations on the item list
-  | AddItem
-  | UpdateItem Id
-  | DeleteItem Id
-  | DeleteCompletedItems
-  | CheckItem Id Bool
-  | CheckAllItems Bool
-    -- operating on local state
-  | EditExistingItem EditingItem
-  | EditAddField Content
-  | SetFilter Filter
+--type GuiEvent
+--  = NoGuiEvent
+--    -- operations on the item list
+--  | AddItem
+--  | UpdateItem Id
+--  | DeleteItem Id
+--  | DeleteCompletedItems
+--  | CheckItem Id Bool
+--  | CheckAllItems Bool
+--    -- operating on local state
+--  | EditExistingItem EditingItem
+--  | EditAddField Content
+--  | SetFilter Filter
 
-type alias GuiAddress = Address GuiEvent
+--type alias GuiAddress = Address GuiEvent
 
 --------------------------------------------------------------------------------
 
@@ -141,17 +155,25 @@ initialEffect = initialTask |> kickOff
 
 syncConfig : ElmFire.Dict.Config Item
 syncConfig =
-  { location = ElmFire.fromUrl firebaseUrl
+  { location = ElmFire.fromUrl (firebaseUrl)
   , orderOptions = ElmFire.noOrder
   , encoder =
       \item -> JE.object
-        [ ("title", JE.string item.title)
-        , ("completed", JE.bool item.completed)
+        [ ("Question", JE.string item.question)
+        , ("Choice1", JE.string item.choice1)
+        , ("Choice2", JE.string item.choice2)
+        , ("Choice3", JE.string item.choice3)
+        , ("Choice4", JE.string item.choice4)
+        , ("AnswerIndex", JE.string item.answerIndex)
         ]
   , decoder =
-      ( JD.object2 Item
-          ("title" := JD.string)
-          ("completed" := JD.bool)
+      ( JD.object6 Item
+          ("Question" := JD.string)
+          ("Choice1" := JD.string)
+          ("Choice2" := JD.string)
+          ("Choice3" := JD.string)
+          ("Choice4" := JD.string)
+          ("AnswerIndex" := JD.string)
       )
   }
 
@@ -173,6 +195,20 @@ kickOff =
 
 --------------------------------------------------------------------------------
 
+type Action =
+  --= FromGui GuiEvent
+   FromServer Items
+  | FromEffect -- no specific actions from effects here
+  | SetAPIKey String
+  | SetQuestion String
+  | SetChoice1 String
+  | SetChoice2 String
+  | SetChoice3 String
+  | SetChoice4 String
+  | SetIndex Int String
+  | SetCorrectAnswer Bool Int
+  | AddParams
+
 -- Process gui events and server events yielding model updates and effects
 
 updateState : Action -> Model -> (Model, Effects Action)
@@ -189,140 +225,167 @@ updateState action model =
       , Effects.none
       )
 
-    FromGui NoGuiEvent ->
-      ( model
-      , Effects.none
-      )
+    SetAPIKey str ->
+      ({ model | apiKey = str}
+        , Effects.none)
 
-    FromGui AddItem ->
-      ( { model | addField = "" }
-      , if model.addField |> String.trim |> String.isEmpty
+    SetQuestion str ->
+      ({ model | modQuestion = str}
+        , Effects.none)
+
+    SetChoice1 str ->
+      ({ model | modChoice1 = str}
+        , Effects.none)
+
+    SetChoice2 str ->
+      ({ model | modChoice2 = str}
+        , Effects.none)
+
+    SetChoice3 str ->
+      ({ model | modChoice3 = str}
+        , Effects.none)
+
+    SetChoice4 str ->
+      ({ model | modChoice4 = str}
+        , Effects.none)
+
+    SetIndex int ans ->
+            case int of
+                --Generate Updated Clone Copy of Model, this is Elm's equivalent to using a setter for an object
+                1 ->
+                    ( { model | modChoice1 = ans }, Effects.none )
+                2 ->
+                    ( { model | modChoice2 = ans }, Effects.none )
+                3 ->
+                    ( { model | modChoice3 = ans }, Effects.none )
+                4 ->
+                    ( { model | modChoice4 = ans }, Effects.none )
+                _ ->
+                    ( { model | modChoice1 = ans }, Effects.none )
+
+    SetCorrectAnswer bool num ->
+            case bool of
+                --In 0.16, Elm didn't provide a library such that the listeners were chcked for input for us. So we have do check if the input worked ourselves.
+                True ->
+                    --If the action worked, change the model.
+                    ( { model | modAnswerIndex = num }, Effects.none )
+                False ->
+                    --Otherwise, keep the model the same.
+                    ( model, Effects.none )
+
+    AddParams ->
+      ( { model | modQuestion = "", modChoice1 = "", modChoice2 = "", modChoice3 = "", modChoice4 = "", modAnswerIndex = 4}
+      , if model.modQuestion |> String.trim |> String.isEmpty
         then Effects.none
         else
-          effectItems <|
-            ElmFire.Op.push
-              { title = model.addField |> String.trim, completed = False }
+          effectItems (ElmFire.Op.insert model.apiKey { question = model.modQuestion, choice1 = model.modChoice1 
+            , choice2 = model.modChoice2, choice3 = model.modChoice3, choice4 = model.modChoice4, answerIndex = toString (model.modAnswerIndex)})
       )
 
-    FromGui (UpdateItem id) ->
-      ( { model | editingItem = Nothing }
-      , case model.editingItem of
-          Just (id1, title) ->
-            if (id == id1)
-            then
-              if title |> String.trim |> String.isEmpty
-              then
-                effectItems <| ElmFire.Op.remove id
-              else
-                effectItems <| ElmFire.Op.update id
-                  ( Maybe.map
-                      (\item -> { item | title = title |> String.trim })
-                  )
-            else Effects.none
-          Nothing -> Effects.none
-      )
 
-    FromGui (DeleteItem id) ->
-      ( model
-      , effectItems <| ElmFire.Op.remove id
-      )
-
-    FromGui DeleteCompletedItems ->
-      ( model
-      , effectItems <|
-          ElmFire.Op.filter ElmFire.Op.parallel
-            (\_ item -> not item.completed)
-      )
-
-    FromGui (CheckItem id completed) ->
-      ( model
-      , effectItems <| ElmFire.Op.update id
-          ( Maybe.map (\item -> { item | completed = completed }) )
-      )
-
-    FromGui (CheckAllItems completed) ->
-      ( model
-      , effectItems <|
-          ElmFire.Op.map ElmFire.Op.parallel
-            (\_ item ->
-              { item | completed = completed }
-            )
-      )
-
-    FromGui (EditExistingItem e) ->
-      ( { model | editingItem = e }
-      , case e of
-          Just (id, _) ->
-            kickOff <| Signal.send focus.address id
-          Nothing -> Effects.none
-      )
-
-    FromGui (EditAddField content) ->
-      ( { model | addField = content }
-      , Effects.none
-      )
-
-    FromGui (SetFilter filter) ->
-      ( { model | filter = filter }
-      , Effects.none
-      )
-
+   
 --------------------------------------------------------------------------------
 
 -- Pre-calculate some values derived from model
 -- for more efficient view code
 
-type alias AugModel = {
-  itemList: List (Id, Item),
-  count: { total: Int, completed: Int }
-}
+--type alias AugModel = {
+--  itemList: List (Id, Item),
+--  count: { total: Int, completed: Int }
+--}
 
-augment : Model -> AugModel
-augment model =
-  let
-    itemList = model.items |> Dict.toList
-    (itemsTotal, itemsCompleted) =
-      List.foldl
-        (\(_, item) (total, completed) ->
-          (total + 1, completed + if item.completed then 1 else 0)
-        )
-        (0, 0)
-        itemList
-  in
-    {
-      itemList = itemList,
-      count = { total = itemsTotal, completed = itemsCompleted }
-    }
+--augment : Model -> AugModel
+--augment model =
+--  let
+--    itemList = model.items |> Dict.toList
+--    (itemsTotal, itemsCompleted) =
+--      List.foldl
+--        (\(_, item) (total, completed) ->
+--          (total + 1, completed + if item.completed then 1 else 0)
+--        )
+--        (0, 0)
+--        itemList
+--  in
+--    {
+--      itemList = itemList,
+--      count = { total = itemsTotal, completed = itemsCompleted }
+--    }
 
 --------------------------------------------------------------------------------
 
 view : Address Action -> Model -> Html
-view actionAddress model =
-  let
-    augModel = augment model
-    guiAddress = Signal.forwardTo actionAddress FromGui
-  in
-    div []
-      [ section [ class "todoapp" ]
-          [ lazy2 viewEntry guiAddress model.addField
-          ]
+view actionAddress model = 
+  div [] [
+    fieldset []
+      [ div [] [
+          input
+            ( [ placeholder "API KEY HERE"
+              , autofocus True
+              , on "input" targetValue (message actionAddress << SetAPIKey)
+              ]
+            )
+            []
+        ]
+        , br [] []
+        , div [] [ text "Question ", input [ placeholder "Enter your question here.", on "input" targetValue (\str -> Signal.message actionAddress (SetQuestion str)) ] [] ]
+        , br [] []
+        , div [] [ text "Set one answer as the correct answer." ]
+        , br [] []
+        , question actionAddress "A)" 1
+        , br [] []
+        , question actionAddress "B)" 2
+        , br [] []
+        , question actionAddress "C)" 3
+        , br [] []
+        , question actionAddress "D)" 4
+        , br [] []
+        , button [ onClick actionAddress AddParams][text "Submit"]
+        , br [] []
+        , br [] []
       ]
-
-viewEntry : GuiAddress -> Content -> Html
-viewEntry guiAddress content =
-  header [ class "header" ]
-    [ h1 [] [ text "todos" ]
-    , input
-        ( [ class "new-todo"
-          , placeholder "What needs to be done?"
-          , autofocus True
-          , value content
-          , on "input" targetValue (message guiAddress << EditAddField)
-          , onEnter guiAddress AddItem
-          ]
-        )
-        []
+      , br [] []
+      , br [] []
+      , fieldset []
+            [ div [] [ text model.modQuestion ]
+            , div [] [ text ("A ) " ++ model.modChoice1) ]
+            , div [] [ text ("B ) " ++ model.modChoice2) ]
+            , div [] [ text ("C ) " ++ model.modChoice3) ]
+            , div [] [ text ("D ) " ++ model.modChoice4) ]
+            , div [] [ text ("The correct answer is " ++ (indexToLetter model.modAnswerIndex) ++ ".") ]
+            , br [] []
+            ]
     ]
+
+indexToLetter : Int -> String
+indexToLetter index =
+    case index of
+        1 ->
+            "A"
+
+        2 ->
+            "B"
+
+        3 ->
+            "C"
+
+        4 ->
+            "D"
+
+        _ ->
+            "Answer out of bounds."
+
+question : Signal.Address Action -> String -> Int -> Html
+question address textValue newAnswerIndex =
+    div []
+        [ --beginning of radio button
+          label
+            [ style [ ( "padding", "20px" ) ] ]
+            [ input [ type' "radio", name "question", checked True, on "input" targetChecked (\bool -> Signal.message address (SetCorrectAnswer bool newAnswerIndex)) ] [], text textValue ]
+          --ending of radio button
+        , input [ placeholder "Enter your answer here.", on "input" targetValue (\str -> Signal.message address (SetIndex newAnswerIndex str)) ] []
+        ]
+  
+
 
 --viewItemList : GuiAddress -> Model -> AugModel -> Html
 --viewItemList guiAddress model augModel =
@@ -470,25 +533,6 @@ viewEntry guiAddress content =
 --               [ text "Source code at GitHub" ]
 --           ]
 --    ]
-
---------------------------------------------------------------------------------
-
--- View helper functions
-
-onEnter : Address a -> a -> Attribute
-onEnter address value =
-  let
-    is13 : Int -> Result String ()
-    is13 code =
-      if code == 13 then Ok () else Err "not the right key code"
-  in
-    on "keydown"
-      (JD.customDecoder keyCode is13)
-      (\_ -> message address value)
-
-showBlock : Bool -> Attribute
-showBlock visible =
-  style [ ("display", if visible then "block" else "none") ]
 
 --------------------------------------------------------------------------------
 

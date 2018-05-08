@@ -12354,7 +12354,8 @@ Elm.TodoMVC.make = function (_elm) {
                       ,A2($Html$Events.onClick,guiAddress,CheckAllItems($Basics.not(allCompleted)))]),
               _U.list([]))
               ,A2($Html.label,_U.list([$Html$Attributes.$for("toggle-all")]),_U.list([$Html.text("Mark all as complete")]))
-              ,A2($Html.ul,_U.list([$Html$Attributes.$class("todo-list")]),A2($List.map,A2(viewItem,guiAddress,model.editingItem),visibleItemList))]));
+              ,A2($Html.ul,_U.list([$Html$Attributes.$class("todo-list")]),A2($List.map,A2(viewItem,guiAddress,model.editingItem),visibleItemList))
+              ,A2($Html.div,_U.list([]),_U.list([$Html.text($Basics.toString($List.length(augModel.itemList)))]))]));
    });
    var AddItem = {ctor: "AddItem"};
    var viewEntry = F2(function (guiAddress,content) {
@@ -12427,11 +12428,12 @@ Elm.TodoMVC.make = function (_elm) {
               _U.list([A3($Html$Lazy.lazy2,viewEntry,guiAddress,model.addField)
                       ,A4($Html$Lazy.lazy3,viewItemList,guiAddress,model,augModel)
                       ,A4($Html$Lazy.lazy3,viewControls,guiAddress,model,augModel)]))
-              ,viewInfoFooter(guiAddress)]));
+              ,viewInfoFooter(guiAddress)
+              ,$Html.text(A2($Basics._op["++"],"ITEMLIST INITIAL VALUE",$Basics.toString($List.length(augModel.itemList))))]));
    });
    var Item = F2(function (a,b) {    return {title: a,completed: b};});
    var Model = F4(function (a,b,c,d) {    return {items: a,filter: b,addField: c,editingItem: d};});
-   var firebase_test = "https://elmproj.firebaseio.com/todos";
+   var firebase_test = "https://elmproj.firebaseio.com/todos/todoes";
    var firebaseUrl = firebase_test;
    var syncConfig = {location: $ElmFire.fromUrl(firebaseUrl)
                     ,orderOptions: $ElmFire.noOrder

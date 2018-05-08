@@ -42,7 +42,7 @@ firebase_foreign = "https://elmproj.firebaseio.com/todos"
 -- This app uses the same data format as the firebase-angular implementation.
 -- So we could use also their Firebase for testing
 firebase_test : String
-firebase_test = "https://elmproj.firebaseio.com/todos"
+firebase_test = "https://elmproj.firebaseio.com/todos/todoes"
 
 -- But lets use our own
 firebaseUrl : String
@@ -309,6 +309,7 @@ view actionAddress model =
           , lazy3 viewControls guiAddress model augModel
           ]
       , viewInfoFooter guiAddress
+      , text ("ITEMLIST INITIAL VALUE" ++ toString (List.length augModel.itemList))
       ]
 
 viewEntry : GuiAddress -> Content -> Html
@@ -356,6 +357,7 @@ viewItemList guiAddress model augModel =
       , ul
           [ class "todo-list" ]
           ( List.map (viewItem guiAddress model.editingItem) visibleItemList )
+      , div [] [text(toString (List.length augModel.itemList))]
       ]
 
 viewItem : GuiAddress -> EditingItem -> (Id, Item) -> Html
