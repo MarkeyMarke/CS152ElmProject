@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="UTF-8"><title>Main</title><style>html,head,body { padding:0; margin:0; }
+<html><head><meta charset="UTF-8"><title>TodoMVC</title><style>html,head,body { padding:0; margin:0; }
 body { font-family: calibri, helvetica, arial, sans-serif; }</style><script type="text/javascript">var Elm = Elm || { Native: {} };Elm.Native.Basics = {};
 Elm.Native.Basics.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -12208,11 +12208,11 @@ Elm.StartApp.make = function (_elm) {
    var App = F3(function (a,b,c) {    return {html: a,model: b,tasks: c};});
    var Config = F4(function (a,b,c,d) {    return {init: a,update: b,view: c,inputs: d};});
    return _elm.StartApp.values = {_op: _op,start: start,Config: Config,App: App};
-};Elm.Main = Elm.Main || {};
-Elm.Main.make = function (_elm) {
+};Elm.TodoMVC = Elm.TodoMVC || {};
+Elm.TodoMVC.make = function (_elm) {
    "use strict";
-   _elm.Main = _elm.Main || {};
-   if (_elm.Main.values) return _elm.Main.values;
+   _elm.TodoMVC = _elm.TodoMVC || {};
+   if (_elm.TodoMVC.values) return _elm.TodoMVC.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
@@ -12224,6 +12224,7 @@ Elm.Main.make = function (_elm) {
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
+   $Html$Lazy = Elm.Html.Lazy.make(_elm),
    $Json$Decode = Elm.Json.Decode.make(_elm),
    $Json$Encode = Elm.Json.Encode.make(_elm),
    $List = Elm.List.make(_elm),
@@ -12250,64 +12251,258 @@ Elm.Main.make = function (_elm) {
          return A2($Signal.message,address,value);
       });
    });
-   var FromEffect = {ctor: "FromEffect"};
-   var FromServer = function (a) {    return {ctor: "FromServer",_0: a};};
-   var AddKey = {ctor: "AddKey"};
-   var EditApiKey = function (a) {    return {ctor: "EditApiKey",_0: a};};
-   var view = F2(function (actionAddress,model) {
-      return A2($Html.div,
-      _U.list([]),
-      _U.list([A2($Html.br,_U.list([]),_U.list([]))
-              ,A2($Html.fieldset,
+   var viewInfoFooter = function (guiAddress) {
+      return A2($Html.footer,
+      _U.list([$Html$Attributes.$class("info")]),
+      _U.list([A2($Html.p,_U.list([]),_U.list([$Html.text("Double-click to edit a todo")]))
+              ,A2($Html.p,
               _U.list([]),
+              _U.list([$Html.text("Created by ")
+                      ,A2($Html.a,_U.list([$Html$Attributes.href("https://github.com/evancz")]),_U.list([$Html.text("Evan Czaplicki")]))
+                      ,$Html.text(" and ")
+                      ,A2($Html.a,_U.list([$Html$Attributes.href("https://github.com/ThomasWeiser")]),_U.list([$Html.text("Thomas Weiser")]))]))
+              ,A2($Html.p,
+              _U.list([]),
+              _U.list([$Html.text("Part of "),A2($Html.a,_U.list([$Html$Attributes.href("http://todomvc.com")]),_U.list([$Html.text("TodoMVC")]))]))
+              ,A2($Html.p,
+              _U.list([]),
+              _U.list([A2($Html.a,
+              _U.list([$Html$Attributes.href("https://github.com/ThomasWeiser/todomvc-elmfire")]),
+              _U.list([$Html.text("Source code at GitHub")]))]))]));
+   };
+   var augment = function (model) {
+      var itemList = $Dict.toList(model.items);
+      var _p1 = A3($List.foldl,
+      F2(function (_p3,_p2) {    var _p4 = _p3;var _p5 = _p2;return {ctor: "_Tuple2",_0: _p5._0 + 1,_1: _p5._1 + (_p4._1.completed ? 1 : 0)};}),
+      {ctor: "_Tuple2",_0: 0,_1: 0},
+      itemList);
+      var itemsTotal = _p1._0;
+      var itemsCompleted = _p1._1;
+      return {itemList: itemList,count: {total: itemsTotal,completed: itemsCompleted}};
+   };
+   var AugModel = F2(function (a,b) {    return {itemList: a,count: b};});
+   var SetFilter = function (a) {    return {ctor: "SetFilter",_0: a};};
+   var EditAddField = function (a) {    return {ctor: "EditAddField",_0: a};};
+   var EditExistingItem = function (a) {    return {ctor: "EditExistingItem",_0: a};};
+   var CheckAllItems = function (a) {    return {ctor: "CheckAllItems",_0: a};};
+   var CheckItem = F2(function (a,b) {    return {ctor: "CheckItem",_0: a,_1: b};});
+   var DeleteCompletedItems = {ctor: "DeleteCompletedItems"};
+   var DeleteItem = function (a) {    return {ctor: "DeleteItem",_0: a};};
+   var UpdateItem = function (a) {    return {ctor: "UpdateItem",_0: a};};
+   var viewItem = F3(function (guiAddress,editingItem,_p6) {
+      var _p7 = _p6;
+      var _p10 = _p7._1;
+      var _p9 = _p7._0;
+      var isEditing = function () {
+         var _p8 = editingItem;
+         if (_p8.ctor === "Just") {
+               return _U.eq(_p9,_p8._0._0) ? {ctor: "_Tuple2",_0: true,_1: _p8._0._1} : {ctor: "_Tuple2",_0: false,_1: ""};
+            } else {
+               return {ctor: "_Tuple2",_0: false,_1: ""};
+            }
+      }();
+      return A2($Html.li,
+      _U.list([$Html$Attributes.classList(_U.list([{ctor: "_Tuple2",_0: "completed",_1: _p10.completed}
+                                                  ,{ctor: "_Tuple2",_0: "editing",_1: $Basics.fst(isEditing)}]))
+              ,$Html$Attributes.key(_p9)]),
+      _U.list([A2($Html.div,
+              _U.list([$Html$Attributes.$class("view")]),
               _U.list([A2($Html.input,
-                      _U.list([$Html$Attributes.placeholder("Enter API key")
-                              ,$Html$Attributes.autofocus(true)
-                              ,$Html$Attributes.value("")
-                              ,A3($Html$Events.on,
-                              "input",
-                              $Html$Events.targetValue,
-                              function (_p1) {
-                                 return A2($Signal.message,actionAddress,EditApiKey(_p1));
-                              })
-                              ,A2(onEnter,actionAddress,AddKey)]),
+                      _U.list([$Html$Attributes.$class("toggle")
+                              ,$Html$Attributes.type$("checkbox")
+                              ,$Html$Attributes.checked(_p10.completed)
+                              ,A2($Html$Events.onClick,guiAddress,A2(CheckItem,_p9,$Basics.not(_p10.completed)))]),
                       _U.list([]))
-                      ,$Html.text("fdnovns")]))]));
+                      ,A2($Html.label,
+                      _U.list([A2($Html$Events.onDoubleClick,guiAddress,EditExistingItem($Maybe.Just({ctor: "_Tuple2",_0: _p9,_1: _p10.title})))]),
+                      _U.list([$Html.text(_p10.title)]))
+                      ,A2($Html.button,_U.list([$Html$Attributes.$class("destroy"),A2($Html$Events.onClick,guiAddress,DeleteItem(_p9))]),_U.list([]))]))
+              ,A2($Html.input,
+              _U.list([$Html$Attributes.$class("edit")
+                      ,$Html$Attributes.id(A2($Basics._op["++"],"todo-",_p9))
+                      ,$Html$Attributes.value($Basics.fst(isEditing) ? $Basics.snd(isEditing) : "")
+                      ,A3($Html$Events.on,
+                      "input",
+                      $Html$Events.targetValue,
+                      function (val) {
+                         return A2($Signal.message,guiAddress,EditExistingItem($Maybe.Just({ctor: "_Tuple2",_0: _p9,_1: val})));
+                      })
+                      ,A2($Html$Events.onBlur,guiAddress,UpdateItem(_p9))
+                      ,A2(onEnter,guiAddress,UpdateItem(_p9))]),
+              _U.list([]))]));
    });
-   var kickOff = function (_p2) {    return $Effects.task(A2($Task.map,$Basics.always(FromEffect),$Task.toMaybe(_p2)));};
+   var viewItemList = F3(function (guiAddress,model,augModel) {
+      var isVisibleItem = function (_p11) {
+         var _p12 = _p11;
+         var _p14 = _p12._1;
+         var _p13 = model.filter;
+         switch (_p13.ctor)
+         {case "All": return true;
+            case "Active": return $Basics.not(_p14.completed);
+            default: return _p14.completed;}
+      };
+      var visibleItemList = A2($List.filter,isVisibleItem,augModel.itemList);
+      var allCompleted = _U.eq(augModel.count.total,augModel.count.completed);
+      var visible = true;
+      return A2($Html.section,
+      _U.list([$Html$Attributes.$class("main"),showBlock($Basics.not($List.isEmpty(visibleItemList)))]),
+      _U.list([A2($Html.input,
+              _U.list([$Html$Attributes.id("toggle-all")
+                      ,$Html$Attributes.$class("toggle-all")
+                      ,$Html$Attributes.type$("checkbox")
+                      ,$Html$Attributes.checked(allCompleted)
+                      ,A2($Html$Events.onClick,guiAddress,CheckAllItems($Basics.not(allCompleted)))]),
+              _U.list([]))
+              ,A2($Html.label,_U.list([$Html$Attributes.$for("toggle-all")]),_U.list([$Html.text("Mark all as complete")]))
+              ,A2($Html.ul,_U.list([$Html$Attributes.$class("todo-list")]),A2($List.map,A2(viewItem,guiAddress,model.editingItem),visibleItemList))]));
+   });
+   var AddItem = {ctor: "AddItem"};
+   var viewEntry = F2(function (guiAddress,content) {
+      return A2($Html.header,
+      _U.list([$Html$Attributes.$class("header")]),
+      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("todos")]))
+              ,A2($Html.input,
+              _U.list([$Html$Attributes.$class("new-todo")
+                      ,$Html$Attributes.placeholder("What needs to be done?")
+                      ,$Html$Attributes.autofocus(true)
+                      ,$Html$Attributes.value(content)
+                      ,A3($Html$Events.on,"input",$Html$Events.targetValue,function (_p15) {    return A2($Signal.message,guiAddress,EditAddField(_p15));})
+                      ,A2(onEnter,guiAddress,AddItem)]),
+              _U.list([]))]));
+   });
+   var NoGuiEvent = {ctor: "NoGuiEvent"};
+   var FromEffect = {ctor: "FromEffect"};
+   var kickOff = function (_p16) {    return $Effects.task(A2($Task.map,$Basics.always(FromEffect),$Task.toMaybe(_p16)));};
+   var FromServer = function (a) {    return {ctor: "FromServer",_0: a};};
+   var FromGui = function (a) {    return {ctor: "FromGui",_0: a};};
    var Completed = {ctor: "Completed"};
    var Active = {ctor: "Active"};
    var All = {ctor: "All"};
-   var initialModel = {items: $Dict.empty,filter: All,addField: "",editingItem: $Maybe.Nothing,apiKey: "",questionString: ""};
-   var Item = F2(function (a,b) {    return {question: a,choice1: b};});
-   var Model = F6(function (a,b,c,d,e,f) {    return {items: a,filter: b,addField: c,editingItem: d,apiKey: e,questionString: f};});
+   var initialModel = {items: $Dict.empty,filter: All,addField: "",editingItem: $Maybe.Nothing};
+   var viewControls = F3(function (guiAddress,model,augModel) {
+      var visible = true;
+      var countLeft = augModel.count.total - augModel.count.completed;
+      var itemNoun = _U.eq(countLeft,1) ? " item" : " items";
+      var countCompleted = augModel.count.completed;
+      return A2($Html.footer,
+      _U.list([$Html$Attributes.$class("footer"),showBlock(visible)]),
+      _U.list([A2($Html.span,
+              _U.list([$Html$Attributes.$class("todo-count")]),
+              _U.list([A2($Html.strong,_U.list([]),_U.list([$Html.text($Basics.toString(countLeft))])),$Html.text(A2($Basics._op["++"],itemNoun," left"))]))
+              ,A2($Html.ul,
+              _U.list([$Html$Attributes.$class("filters")]),
+              _U.list([A2($Html.li,
+                      _U.list([A2($Html$Events.onClick,guiAddress,SetFilter(All))]),
+                      _U.list([A2($Html.a,
+                              _U.list([$Html$Attributes.href("#/")
+                                      ,$Html$Attributes.classList(_U.list([{ctor: "_Tuple2",_0: "selected",_1: _U.eq(model.filter,All)}]))]),
+                              _U.list([$Html.text("All")]))
+                              ,$Html.text(" ")]))
+                      ,A2($Html.li,
+                      _U.list([A2($Html$Events.onClick,guiAddress,SetFilter(Active))]),
+                      _U.list([A2($Html.a,
+                              _U.list([$Html$Attributes.href("#/active")
+                                      ,$Html$Attributes.classList(_U.list([{ctor: "_Tuple2",_0: "selected",_1: _U.eq(model.filter,Active)}]))]),
+                              _U.list([$Html.text("Active")]))
+                              ,$Html.text(" ")]))
+                      ,A2($Html.li,
+                      _U.list([A2($Html$Events.onClick,guiAddress,SetFilter(Completed))]),
+                      _U.list([A2($Html.a,
+                      _U.list([$Html$Attributes.href("#/completed")
+                              ,$Html$Attributes.classList(_U.list([{ctor: "_Tuple2",_0: "selected",_1: _U.eq(model.filter,Completed)}]))]),
+                      _U.list([$Html.text("Completed")]))]))]))
+              ,A2($Html.button,
+              _U.list([$Html$Attributes.$class("clear-completed")
+                      ,$Html$Attributes.hidden(_U.eq(countCompleted,0))
+                      ,A2($Html$Events.onClick,guiAddress,DeleteCompletedItems)]),
+              _U.list([$Html.text("Clear completed")]))]));
+   });
+   var view = F2(function (actionAddress,model) {
+      var guiAddress = A2($Signal.forwardTo,actionAddress,FromGui);
+      var augModel = augment(model);
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.section,
+              _U.list([$Html$Attributes.$class("todoapp")]),
+              _U.list([A3($Html$Lazy.lazy2,viewEntry,guiAddress,model.addField)
+                      ,A4($Html$Lazy.lazy3,viewItemList,guiAddress,model,augModel)
+                      ,A4($Html$Lazy.lazy3,viewControls,guiAddress,model,augModel)]))
+              ,viewInfoFooter(guiAddress)]));
+   });
+   var Item = F2(function (a,b) {    return {title: a,completed: b};});
+   var Model = F4(function (a,b,c,d) {    return {items: a,filter: b,addField: c,editingItem: d};});
    var firebase_test = "https://elmproj.firebaseio.com/todos";
    var firebaseUrl = firebase_test;
    var syncConfig = {location: $ElmFire.fromUrl(firebaseUrl)
                     ,orderOptions: $ElmFire.noOrder
                     ,encoder: function (item) {
-                       return $Json$Encode.object(_U.list([{ctor: "_Tuple2",_0: "Question",_1: $Json$Encode.string(item.question)}
-                                                          ,{ctor: "_Tuple2",_0: "Choice1",_1: $Json$Encode.string(item.choice1)}]));
+                       return $Json$Encode.object(_U.list([{ctor: "_Tuple2",_0: "title",_1: $Json$Encode.string(item.title)}
+                                                          ,{ctor: "_Tuple2",_0: "completed",_1: $Json$Encode.bool(item.completed)}]));
                     }
                     ,decoder: A3($Json$Decode.object2,
                     Item,
-                    A2($Json$Decode._op[":="],"Question",$Json$Decode.string),
-                    A2($Json$Decode._op[":="],"Choice1",$Json$Decode.string))};
-   var _p3 = $ElmFire$Dict.mirror(syncConfig);
-   var initialTask = _p3._0;
-   var inputItems = _p3._1;
+                    A2($Json$Decode._op[":="],"title",$Json$Decode.string),
+                    A2($Json$Decode._op[":="],"completed",$Json$Decode.bool))};
+   var _p17 = $ElmFire$Dict.mirror(syncConfig);
+   var initialTask = _p17._0;
+   var inputItems = _p17._1;
    var initialEffect = kickOff(initialTask);
    var effectItems = function (operation) {    return kickOff(A2($ElmFire$Op.operate,syncConfig,operation));};
    var updateState = F2(function (action,model) {
-      var _p4 = action;
-      switch (_p4.ctor)
+      var _p18 = action;
+      switch (_p18.ctor)
       {case "FromEffect": return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
-         case "FromServer": return {ctor: "_Tuple2",_0: _U.update(model,{items: _p4._0}),_1: $Effects.none};
-         case "EditApiKey": return {ctor: "_Tuple2",_0: _U.update(model,{apiKey: _p4._0}),_1: $Effects.none};
-         default: return {ctor: "_Tuple2"
-                         ,_0: model
-                         ,_1: $String.isEmpty($String.trim(model.questionString)) ? $Effects.none : effectItems($ElmFire$Op.push({question: model.questionString
-                                                                                                                                 ,choice1: model.apiKey}))};}
+         case "FromServer": return {ctor: "_Tuple2",_0: _U.update(model,{items: _p18._0}),_1: $Effects.none};
+         default: switch (_p18._0.ctor)
+           {case "NoGuiEvent": return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+              case "AddItem": return {ctor: "_Tuple2"
+                                     ,_0: _U.update(model,{addField: ""})
+                                     ,_1: $String.isEmpty($String.trim(model.addField)) ? $Effects.none : effectItems($ElmFire$Op.push({title: $String.trim(model.addField)
+                                                                                                                                       ,completed: false}))};
+              case "UpdateItem": var _p21 = _p18._0._0;
+                return {ctor: "_Tuple2"
+                       ,_0: _U.update(model,{editingItem: $Maybe.Nothing})
+                       ,_1: function () {
+                          var _p19 = model.editingItem;
+                          if (_p19.ctor === "Just") {
+                                var _p20 = _p19._0._1;
+                                return _U.eq(_p21,
+                                _p19._0._0) ? $String.isEmpty($String.trim(_p20)) ? effectItems($ElmFire$Op.remove(_p21)) : effectItems(A2($ElmFire$Op.update,
+                                _p21,
+                                $Maybe.map(function (item) {    return _U.update(item,{title: $String.trim(_p20)});}))) : $Effects.none;
+                             } else {
+                                return $Effects.none;
+                             }
+                       }()};
+              case "DeleteItem": return {ctor: "_Tuple2",_0: model,_1: effectItems($ElmFire$Op.remove(_p18._0._0))};
+              case "DeleteCompletedItems": return {ctor: "_Tuple2"
+                                                  ,_0: model
+                                                  ,_1: effectItems(A2($ElmFire$Op.filter,
+                                                  $ElmFire$Op.parallel,
+                                                  F2(function (_p22,item) {    return $Basics.not(item.completed);})))};
+              case "CheckItem": return {ctor: "_Tuple2"
+                                       ,_0: model
+                                       ,_1: effectItems(A2($ElmFire$Op.update,
+                                       _p18._0._0,
+                                       $Maybe.map(function (item) {    return _U.update(item,{completed: _p18._0._1});})))};
+              case "CheckAllItems": return {ctor: "_Tuple2"
+                                           ,_0: model
+                                           ,_1: effectItems(A2($ElmFire$Op.map,
+                                           $ElmFire$Op.parallel,
+                                           F2(function (_p23,item) {    return _U.update(item,{completed: _p18._0._0});})))};
+              case "EditExistingItem": var _p25 = _p18._0._0;
+                return {ctor: "_Tuple2"
+                       ,_0: _U.update(model,{editingItem: _p25})
+                       ,_1: function () {
+                          var _p24 = _p25;
+                          if (_p24.ctor === "Just") {
+                                return kickOff(A2($Signal.send,focus.address,_p24._0._0));
+                             } else {
+                                return $Effects.none;
+                             }
+                       }()};
+              case "EditAddField": return {ctor: "_Tuple2",_0: _U.update(model,{addField: _p18._0._0}),_1: $Effects.none};
+              default: return {ctor: "_Tuple2",_0: _U.update(model,{filter: _p18._0._0}),_1: $Effects.none};}}
    });
    var config = {init: {ctor: "_Tuple2",_0: initialModel,_1: initialEffect}
                 ,update: updateState
@@ -12317,32 +12512,48 @@ Elm.Main.make = function (_elm) {
    var runEffects = Elm.Native.Task.make(_elm).performSignal("runEffects",app.tasks);
    var main = app.html;
    var firebase_foreign = "https://elmproj.firebaseio.com/todos";
-   return _elm.Main.values = {_op: _op
-                             ,firebase_foreign: firebase_foreign
-                             ,firebase_test: firebase_test
-                             ,firebaseUrl: firebaseUrl
-                             ,config: config
-                             ,app: app
-                             ,main: main
-                             ,Model: Model
-                             ,Item: Item
-                             ,All: All
-                             ,Active: Active
-                             ,Completed: Completed
-                             ,initialModel: initialModel
-                             ,initialTask: initialTask
-                             ,inputItems: inputItems
-                             ,initialEffect: initialEffect
-                             ,syncConfig: syncConfig
-                             ,effectItems: effectItems
-                             ,kickOff: kickOff
-                             ,EditApiKey: EditApiKey
-                             ,AddKey: AddKey
-                             ,FromServer: FromServer
-                             ,FromEffect: FromEffect
-                             ,updateState: updateState
-                             ,view: view
-                             ,onEnter: onEnter
-                             ,showBlock: showBlock
-                             ,focus: focus};
-};</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>
+   return _elm.TodoMVC.values = {_op: _op
+                                ,firebase_foreign: firebase_foreign
+                                ,firebase_test: firebase_test
+                                ,firebaseUrl: firebaseUrl
+                                ,config: config
+                                ,app: app
+                                ,main: main
+                                ,Model: Model
+                                ,Item: Item
+                                ,All: All
+                                ,Active: Active
+                                ,Completed: Completed
+                                ,initialModel: initialModel
+                                ,FromGui: FromGui
+                                ,FromServer: FromServer
+                                ,FromEffect: FromEffect
+                                ,NoGuiEvent: NoGuiEvent
+                                ,AddItem: AddItem
+                                ,UpdateItem: UpdateItem
+                                ,DeleteItem: DeleteItem
+                                ,DeleteCompletedItems: DeleteCompletedItems
+                                ,CheckItem: CheckItem
+                                ,CheckAllItems: CheckAllItems
+                                ,EditExistingItem: EditExistingItem
+                                ,EditAddField: EditAddField
+                                ,SetFilter: SetFilter
+                                ,initialTask: initialTask
+                                ,inputItems: inputItems
+                                ,initialEffect: initialEffect
+                                ,syncConfig: syncConfig
+                                ,effectItems: effectItems
+                                ,kickOff: kickOff
+                                ,updateState: updateState
+                                ,AugModel: AugModel
+                                ,augment: augment
+                                ,view: view
+                                ,viewEntry: viewEntry
+                                ,viewItemList: viewItemList
+                                ,viewItem: viewItem
+                                ,viewControls: viewControls
+                                ,viewInfoFooter: viewInfoFooter
+                                ,onEnter: onEnter
+                                ,showBlock: showBlock
+                                ,focus: focus};
+};</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.TodoMVC)</script></body></html>

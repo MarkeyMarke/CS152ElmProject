@@ -1,3 +1,5 @@
+module Questions where
+
 {-| TodoMVC implemented in Elm
     using Firebase for storage
 
@@ -10,6 +12,7 @@
     - [Elm Language](http://elm-lang.org/)
     - [TodoMVC Project](http://todomvc.com/)
 -}
+
 import Result
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -75,16 +78,13 @@ type alias Model =
   , filter: Filter
   , addField: Content
   , editingItem: EditingItem
-  , apiKey: Content
-  , questionString: Content
-  , choice1String: Content
   }
 
 type alias Items = Dict Id Item
 type alias Id = String
 type alias Item =
-  { question: Content
-  , choice1: Content
+  { title: Content
+  , completed: Bool
   }
 type alias Content = String
 
@@ -98,31 +98,32 @@ initialModel =
   , filter = All
   , addField = ""
   , editingItem = Nothing
-  , apiKey = ""
-  , questionString = ""
-  , choice1String =""
   }
+
+type Action
+  = FromGui GuiEvent
+  | FromServer Items
+  | FromEffect -- no specific actions from effects here
 
 --------------------------------------------------------------------------------
 
 -- Events originating from the user interacting with the html page
 
---type GuiEvent
---  = NoGuiEvent
---    -- operations on the item list
---  --| AddItem
---  ----| UpdateItem Id
---  ----| DeleteItem Id
---  ----| DeleteCompletedItems
---  --| CheckItem Id Bool
---  --| CheckAllItems Bool
---  --  -- operating on local state
---  --| EditExistingItem EditingItem
---  --| EditAddField Content
---  --| SetFilter Filter
---  | EditApiKey String
+type GuiEvent
+  = NoGuiEvent
+    -- operations on the item list
+  | AddItem
+  | UpdateItem Id
+  | DeleteItem Id
+  | DeleteCompletedItems
+  | CheckItem Id Bool
+  | CheckAllItems Bool
+    -- operating on local state
+  | EditExistingItem EditingItem
+  | EditAddField Content
+  | SetFilter Filter
 
---type alias GuiAddress = Address GuiEvent
+type alias GuiAddress = Address GuiEvent
 
 --------------------------------------------------------------------------------
 
@@ -144,13 +145,13 @@ syncConfig =
   , orderOptions = ElmFire.noOrder
   , encoder =
       \item -> JE.object
-        [ ("Question", JE.string item.question)
-        , ("Choice1", JE.string item.choice1)
+        [ ("title", JE.string item.title)
+        , ("completed", JE.bool item.completed)
         ]
   , decoder =
       ( JD.object2 Item
-          ("Question" := JD.string)
-          ("Choice1" := JD.string)
+          ("title" := JD.string)
+          ("completed" := JD.bool)
       )
   }
 
@@ -172,21 +173,12 @@ kickOff =
 
 --------------------------------------------------------------------------------
 
-type Action =
-    AddParams 
-  --= FromGui GuiEvent
-  | FromServer Items
-  | FromEffect -- no specific actions from effects here
-  | SetQuestion String
-  | SetApiKey String
-  | SetChoice1 String
-
-
 -- Process gui events and server events yielding model updates and effects
 
 updateState : Action -> Model -> (Model, Effects Action)
 updateState action model =
   case action of
+
     FromEffect ->
       ( model
       , Effects.none
@@ -197,194 +189,140 @@ updateState action model =
       , Effects.none
       )
 
-    SetApiKey key ->
-      ( { model | apiKey = key},
-        Effects.none)
+    FromGui NoGuiEvent ->
+      ( model
+      , Effects.none
+      )
 
-    SetQuestion str ->
-      ( { model | question = str},
-        Effects.none)
-
-    SetChoice1 str ->
-      ( { model | choice1 = str},
-        Effects.none)
-
-    AddParams ->
-      ( { model | question = "", choice1 = ""}
-        , if model.questionString |> String.trim |> String.isEmpty
+    FromGui AddItem ->
+      ( { model | addField = "" }
+      , if model.addField |> String.trim |> String.isEmpty
         then Effects.none
         else
           effectItems <|
             ElmFire.Op.push
-              { question = model.questionString, choice1 = model.choice1 }
+              { title = model.addField |> String.trim, completed = False }
       )
 
+    FromGui (UpdateItem id) ->
+      ( { model | editingItem = Nothing }
+      , case model.editingItem of
+          Just (id1, title) ->
+            if (id == id1)
+            then
+              if title |> String.trim |> String.isEmpty
+              then
+                effectItems <| ElmFire.Op.remove id
+              else
+                effectItems <| ElmFire.Op.update id
+                  ( Maybe.map
+                      (\item -> { item | title = title |> String.trim })
+                  )
+            else Effects.none
+          Nothing -> Effects.none
+      )
 
-    --FromGui NoGuiEvent ->
-    --  ( model
-    --  , Effects.none
-    --  )
+    FromGui (DeleteItem id) ->
+      ( model
+      , effectItems <| ElmFire.Op.remove id
+      )
 
-    --FromGui AddItem ->
-    --  ( { model | addField = "" }
-    --  , if model.addField |> String.trim |> String.isEmpty
-    --    then Effects.none
-    --    else
-    --      effectItems <|
-    --        ElmFire.Op.push
-    --          { question = model.addField |> String.trim, choice1 = "fdvsvvsf" }
-    --  )
+    FromGui DeleteCompletedItems ->
+      ( model
+      , effectItems <|
+          ElmFire.Op.filter ElmFire.Op.parallel
+            (\_ item -> not item.completed)
+      )
 
-    --FromGui (UpdateItem id) ->
-    --  ( { model | editingItem = Nothing }
-    --  , case model.editingItem of
-    --      Just (id1, title) ->
-    --        if (id == id1)
-    --        then
-    --          if title |> String.trim |> String.isEmpty
-    --          then
-    --            effectItems <| ElmFire.Op.remove id
-    --          else
-    --            effectItems <| ElmFire.Op.update id
-    --              ( Maybe.map
-    --                  (\item -> { item | title = title |> String.trim })
-    --              )
-    --        else Effects.none
-    --      Nothing -> Effects.none
-    --  )
+    FromGui (CheckItem id completed) ->
+      ( model
+      , effectItems <| ElmFire.Op.update id
+          ( Maybe.map (\item -> { item | completed = completed }) )
+      )
 
-    --FromGui (DeleteItem id) ->
-    --  ( model
-    --  , effectItems <| ElmFire.Op.remove id
-    --  )
+    FromGui (CheckAllItems completed) ->
+      ( model
+      , effectItems <|
+          ElmFire.Op.map ElmFire.Op.parallel
+            (\_ item ->
+              { item | completed = completed }
+            )
+      )
 
-    --FromGui DeleteCompletedItems ->
-    --  ( model
-    --  , effectItems <|
-    --      ElmFire.Op.filter ElmFire.Op.parallel
-    --        (\_ item -> not item.completed)
-    --  )
+    FromGui (EditExistingItem e) ->
+      ( { model | editingItem = e }
+      , case e of
+          Just (id, _) ->
+            kickOff <| Signal.send focus.address id
+          Nothing -> Effects.none
+      )
 
-    --FromGui (CheckItem id completed) ->
-    --  ( model
-    --  , effectItems <| ElmFire.Op.update id
-    --      ( Maybe.map (\item -> { item | completed = completed }) )
-    --  )
+    FromGui (EditAddField content) ->
+      ( { model | addField = content }
+      , Effects.none
+      )
 
-    --FromGui (CheckAllItems completed) ->
-    --  ( model
-    --  , effectItems <|
-    --      ElmFire.Op.map ElmFire.Op.parallel
-    --        (\_ item ->
-    --          { item | completed = completed }
-    --        )
-    --  )
-
-    --FromGui (EditExistingItem e) ->
-    --  ( { model | editingItem = e }
-    --  , case e of
-    --      Just (id, _) ->
-    --        kickOff <| Signal.send focus.address id
-    --      Nothing -> Effects.none
-    --  )
-
-    --FromGui (EditAddField content) ->
-    --  ( { model | addField = content }
-    --  , Effects.none
-    --  )
-
-    --FromGui (EditApiKey content) ->
-    --  ( { model | apiKey = content }
-    --  , Effects.none
-    --  )
-
-    --FromGui (SetFilter filter) ->
-    --  ( { model | filter = filter }
-    --  , Effects.none
-    --  )
+    FromGui (SetFilter filter) ->
+      ( { model | filter = filter }
+      , Effects.none
+      )
 
 --------------------------------------------------------------------------------
 
 -- Pre-calculate some values derived from model
 -- for more efficient view code
 
---type alias AugModel = {
---  itemList: List (Id, Item),
---  count: { total: Int, completed: Int }
---}
+type alias AugModel = {
+  itemList: List (Id, Item),
+  count: { total: Int, completed: Int }
+}
 
---augment : Model -> AugModel
---augment model =
---  let
---    itemList = model.items |> Dict.toList
---    (itemsTotal, itemsCompleted) =
---      List.foldl
---        (\(_, item) (total, completed) ->
---          (total + 1, completed + if item.completed then 1 else 0)
---        )
---        (0, 0)
---        itemList
---  in
---    {
---      itemList = itemList,
---      count = { total = itemsTotal, completed = itemsCompleted }
---    }
+augment : Model -> AugModel
+augment model =
+  let
+    itemList = model.items |> Dict.toList
+    (itemsTotal, itemsCompleted) =
+      List.foldl
+        (\(_, item) (total, completed) ->
+          (total + 1, completed + if item.completed then 1 else 0)
+        )
+        (0, 0)
+        itemList
+  in
+    {
+      itemList = itemList,
+      count = { total = itemsTotal, completed = itemsCompleted }
+    }
 
 --------------------------------------------------------------------------------
 
 view : Address Action -> Model -> Html
 view actionAddress model =
-    div [] 
-        [ br [] []
-          ,fieldset [] [
-            input
-              ( [ placeholder "Enter API key"
-                , autofocus True
-                , on "input" targetValue (message actionAddress << SetApiKey)
-                , onEnter actionAddress AddParams
-                ]
-              )
-              []
-            , input
-              ( [ placeholder "Enter QUESTION"
-                , on "input" targetValue (message actionAddress << SetQuestion)
-                , onEnter actionAddress AddParams
-                ]
-              )
-              []
-            , input
-              ( [ placeholder "Enter CHOICE"
-                , on "input" targetValue (message actionAddress << SetChoice1)
-                , onEnter actionAddress AddParams
-                ]
-              )
-              []
-            ]
-            , text ("fdnovns")
-            ]
-    --div []
-    --  [ section [ class "todoapp" ]
-    --      [ lazy2 viewEntry guiAddress model.addField
-    --      ]
-    --  ]
+  let
+    augModel = augment model
+    guiAddress = Signal.forwardTo actionAddress FromGui
+  in
+    div []
+      [ section [ class "todoapp" ]
+          [ lazy2 viewEntry guiAddress model.addField
+          ]
+      ]
 
---viewEntry : GuiAddress -> Content -> Html
---viewEntry guiAddress content =
---     div [] 
---      [ br [] []
---        ,fieldset [] [
---          input
---            ( [ placeholder "Enter API key"
---              , autofocus True
---              , value content
---              , on "input" targetValue (message guiAddress << EditApiKey)
---              , onEnter guiAddress AddItem
---              ]
---            )
---            []
---          , text ("fdnovns")
---          ]
---        ]
+viewEntry : GuiAddress -> Content -> Html
+viewEntry guiAddress content =
+  header [ class "header" ]
+    [ h1 [] [ text "todos" ]
+    , input
+        ( [ class "new-todo"
+          , placeholder "What needs to be done?"
+          , autofocus True
+          , value content
+          , on "input" targetValue (message guiAddress << EditAddField)
+          , onEnter guiAddress AddItem
+          ]
+        )
+        []
+    ]
 
 --viewItemList : GuiAddress -> Model -> AugModel -> Html
 --viewItemList guiAddress model augModel =
