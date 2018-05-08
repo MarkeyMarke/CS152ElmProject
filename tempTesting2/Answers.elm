@@ -3,10 +3,6 @@
    Query that same location and display the result.
    Use the displayed link to show the Firebase bashboard for the location.
 -}
-
-
-module Main (..) where
-
 import StartApp
 import Effects exposing (Effects)
 import Html exposing (..)
@@ -27,7 +23,6 @@ import ElmFire
     exposing
         ( fromUrl
         , set
-        , update
         , subscribe
         , valueChanged
         , noOrder
@@ -75,7 +70,7 @@ a4URL =
 
 answerPicksBoxWrite : Mailbox String
 answerPicksBoxWrite =
-    mailbox "UPDATE PLS"
+    mailbox "0%0%0%0"
 
 
 answerPicksBoxRead : Mailbox JE.Value
@@ -117,7 +112,7 @@ port runSetAnswerPicks : Signal (Task Error Reference)
 port runSetAnswerPicks =
     Signal.map
         (\str ->
-            ElmFire.update (string str)
+            ElmFire.Op.set (string str)
                 (fromUrl "https://elmproj.firebaseio.com/AnswerPicks")
         )
         answerPicksBoxWrite.signal
