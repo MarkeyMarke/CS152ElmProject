@@ -380,7 +380,7 @@ view actionAddress model =
         [ fieldset []
             [ div []
                 [ input
-                    ([ placeholder "API KEY HERE"
+                    ([ placeholder "Enter keyphrase here"
                      , autofocus True
                      , on "input" targetValue (message actionAddress << SetAPIKey)
                      ]
