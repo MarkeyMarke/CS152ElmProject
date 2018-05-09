@@ -44,3 +44,4 @@ $ elm-make questions.elm --output=questions.html
 $ elm-make answers.elm --output=answers.html
 $ elm-make results.elm --output=results.html
 ```
+Now you're done! Simply execute the HTML files to open browsers, and then you're using our application.
