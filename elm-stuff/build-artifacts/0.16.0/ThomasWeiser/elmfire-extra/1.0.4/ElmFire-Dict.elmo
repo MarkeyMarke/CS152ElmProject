@@ -28,16 +28,30 @@ Elm.ElmFire.Dict.make = function (_elm) {
          case "Unsubscribed": return dict;
          default: return dict;}
    });
-   var integrate = function (deltas) {    return A3($Signal.foldp,update,$Dict.empty,deltas);};
+   var integrate = function (deltas) {
+      return A3($Signal.foldp,update,$Dict.empty,deltas);
+   };
    var getValues = function (config) {
-      var decodeValueList = $List.filterMap(function (_p1) {    return $Result.toMaybe(A2($Json$Decode.decodeValue,config.decoder,_p1));});
+      var decodeValueList = $List.filterMap(function (_p1) {
+         return $Result.toMaybe(A2($Json$Decode.decodeValue,
+         config.decoder,
+         _p1));
+      });
       return A2($Task.map,
       function (_p2) {
          return decodeValueList($ElmFire.toValueList(_p2));
       },
-      A2($ElmFire.once,$ElmFire.valueChanged(config.orderOptions),config.location));
+      A2($ElmFire.once,
+      $ElmFire.valueChanged(config.orderOptions),
+      config.location));
    };
-   var getKeys = function (config) {    return A2($Task.map,$ElmFire.toKeyList,A2($ElmFire.once,$ElmFire.valueChanged(config.orderOptions),config.location));};
+   var getKeys = function (config) {
+      return A2($Task.map,
+      $ElmFire.toKeyList,
+      A2($ElmFire.once,
+      $ElmFire.valueChanged(config.orderOptions),
+      config.location));
+   };
    var getList = function (config) {
       var decodePairList = $List.filterMap(function (_p3) {
          var _p4 = _p3;
@@ -52,15 +66,29 @@ Elm.ElmFire.Dict.make = function (_elm) {
       function (_p6) {
          return decodePairList($ElmFire.toPairList(_p6));
       },
-      A2($ElmFire.once,$ElmFire.valueChanged(config.orderOptions),config.location));
+      A2($ElmFire.once,
+      $ElmFire.valueChanged(config.orderOptions),
+      config.location));
    };
-   var getDict = function (config) {    return A2($Task.map,$Dict.fromList,getList(config));};
-   var QueryError = function (a) {    return {ctor: "QueryError",_0: a};};
+   var getDict = function (config) {
+      return A2($Task.map,$Dict.fromList,getList(config));
+   };
+   var QueryError = function (a) {
+      return {ctor: "QueryError",_0: a};
+   };
    var Unsubscribed = {ctor: "Unsubscribed"};
-   var Undecodable = F2(function (a,b) {    return {ctor: "Undecodable",_0: a,_1: b};});
-   var Removed = F2(function (a,b) {    return {ctor: "Removed",_0: a,_1: b};});
-   var Changed = F2(function (a,b) {    return {ctor: "Changed",_0: a,_1: b};});
-   var Added = F2(function (a,b) {    return {ctor: "Added",_0: a,_1: b};});
+   var Undecodable = F2(function (a,b) {
+      return {ctor: "Undecodable",_0: a,_1: b};
+   });
+   var Removed = F2(function (a,b) {
+      return {ctor: "Removed",_0: a,_1: b};
+   });
+   var Changed = F2(function (a,b) {
+      return {ctor: "Changed",_0: a,_1: b};
+   });
+   var Added = F2(function (a,b) {
+      return {ctor: "Added",_0: a,_1: b};
+   });
    var subscribeDelta = F2(function (addressee,config) {
       var subscribeEvent = F2(function (event,deltaOp) {
          return A4($ElmFire.subscribe,
@@ -68,7 +96,9 @@ Elm.ElmFire.Dict.make = function (_elm) {
             return A2($Signal.send,
             addressee,
             function () {
-               var _p7 = A2($Json$Decode.decodeValue,config.decoder,snapshot.value);
+               var _p7 = A2($Json$Decode.decodeValue,
+               config.decoder,
+               snapshot.value);
                if (_p7.ctor === "Ok") {
                      return A2(deltaOp,snapshot.key,_p7._0);
                   } else {
@@ -92,18 +122,28 @@ Elm.ElmFire.Dict.make = function (_elm) {
          config.location);
       });
       return A2($Task.andThen,
-      A2(subscribeEvent,$ElmFire.childRemoved(config.orderOptions),Removed),
+      A2(subscribeEvent,
+      $ElmFire.childRemoved(config.orderOptions),
+      Removed),
       function (s1) {
          return A2($Task.andThen,
-         A2(subscribeEvent,$ElmFire.childChanged(config.orderOptions),Changed),
+         A2(subscribeEvent,
+         $ElmFire.childChanged(config.orderOptions),
+         Changed),
          function (s2) {
             return A2($Task.andThen,
-            A2(subscribeEvent,$ElmFire.childAdded(config.orderOptions),Added),
+            A2(subscribeEvent,
+            $ElmFire.childAdded(config.orderOptions),
+            Added),
             function (s3) {
                return $Task.succeed(A2($Task.andThen,
                $ElmFire.unsubscribe(s1),
                function (_p9) {
-                  return A2($Task.andThen,$ElmFire.unsubscribe(s2),function (_p10) {    return $ElmFire.unsubscribe(s3);});
+                  return A2($Task.andThen,
+                  $ElmFire.unsubscribe(s2),
+                  function (_p10) {
+                     return $ElmFire.unsubscribe(s3);
+                  });
                }));
             });
          });
@@ -116,7 +156,9 @@ Elm.ElmFire.Dict.make = function (_elm) {
       var sum = integrate(deltas.signal);
       return {ctor: "_Tuple2",_0: init,_1: sum};
    };
-   var Config = F4(function (a,b,c,d) {    return {location: a,orderOptions: b,encoder: c,decoder: d};});
+   var Config = F4(function (a,b,c,d) {
+      return {location: a,orderOptions: b,encoder: c,decoder: d};
+   });
    return _elm.ElmFire.Dict.values = {_op: _op
                                      ,getDict: getDict
                                      ,getList: getList

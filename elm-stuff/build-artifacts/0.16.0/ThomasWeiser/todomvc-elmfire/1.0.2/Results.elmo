@@ -32,29 +32,61 @@ Elm.Results.make = function (_elm) {
          case 4: return "D";
          default: return "Answer out of bounds.";}
    };
-   var customListFilter = F2(function (index,_p1) {    var _p2 = _p1;return _U.eq(_p2._0,A2($Basics._op["++"],"C",index)) ? true : false;});
-   var augment = function (model) {    var itemList = $Dict.toList(model.items);return {itemList: itemList};};
+   var customListFilter = F2(function (index,_p1) {
+      var _p2 = _p1;
+      return _U.eq(_p2._0,
+      A2($Basics._op["++"],"C",index)) ? true : false;
+   });
+   var augment = function (model) {
+      var itemList = $Dict.toList(model.items);
+      return {itemList: itemList};
+   };
    var AugModel = function (a) {    return {itemList: a};};
    var updateState = F2(function (action,model) {
       var _p3 = action;
       switch (_p3.ctor)
-      {case "FromEffect": return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
-         case "FromServer": return {ctor: "_Tuple2",_0: _U.update(model,{items: _p3._0}),_1: $Effects.none};
-         default: return {ctor: "_Tuple2",_0: _U.update(model,{apiKey: _p3._0}),_1: $Effects.none};}
+      {case "FromEffect": return {ctor: "_Tuple2"
+                                 ,_0: model
+                                 ,_1: $Effects.none};
+         case "FromServer": return {ctor: "_Tuple2"
+                                   ,_0: _U.update(model,{items: _p3._0})
+                                   ,_1: $Effects.none};
+         default: return {ctor: "_Tuple2"
+                         ,_0: _U.update(model,{apiKey: _p3._0})
+                         ,_1: $Effects.none};}
    });
-   var SetAPIKey = function (a) {    return {ctor: "SetAPIKey",_0: a};};
+   var SetAPIKey = function (a) {
+      return {ctor: "SetAPIKey",_0: a};
+   };
    var view = F2(function (actionAddress,model) {
-      var convertStr = function ($int) {    var _p4 = $int;if (_p4 === 0) {    return "0";} else {    return $Basics.toString($int - 1);}};
+      var convertStr = function ($int) {
+         var _p4 = $int;
+         if (_p4 === 0) {
+               return "0";
+            } else {
+               return $Basics.toString($int - 1);
+            }
+      };
       var augmodel = augment(model);
       var itemList = augmodel.itemList;
       var code = model.apiKey;
-      var codeChecker = function (_p5) {    var _p6 = _p5;return _U.eq(_p6._0,code) ? true : false;};
+      var codeChecker = function (_p5) {
+         var _p6 = _p5;
+         return _U.eq(_p6._0,code) ? true : false;
+      };
       var codeList = A2($List.filter,codeChecker,itemList);
       var array = $Array.fromList(codeList);
       var tuple = A2($Maybe.withDefault,
       {ctor: "_Tuple2"
       ,_0: ""
-      ,_1: {choice1: "",choice2: "",choice3: "",choice4: "",c1Votes: _U.list([]),c2Votes: _U.list([]),c3Votes: _U.list([]),c4Votes: _U.list([])}},
+      ,_1: {choice1: ""
+           ,choice2: ""
+           ,choice3: ""
+           ,choice4: ""
+           ,c1Votes: _U.list([])
+           ,c2Votes: _U.list([])
+           ,c3Votes: _U.list([])
+           ,c4Votes: _U.list([])}},
       A2($Array.get,0,array));
       var item = $Basics.snd(tuple);
       var choice1 = item.choice1;
@@ -86,36 +118,85 @@ Elm.Results.make = function (_elm) {
               ,A2($Html.br,_U.list([]),_U.list([]))
               ,A2($Html.fieldset,
               _U.list([]),
-              _U.list([A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"A) ",choice1))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c1Votes))]))
+              _U.list([A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],"A) ",choice1))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "# of Votes: ",
+                      c1Votes))]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"B) ",choice2))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c2Votes))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],"B) ",choice2))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "# of Votes: ",
+                      c2Votes))]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"C) ",choice3))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c3Votes))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],"C) ",choice3))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "# of Votes: ",
+                      c3Votes))]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"D) ",choice4))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c4Votes))]))]))]));
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],"D) ",choice4))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "# of Votes: ",
+                      c4Votes))]))]))]));
    });
    var FromEffect = {ctor: "FromEffect"};
-   var FromServer = function (a) {    return {ctor: "FromServer",_0: a};};
-   var kickOff = function (_p8) {    return $Effects.task(A2($Task.map,$Basics.always(FromEffect),$Task.toMaybe(_p8)));};
-   var Item = F8(function (a,b,c,d,e,f,g,h) {    return {choice1: a,choice2: b,choice3: c,choice4: d,c1Votes: e,c2Votes: f,c3Votes: g,c4Votes: h};});
+   var FromServer = function (a) {
+      return {ctor: "FromServer",_0: a};
+   };
+   var kickOff = function (_p8) {
+      return $Effects.task(A2($Task.map,
+      $Basics.always(FromEffect),
+      $Task.toMaybe(_p8)));
+   };
+   var Item = F8(function (a,b,c,d,e,f,g,h) {
+      return {choice1: a
+             ,choice2: b
+             ,choice3: c
+             ,choice4: d
+             ,c1Votes: e
+             ,c2Votes: f
+             ,c3Votes: g
+             ,c4Votes: h};
+   });
    var initialModel = {items: $Dict.empty,apiKey: ""};
-   var Model = F2(function (a,b) {    return {items: a,apiKey: b};});
+   var Model = F2(function (a,b) {
+      return {items: a,apiKey: b};
+   });
    var firebase_test = "https://elmproj.firebaseio.com/Questions";
    var firebaseUrl = firebase_test;
    var syncConfig = {location: $ElmFire.fromUrl(firebaseUrl)
                     ,orderOptions: $ElmFire.noOrder
                     ,encoder: function (item) {
-                       return $Json$Encode.object(_U.list([{ctor: "_Tuple2",_0: "Choice1",_1: $Json$Encode.string(item.choice1)}
-                                                          ,{ctor: "_Tuple2",_0: "Choice2",_1: $Json$Encode.string(item.choice2)}
-                                                          ,{ctor: "_Tuple2",_0: "Choice3",_1: $Json$Encode.string(item.choice3)}
-                                                          ,{ctor: "_Tuple2",_0: "Choice4",_1: $Json$Encode.string(item.choice4)}]));
+                       return $Json$Encode.object(_U.list([{ctor: "_Tuple2"
+                                                           ,_0: "Choice1"
+                                                           ,_1: $Json$Encode.string(item.choice1)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "Choice2"
+                                                           ,_1: $Json$Encode.string(item.choice2)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "Choice3"
+                                                           ,_1: $Json$Encode.string(item.choice3)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "Choice4"
+                                                           ,_1: $Json$Encode.string(item.choice4)}]));
                     }
                     ,decoder: A9($Json$Decode.object8,
                     Item,
@@ -125,26 +206,37 @@ Elm.Results.make = function (_elm) {
                     A2($Json$Decode._op[":="],"Choice4",$Json$Decode.string),
                     A2($Json$Decode.at,
                     _U.list(["Votes","C1"]),
-                    A2($Json$Decode.map,$List.map($Basics.fst),$Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))),
+                    A2($Json$Decode.map,
+                    $List.map($Basics.fst),
+                    $Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))),
                     A2($Json$Decode.at,
                     _U.list(["Votes","C2"]),
-                    A2($Json$Decode.map,$List.map($Basics.fst),$Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))),
+                    A2($Json$Decode.map,
+                    $List.map($Basics.fst),
+                    $Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))),
                     A2($Json$Decode.at,
                     _U.list(["Votes","C3"]),
-                    A2($Json$Decode.map,$List.map($Basics.fst),$Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))),
+                    A2($Json$Decode.map,
+                    $List.map($Basics.fst),
+                    $Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))),
                     A2($Json$Decode.at,
                     _U.list(["Votes","C4"]),
-                    A2($Json$Decode.map,$List.map($Basics.fst),$Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))))};
+                    A2($Json$Decode.map,
+                    $List.map($Basics.fst),
+                    $Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))))};
    var _p9 = $ElmFire$Dict.mirror(syncConfig);
    var initialTask = _p9._0;
    var inputItems = _p9._1;
    var initialEffect = kickOff(initialTask);
-   var config = {init: {ctor: "_Tuple2",_0: initialModel,_1: initialEffect}
+   var config = {init: {ctor: "_Tuple2"
+                       ,_0: initialModel
+                       ,_1: initialEffect}
                 ,update: updateState
                 ,view: view
                 ,inputs: _U.list([A2($Signal.map,FromServer,inputItems)])};
    var app = $StartApp.start(config);
-   var runEffects = Elm.Native.Task.make(_elm).performSignal("runEffects",app.tasks);
+   var runEffects = Elm.Native.Task.make(_elm).performSignal("runEffects",
+   app.tasks);
    var main = app.html;
    var firebase_foreign = "https://elmproj.firebaseio.com/Questions";
    return _elm.Results.values = {_op: _op

@@ -19,7 +19,9 @@ Elm.ElmFire.Op.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Task = Elm.Task.make(_elm);
    var _op = {};
-   var operateFilterMapElemT = F3(function (config,filterMapping,key) {
+   var operateFilterMapElemT = F3(function (config,
+   filterMapping,
+   key) {
       return A3($ElmFire.transaction,
       function (maybeJsonVal) {
          var _p0 = maybeJsonVal;
@@ -42,12 +44,16 @@ Elm.ElmFire.Op.make = function (_elm) {
       A2($ElmFire.sub,key,config.location),
       true);
    });
-   var operateFilterMapTFun = F3(function (config,filterMapping,maybeJsonDict) {
+   var operateFilterMapTFun = F3(function (config,
+   filterMapping,
+   maybeJsonDict) {
       var _p3 = maybeJsonDict;
       if (_p3.ctor === "Nothing") {
             return $ElmFire.Abort;
          } else {
-            var _p4 = A2($Json$Decode.decodeValue,$Json$Decode.keyValuePairs($Json$Decode.value),_p3._0);
+            var _p4 = A2($Json$Decode.decodeValue,
+            $Json$Decode.keyValuePairs($Json$Decode.value),
+            _p3._0);
             if (_p4.ctor === "Err") {
                   return $ElmFire.Abort;
                } else {
@@ -64,7 +70,9 @@ Elm.ElmFire.Op.make = function (_elm) {
                            if (_p8.ctor === "Nothing") {
                                  return $Maybe.Nothing;
                               } else {
-                                 return $Maybe.Just({ctor: "_Tuple2",_0: _p10,_1: config.encoder(_p8._0)});
+                                 return $Maybe.Just({ctor: "_Tuple2"
+                                                    ,_0: _p10
+                                                    ,_1: config.encoder(_p8._0)});
                               }
                         }
                   },
@@ -80,23 +88,31 @@ Elm.ElmFire.Op.make = function (_elm) {
          if (_p11.ctor === "Nothing") {
                return $ElmFire.Abort;
             } else {
-               var _p12 = A2($Json$Decode.decodeValue,config.decoder,_p11._0);
+               var _p12 = A2($Json$Decode.decodeValue,
+               config.decoder,
+               _p11._0);
                if (_p12.ctor === "Err") {
                      return $ElmFire.Abort;
                   } else {
-                     return A2(filter,key,_p12._0) ? $ElmFire.Abort : $ElmFire.Remove;
+                     return A2(filter,
+                     key,
+                     _p12._0) ? $ElmFire.Abort : $ElmFire.Remove;
                   }
             }
       },
       A2($ElmFire.sub,key,config.location),
       true);
    });
-   var operateFilterTFun = F3(function (config,filter,maybeJsonDict) {
+   var operateFilterTFun = F3(function (config,
+   filter,
+   maybeJsonDict) {
       var _p13 = maybeJsonDict;
       if (_p13.ctor === "Nothing") {
             return $ElmFire.Abort;
          } else {
-            var _p14 = A2($Json$Decode.decodeValue,$Json$Decode.keyValuePairs($Json$Decode.value),_p13._0);
+            var _p14 = A2($Json$Decode.decodeValue,
+            $Json$Decode.keyValuePairs($Json$Decode.value),
+            _p13._0);
             if (_p14.ctor === "Err") {
                   return $ElmFire.Abort;
                } else {
@@ -122,7 +138,9 @@ Elm.ElmFire.Op.make = function (_elm) {
          if (_p18.ctor === "Nothing") {
                return $ElmFire.Abort;
             } else {
-               var _p19 = A2($Json$Decode.decodeValue,config.decoder,_p18._0);
+               var _p19 = A2($Json$Decode.decodeValue,
+               config.decoder,
+               _p18._0);
                if (_p19.ctor === "Err") {
                      return $ElmFire.Abort;
                   } else {
@@ -133,12 +151,16 @@ Elm.ElmFire.Op.make = function (_elm) {
       A2($ElmFire.sub,key,config.location),
       true);
    });
-   var operateMapTFun = F3(function (config,mapping,maybeJsonDict) {
+   var operateMapTFun = F3(function (config,
+   mapping,
+   maybeJsonDict) {
       var _p20 = maybeJsonDict;
       if (_p20.ctor === "Nothing") {
             return $ElmFire.Abort;
          } else {
-            var _p21 = A2($Json$Decode.decodeValue,$Json$Decode.keyValuePairs($Json$Decode.value),_p20._0);
+            var _p21 = A2($Json$Decode.decodeValue,
+            $Json$Decode.keyValuePairs($Json$Decode.value),
+            _p20._0);
             if (_p21.ctor === "Err") {
                   return $ElmFire.Abort;
                } else {
@@ -173,7 +195,9 @@ Elm.ElmFire.Op.make = function (_elm) {
                   return $ElmFire.Set(config.encoder(_p28._0));
                }
          } else {
-            var _p29 = A2($Json$Decode.decodeValue,config.decoder,_p27._0);
+            var _p29 = A2($Json$Decode.decodeValue,
+            config.decoder,
+            _p27._0);
             if (_p29.ctor === "Err") {
                   return $ElmFire.Abort;
                } else {
@@ -192,17 +216,29 @@ Elm.ElmFire.Op.make = function (_elm) {
    var sequential = Sequential;
    var Atomic = {ctor: "Atomic"};
    var atomic = Atomic;
-   var FilterMap = F2(function (a,b) {    return {ctor: "FilterMap",_0: a,_1: b};});
+   var FilterMap = F2(function (a,b) {
+      return {ctor: "FilterMap",_0: a,_1: b};
+   });
    var filterMap = FilterMap;
-   var Filter = F2(function (a,b) {    return {ctor: "Filter",_0: a,_1: b};});
+   var Filter = F2(function (a,b) {
+      return {ctor: "Filter",_0: a,_1: b};
+   });
    var filter = Filter;
-   var Map = F2(function (a,b) {    return {ctor: "Map",_0: a,_1: b};});
+   var Map = F2(function (a,b) {
+      return {ctor: "Map",_0: a,_1: b};
+   });
    var map = Map;
-   var RemoveList = F2(function (a,b) {    return {ctor: "RemoveList",_0: a,_1: b};});
+   var RemoveList = F2(function (a,b) {
+      return {ctor: "RemoveList",_0: a,_1: b};
+   });
    var removeList = RemoveList;
-   var InsertList = F2(function (a,b) {    return {ctor: "InsertList",_0: a,_1: b};});
+   var InsertList = F2(function (a,b) {
+      return {ctor: "InsertList",_0: a,_1: b};
+   });
    var insertList = InsertList;
-   var FromList = F2(function (a,b) {    return {ctor: "FromList",_0: a,_1: b};});
+   var FromList = F2(function (a,b) {
+      return {ctor: "FromList",_0: a,_1: b};
+   });
    var fromList = FromList;
    var operate = F2(function (config,operation) {
       operate: while (true) {
@@ -220,60 +256,92 @@ Elm.ElmFire.Op.make = function (_elm) {
             $Task.sequence(A2($List.map,$Task.spawn,taskList)),
             function (_p32) {
                return $ElmFire.open(config.location);
-            }) : A2($Task.andThen,$Task.sequence(taskList),function (_p33) {    return $ElmFire.open(config.location);});
+            }) : A2($Task.andThen,
+            $Task.sequence(taskList),
+            function (_p33) {
+               return $ElmFire.open(config.location);
+            });
          });
          var getKeys = $ElmFire$Dict.getKeys(config);
          var encodePairs = function (pairs) {
             return $Json$Encode.object(A2($List.map,
             function (_p34) {
                var _p35 = _p34;
-               return {ctor: "_Tuple2",_0: _p35._0,_1: config.encoder(_p35._1)};
+               return {ctor: "_Tuple2"
+                      ,_0: _p35._0
+                      ,_1: config.encoder(_p35._1)};
             },
             pairs));
          };
          var _p36 = operation;
          switch (_p36.ctor)
          {case "None": return $ElmFire.open(config.location);
-            case "Insert": return A2($ElmFire.set,config.encoder(_p36._1),A2($ElmFire.sub,_p36._0,config.location));
-            case "Push": return A2($ElmFire.set,config.encoder(_p36._0),$ElmFire.push(config.location));
+            case "Insert": return A2($ElmFire.set,
+              config.encoder(_p36._1),
+              A2($ElmFire.sub,_p36._0,config.location));
+            case "Push": return A2($ElmFire.set,
+              config.encoder(_p36._0),
+              $ElmFire.push(config.location));
             case "Update": return A2($Task.map,
               function (_p37) {
                  return function (_) {
                     return _.reference;
                  }($Basics.snd(_p37));
               },
-              A3($ElmFire.transaction,A2(operateUpdateFun,config,_p36._1),A2($ElmFire.sub,_p36._0,config.location),true));
-            case "Remove": return $ElmFire.remove(A2($ElmFire.sub,_p36._0,config.location));
+              A3($ElmFire.transaction,
+              A2(operateUpdateFun,config,_p36._1),
+              A2($ElmFire.sub,_p36._0,config.location),
+              true));
+            case "Remove": return $ElmFire.remove(A2($ElmFire.sub,
+              _p36._0,
+              config.location));
             case "Empty": return $ElmFire.remove(config.location);
-            case "FromDict": var _v26 = config,_v27 = A2(FromList,_p36._0,$Dict.toList(_p36._1));
+            case "FromDict": var _v26 = config,
+              _v27 = A2(FromList,_p36._0,$Dict.toList(_p36._1));
               config = _v26;
               operation = _v27;
               continue operate;
             case "FromList": if (_p36._0.ctor === "Atomic") {
                     return A2($ElmFire.set,encodePairs(_p36._1),config.location);
                  } else {
-                    return A2($Task.andThen,$ElmFire.remove(config.location),function (_p38) {    return A2(operate,config,A2(InsertList,_p36._0,_p36._1));});
+                    return A2($Task.andThen,
+                    $ElmFire.remove(config.location),
+                    function (_p38) {
+                       return A2(operate,config,A2(InsertList,_p36._0,_p36._1));
+                    });
                  }
             case "InsertList": if (_p36._0.ctor === "Atomic") {
-                    return A2($ElmFire.update,encodePairs(_p36._1),config.location);
+                    return A2($ElmFire.update,
+                    encodePairs(_p36._1),
+                    config.location);
                  } else {
                     return A2(dispatchTaskList,
                     _p36._0,
                     A2($List.map,
                     function (_p39) {
                        var _p40 = _p39;
-                       return A2($ElmFire.set,config.encoder(_p40._1),A2($ElmFire.sub,_p40._0,config.location));
+                       return A2($ElmFire.set,
+                       config.encoder(_p40._1),
+                       A2($ElmFire.sub,_p40._0,config.location));
                     },
                     _p36._1));
                  }
             case "RemoveList": if (_p36._0.ctor === "Atomic") {
                     return A2($ElmFire.update,
-                    $Json$Encode.object(A2($List.map,function (key) {    return {ctor: "_Tuple2",_0: key,_1: $Json$Encode.$null};},_p36._1)),
+                    $Json$Encode.object(A2($List.map,
+                    function (key) {
+                       return {ctor: "_Tuple2",_0: key,_1: $Json$Encode.$null};
+                    },
+                    _p36._1)),
                     config.location);
                  } else {
                     return A2(dispatchTaskList,
                     _p36._0,
-                    A2($List.map,function (key) {    return $ElmFire.remove(A2($ElmFire.sub,key,config.location));},_p36._1));
+                    A2($List.map,
+                    function (key) {
+                       return $ElmFire.remove(A2($ElmFire.sub,key,config.location));
+                    },
+                    _p36._1));
                  }
             case "Map": if (_p36._0.ctor === "Atomic") {
                     return transactionOp(A2(operateMapTFun,config,_p36._1));
@@ -281,7 +349,9 @@ Elm.ElmFire.Op.make = function (_elm) {
                     return A2($Task.andThen,
                     getKeys,
                     function (keys) {
-                       return A2(dispatchTaskList,_p36._0,A2($List.map,A2(operateMapElemT,config,_p36._1),keys));
+                       return A2(dispatchTaskList,
+                       _p36._0,
+                       A2($List.map,A2(operateMapElemT,config,_p36._1),keys));
                     });
                  }
             case "Filter": if (_p36._0.ctor === "Atomic") {
@@ -290,36 +360,52 @@ Elm.ElmFire.Op.make = function (_elm) {
                     return A2($Task.andThen,
                     getKeys,
                     function (keys) {
-                       return A2(dispatchTaskList,_p36._0,A2($List.map,A2(operateFilterElemT,config,_p36._1),keys));
+                       return A2(dispatchTaskList,
+                       _p36._0,
+                       A2($List.map,A2(operateFilterElemT,config,_p36._1),keys));
                     });
                  }
             default: if (_p36._0.ctor === "Atomic") {
-                    return transactionOp(A2(operateFilterMapTFun,config,_p36._1));
+                    return transactionOp(A2(operateFilterMapTFun,
+                    config,
+                    _p36._1));
                  } else {
                     return A2($Task.andThen,
                     getKeys,
                     function (keys) {
-                       return A2(dispatchTaskList,_p36._0,A2($List.map,A2(operateFilterMapElemT,config,_p36._1),keys));
+                       return A2(dispatchTaskList,
+                       _p36._0,
+                       A2($List.map,A2(operateFilterMapElemT,config,_p36._1),keys));
                     });
                  }}
       }
    });
-   var forwardOperation = F2(function (taskAddressee,config) {    return A2($Signal.forwardTo,taskAddressee,operate(config));});
-   var FromDict = F2(function (a,b) {    return {ctor: "FromDict",_0: a,_1: b};});
+   var forwardOperation = F2(function (taskAddressee,config) {
+      return A2($Signal.forwardTo,taskAddressee,operate(config));
+   });
+   var FromDict = F2(function (a,b) {
+      return {ctor: "FromDict",_0: a,_1: b};
+   });
    var fromDict = FromDict;
    var Empty = {ctor: "Empty"};
    var empty = Empty;
    var Remove = function (a) {    return {ctor: "Remove",_0: a};};
    var remove = Remove;
-   var Update = F2(function (a,b) {    return {ctor: "Update",_0: a,_1: b};});
+   var Update = F2(function (a,b) {
+      return {ctor: "Update",_0: a,_1: b};
+   });
    var update = Update;
    var Push = function (a) {    return {ctor: "Push",_0: a};};
    var push = Push;
-   var Insert = F2(function (a,b) {    return {ctor: "Insert",_0: a,_1: b};});
+   var Insert = F2(function (a,b) {
+      return {ctor: "Insert",_0: a,_1: b};
+   });
    var insert = Insert;
    var None = {ctor: "None"};
    var none = None;
-   var Config = F4(function (a,b,c,d) {    return {location: a,orderOptions: b,encoder: c,decoder: d};});
+   var Config = F4(function (a,b,c,d) {
+      return {location: a,orderOptions: b,encoder: c,decoder: d};
+   });
    return _elm.ElmFire.Op.values = {_op: _op
                                    ,none: none
                                    ,insert: insert
