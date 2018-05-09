@@ -20,7 +20,7 @@
 </style>
 
 		<meta name="csrf-param" content="authenticity_token" />
-<meta name="csrf-token" content="4ZKaCCFRHU2zbbCnmvJRx8aBEx9WEX9gkXTmOvytyNB4RqYTrJDq8JU/l/TTTnrps07WyTs8vYx5/bIyZFnw0A==" />
+<meta name="csrf-token" content="RZe9/EZjJpnV0FvV4b6yxeFPBQgY5mK9Pa/xIswUvczcQ4Hny6LRJPOCfIaoApnrlIDA3nXLoFHVJqUqVOCFzA==" />
 		<style id="user-css-output" type="text/css"></style>
 	</head>
 	<body>
@@ -269,19 +269,29 @@ view model =
 
 
 
-<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 593px; height: 280px; left: 27px; top: 140px;" data-block-id="85d893fc0832cd507758eeb70510b26b"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 14;"><pre class="elm"><code>type alias Model =
-    { question : String
-    , choice1 : String
-    , choice2 : String
-    , choice3 : String
-    , choice4 : String
-    , answerIndex : Int
-    }
+<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 293px; height: 452px; left: 27px; top: 151px;" data-block-id="85d893fc0832cd507758eeb70510b26b"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 14;"><pre class="elm"><code>type alias Model =
+  { items: Items
+  , apiKey: Content
+  , modQuestion: Content
+  , modChoice1: Content
+  , modChoice2: Content
+  , modChoice3: Content
+  , modChoice4: Content
+  , modAnswerIndex: Int
+  }
 
-model : Model
-model =
-    Model "Your question will show here." "A goes here." 
-          "B goes here." "C goes here." "D goes here." 4</code></pre></div></div></section><section data-id="0ad03a668da0774314ddeff319db764d"><div class="sl-block" data-block-type="text" style="height: auto; width: 642px; left: 27px; top: 55px;" data-block-id="3892a3d5edf9b111083b4572b6eeafc3"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
+initialModel : Model
+initialModel =
+  { items = Dict.empty
+  , apiKey = ""
+  , modQuestion = ""
+  , modChoice1 = ""
+  , modChoice2 = ""
+  , modChoice3 = ""
+  , modChoice4 = ""
+  , modAnswerIndex = 4
+  }</code></pre></div></div>
+<div class="sl-block" data-block-type="image" style="min-width: 4px; min-height: 4px; width: 333px; height: 169px; left: 501px; top: 280px;" data-block-id="fa327d00b86e5b8c4032311c77d6a1cb"><div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="215" data-natural-height="109" data-src="https://s3.amazonaws.com/media-p.slid.es/uploads/870892/images/4894429/Screen_Shot_2018-05-08_at_6.18.31_PM.png"></div></div></section><section data-id="0ad03a668da0774314ddeff319db764d"><div class="sl-block" data-block-type="text" style="height: auto; width: 642px; left: 27px; top: 55px;" data-block-id="3892a3d5edf9b111083b4572b6eeafc3"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
 <h1>Update - Changing Data in Model</h1>
 </div></div>
 <div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 27px; top: 116px;" data-block-id="60ede48fbf99dca782c258ddc4e8ac55"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 12;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
@@ -289,27 +299,33 @@ model =
 
 
 
-<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 730px; height: 426px; left: 27px; top: 133px;" data-block-id="f1b1023c64d1c58e92569b21a4b4a445"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 14;"><pre class="elm"><code>type Action
-    = SetQuestion String
-    | SetAnswer Int String
-    | SetCorrectAnswer Bool Int
+<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 578px; height: 555px; left: 27px; top: 145px;" data-block-id="f1b1023c64d1c58e92569b21a4b4a445"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 14;"><pre class="elm"><code>type Action =
+   FromServer Items
+  | FromEffect -- no specific actions from effects here
+  | SetAPIKey String
+  | SetTempAnswer Bool Int
+  | Vote
+  | ClearVotes
+  | AddParamsChoices String
 
-update : Action -&gt; Model -&gt; ( Model, Effects Action )
-update action model =
-    case action of
-        SetQuestion q -&gt;
-            ( { model | question = q }, Effects.none )
-        SetAnswer int ans -&gt;
-            case int of
-                1 -&gt; ( { model | choice1 = ans }, Effects.none )
-                2 -&gt; ( { model | choice2 = ans }, Effects.none )
-                3 -&gt; ( { model | choice3 = ans }, Effects.none )
-                4 -&gt; ( { model | choice4 = ans }, Effects.none )
-                _ -&gt; ( { model | choice1 = ans }, Effects.none )
-        SetCorrectAnswer bool num -&gt;
-            case bool of
-                True -&gt; ( { model | answerIndex = num }, Effects.none )
-                False -&gt; ( model, Effects.none )</code></pre></div></div></section><section data-id="106eae4cf723a08a77ded47e9139b9fa"><div class="sl-block" data-block-type="text" style="height: auto; width: 682px; left: 10px; top: 52px;" data-block-id="a8737641026fbc81b23ee1b509df4b13"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
+updateState : Action -&gt; Model -&gt; (Model, Effects Action)
+updateState action model =
+  case action of
+
+    FromEffect -&gt;
+      ( model
+      , Effects.none
+      )
+
+    FromServer items -&gt;
+      ( { model | items = items }
+      , Effects.none
+      )
+
+    SetAPIKey str -&gt;
+      ({ model | apiKey = str}
+        , Effects.none)</code></pre></div></div>
+<div class="sl-block" data-block-type="image" style="min-width: 4px; min-height: 4px; width: 207px; height: 376px; left: 649px; top: 232px;" data-block-id="b1d7f28a734ea37f132a9f694a112c96"><div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="207" data-natural-height="376" data-src="https://s3.amazonaws.com/media-p.slid.es/uploads/870892/images/4894436/Screen_Shot_2018-05-08_at_6.22.15_PM.png"></div></div></section><section data-id="106eae4cf723a08a77ded47e9139b9fa"><div class="sl-block" data-block-type="text" style="height: auto; width: 682px; left: 10px; top: 52px;" data-block-id="a8737641026fbc81b23ee1b509df4b13"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
 <h1>View - Interpret Model into HTML</h1>
 </div></div>
 <div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 0px; top: 115px;" data-block-id="ef2a07003630723843bbf9455b5a4e38"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 12;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
@@ -318,34 +334,32 @@ update action model =
 
 
 
-<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 603px; height: 447px; left: 11px; top: 128px;" data-block-id="0179252caa3cc6fade2d081270693584"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 14; font-size: 80%;"><pre class="elm"><code>view : Signal.Address Action -&gt; Model -&gt; Html
-view address model =
-    div []
-        [ br [] []
-        , fieldset []
-            [ div [] [ text "Question ", input [ placeholder "Enter your 
-                question here.", 
-                on "input" targetValue (\str -&gt; 
-                Signal.message address (SetQuestion str)) ] [] ]
-            , div [] [ text "Set one answer as the correct answer." ]
-            , question address "A" 1
-            , question address "B" 2
-            , question address "C" 3
-            , question address "D" 4
-            , button
-                [ onClick proxy.address
-                    [ ( inputStringQ.address, model.question )
-                    , ( inputStringA1.address, model.choice1 )
-                    , ( inputStringA2.address, model.choice2 )
-                    , ( inputStringA3.address, model.choice3 )
-                    , ( inputStringA4.address, model.choice4 )
-                    , ( inputStringAI.address, toString (model.
-                        answerIndex) )
-                    ]
-                ]
-                [ text "Submit" ]
-            ]</code></pre></div></div>
-<div class="sl-block" data-block-type="image" style="min-width: 4px; min-height: 4px; width: 319px; height: 242px; left: 627px; top: 210px;" data-block-id="613e784fb41610ac8dd658bd6f50e447"><div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="330" data-natural-height="250" data-lazy-loaded="" data-src="https://s3.amazonaws.com/media-p.slid.es/uploads/870892/images/4890814/Screen_Shot_2018-05-07_at_9.28.22_PM.png"></div></div></section><section data-id="a4b2cc6d3879529a95c374b358440986"><div class="sl-block" data-block-type="text" style="height: auto; width: 704px; left: 27px; top: 54px;" data-block-id="cea2fcb5d96e2fc01944ff9ce88ab99b"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
+<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 607px; height: 388px; left: 11px; top: 128px;" data-block-id="0179252caa3cc6fade2d081270693584"><div class="sl-block-style" style="z-index: 14; transform: rotate(360deg);"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 14; font-size: 80%;"><pre class="elm"><code>view : Address Action -&gt; Model -&gt; Html
+view actionAddress model = 
+    div [] [
+      fieldset [] [ div [] [
+            input( [ placeholder "API KEY HERE", autofocus True
+           , on "input" targetValue (message actionAddress 
+             &lt;&lt; SetAPIKey)])[]]
+          , br [] []
+        ]
+      , fieldset []
+       [ div []
+          [ label [] [ text "Question: ", output [] [ text (question) ]]]
+        , questionMaker actionAddress choice1 1
+        , questionMaker actionAddress choice2 2
+        , questionMaker actionAddress choice3 3
+        , questionMaker actionAddress choice4 4
+        , button [ onClick actionAddress Vote][text "Vote"]
+        , button [ onClick proxy.address [(actionAddress, ClearVotes), 
+          (actionAddress, AddParamsChoices "1"), 
+          (actionAddress, AddParamsChoices "2") 
+        ,(actionAddress, AddParamsChoices "3"), 
+         (actionAddress, AddParamsChoices "4")]]
+         [text "Clear All Votes"]
+      ]
+    ]</code></pre></div></div></div>
+<div class="sl-block" data-block-type="image" style="min-width: 4px; min-height: 4px; width: 301px; height: 388px; left: 632px; top: 128px;" data-block-id="289e8ad86e67d351c1e952bb5a35b597"><div class="sl-block-content" style="z-index: 15;"><img style="" data-natural-width="300" data-natural-height="387" data-src="https://s3.amazonaws.com/media-p.slid.es/uploads/870892/images/4894444/Screen_Shot_2018-05-08_at_6.28.31_PM.png"></div></div></section><section data-id="a4b2cc6d3879529a95c374b358440986"><div class="sl-block" data-block-type="text" style="height: auto; width: 704px; left: 27px; top: 54px;" data-block-id="cea2fcb5d96e2fc01944ff9ce88ab99b"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
 <h1>ElmFire - Connecting to Firebase</h1>
 </div></div>
 <div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 27px; top: 115px;" data-block-id="d167d040f38a11906d139ed916a3526b"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 12;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
@@ -354,15 +368,30 @@ view address model =
 
 
 
-<div class="sl-block" data-block-type="text" data-block-id="ce0419ffcf17b045cb00239f0413bc35" style="height: auto; min-width: 30px; min-height: 30px; width: 612px; left: 28px; top: 164px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<div class="sl-block" data-block-type="text" data-block-id="ce0419ffcf17b045cb00239f0413bc35" style="height: auto; min-width: 30px; min-height: 30px; width: 612px; left: 27px; top: 140px;"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
 <p style="text-align:left">Read from Firebase</p>
 
 <ul>
-	<li>Grab a JE.value from URL of Firebase</li>
-	<li>Set a signal of a Mailbox to that value</li>
+	<li>Mirror the Firebase location </li>
+	<li>Get a signal of all updates</li>
+	<li>Retrieve all values</li>
 </ul>
 </div></div>
-<div class="sl-block" data-block-type="image" style="min-width: 4px; min-height: 4px; width: 441px; height: 279px; left: 186px; top: 351px;" data-block-id="fb4da95bc2b7254fefec20ed3aaaa054"><div class="sl-block-content" style="z-index: 16;"><img style="" data-natural-width="441" data-natural-height="279" data-lazy-loaded="" data-src="https://s3.amazonaws.com/media-p.slid.es/uploads/870892/images/4890999/Screen_Shot_2018-05-07_at_11.33.22_PM.png"></div></div></section><section data-id="032b96d845a203ce544e2b5ac03bb9b6"><div class="sl-block" data-block-type="text" style="height: auto; width: 704px; left: 27px; top: 54px;" data-block-id="5e63289731426d1db9f165cad12046d1"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
+<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 647px; height: 300px; left: 160px; top: 350px;" data-block-id="ca15bd50aa8d1c9be4495b98a4ba6bee"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 15;"><pre class="elm"><code>(initialTask, inputItems) =
+  ElmFire.Dict.mirror syncConfig
+
+syncConfig : ElmFire.Dict.Config Item
+syncConfig =
+  { location = ElmFire.fromUrl (firebaseUrl)
+  , orderOptions = ElmFire.noOrder
+  , encoder =
+      \item -&gt; JE.object
+        [ ("Question", JE.string item.question)
+        , ("Choice1", JE.string item.choice1)
+        , ("Choice2", JE.string item.choice2)
+        , ("Choice3", JE.string item.choice3)
+        , ("Choice4", JE.string item.choice4)
+        ]</code></pre></div></div></section><section data-id="032b96d845a203ce544e2b5ac03bb9b6"><div class="sl-block" data-block-type="text" style="height: auto; width: 704px; left: 27px; top: 54px;" data-block-id="5e63289731426d1db9f165cad12046d1"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
 <h1>ElmFire - Connecting to Firebase</h1>
 </div></div>
 <div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 27px; top: 115px;" data-block-id="1190b5aa989a0f3bb741bbd0f2cde308"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 12;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
@@ -371,21 +400,13 @@ view address model =
 
 
 
-<div class="sl-block" data-block-type="text" style="height: auto; width: 612px; left: 28px; top: 169px;" data-block-id="4cc236e866fe5277807517ea08bb7c0d"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 612px; left: 28px; top: 140px;" data-block-id="4cc236e866fe5277807517ea08bb7c0d"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14;">
 <p style="color:rgb(255, 255, 255); text-align:left">Writing to Firebase</p>
 
 <ul style="color:rgb(255, 255, 255)">
 	<li style="text-align:left">Sets a value from the database to the signal</li>
 </ul>
-</div></div>
-<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 739px; height: 189px; left: 80px; top: 371px;" data-block-id="0767908b282331f600326b2a6aabc9fb"><div class="sl-block-content" data-highlight-theme="xcode" style="z-index: 15;"><pre class="elm"><code>port runSetAnswerPicks : Signal (Task Error Reference)
-port runSetAnswerPicks =
-    Signal.map
-        (\str -&gt;
-            ElmFire.Op.set (string str)
-                (fromUrl "https://elmproj.firebaseio.com/AnswerPicks")
-        )
-        answerPicksBoxWrite.signal</code></pre></div></div></section><section data-id="64b48aac8fc7e2f8388a830ae78701b4"><div class="sl-block" data-block-type="text" style="height: auto; width: 551px; left: 27px; top: 54px;" data-block-id="215f3a4e5ed11e0a27b29656eab7bc48"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
+</div></div></section><section data-id="64b48aac8fc7e2f8388a830ae78701b4"><div class="sl-block" data-block-type="text" style="height: auto; width: 551px; left: 27px; top: 54px;" data-block-id="215f3a4e5ed11e0a27b29656eab7bc48"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%; text-align: left;" data-has-custom-html="">
 <h1>The Benefits of ELM</h1>
 </div></div>
 <div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 27px; top: 115px;" data-block-id="673b3fc52939a6859103874b4cdeabe3"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 12;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
@@ -448,13 +469,13 @@ port runSetAnswerPicks =
 
 
 
-<div class="sl-block" data-block-type="image" style="min-width: 4px; min-height: 4px; width: 805px; height: 278px; left: 77px; top: 211px;" data-block-id="abf3c55f6dc5ddbbf3009ce96d5b35b4"><div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="875" data-natural-height="302" data-src="https://s3.amazonaws.com/media-p.slid.es/uploads/870892/images/4891035/Screen_Shot_2018-05-07_at_11.50.23_PM.png"></div></div></section>
+<div class="sl-block" data-block-type="image" style="min-width: 4px; min-height: 4px; width: 805px; height: 278px; left: 77px; top: 211px;" data-block-id="abf3c55f6dc5ddbbf3009ce96d5b35b4"><div class="sl-block-content" style="z-index: 14;"><img style="" data-natural-width="875" data-natural-height="302" data-lazy-loaded="" data-src="https://s3.amazonaws.com/media-p.slid.es/uploads/870892/images/4891035/Screen_Shot_2018-05-07_at_11.50.23_PM.png"></div></div></section>
 			</div>
 		</div>
 
 		
 <script>
-	var SLConfig = {"current_user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null,"editor_grid":true,"editor_snap":true,"developer_mode":false,"speaker_layout":null,"phone_number":null,"phone_country_code":null,"media_sources":null},"email":"johnjunjielau@hotmail.com","notify_on_receipt":true,"billing_address":null,"billing_vat_id":null,"editor_tutorial_completed":true,"manually_upgraded":false,"deck_user_editor_limit":1,"storage_used":211066,"storage_limit":262144000},"deck":{"id":1243579,"slug":"cs152-project","title":"CS152 Project","description":"","width":960,"height":700,"visibility":"all","published_at":"2018-05-01T05:38:58.504Z","sanitize_messages":null,"thumbnail_url":"https://s3.amazonaws.com/media-p.slid.es/thumbnails/68fd3d36d988886ab4e77af9df67c78e/thumb.jpg?1525741139","view_count":1,"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}},"background_transition":"slide","transition":"slide","theme_id":null,"theme_font":"montserrat","theme_color":"blue-yellow","auto_slide_interval":0,"comments_enabled":true,"forking_enabled":true,"rolling_links":false,"center":false,"shuffle":null,"should_loop":false,"share_notes":null,"slide_number":null,"slide_count":16,"rtl":false,"version":2,"collaborative":true,"deck_user_editor_limit":1,"data_updated_at":1525762368864,"font_typekit":null,"font_google":null,"notes":{}},"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}}};
+	var SLConfig = {"current_user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null,"editor_grid":true,"editor_snap":true,"developer_mode":false,"speaker_layout":null,"phone_number":null,"phone_country_code":null,"media_sources":null},"email":"johnjunjielau@hotmail.com","notify_on_receipt":true,"billing_address":null,"billing_vat_id":null,"editor_tutorial_completed":true,"manually_upgraded":false,"deck_user_editor_limit":1,"storage_used":254377,"storage_limit":262144000},"deck":{"id":1243579,"slug":"cs152-project","title":"CS152 Project","description":"","width":960,"height":700,"visibility":"all","published_at":"2018-05-01T05:38:58.504Z","sanitize_messages":null,"thumbnail_url":"https://s3.amazonaws.com/media-p.slid.es/thumbnails/68fd3d36d988886ab4e77af9df67c78e/thumb.jpg?1525741139","view_count":1,"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}},"background_transition":"slide","transition":"slide","theme_id":null,"theme_font":"montserrat","theme_color":"blue-yellow","auto_slide_interval":0,"comments_enabled":true,"forking_enabled":true,"rolling_links":false,"center":false,"shuffle":null,"should_loop":false,"share_notes":null,"slide_number":null,"slide_count":16,"rtl":false,"version":2,"collaborative":true,"deck_user_editor_limit":1,"data_updated_at":1525833668096,"font_typekit":null,"font_google":null,"notes":{}},"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}}};
 </script>
 
 		<script>

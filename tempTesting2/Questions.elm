@@ -97,7 +97,7 @@ inputStringVoteCount =
 port runSet : Signal (Task Error Reference)
 port runSet =
     Signal.map
-        (\str -> set (string str) (fromUrl "https://elmproj.firebaseio.com/QuestionBody/Question/Questiontest"))
+        (\str -> set (string str) (fromUrl "https://elmproj.firebaseio.com/QuestionBody/Question"))
         inputStringQ.signal
 
 
