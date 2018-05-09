@@ -20,7 +20,7 @@
 </style>
 
 		<meta name="csrf-param" content="authenticity_token" />
-<meta name="csrf-token" content="D4Ed7ukrzBeTntY5dp197CFZrp3J1b5Ga3lJb5wULMOWVSH1ZOo7qrXM8Wo/IVbCVJZrS6T4fKqD8B1nBOAUww==" />
+<meta name="csrf-token" content="vuYiOznVH4W85kxc+Zupkp6vmoAeQvXC2IiZAy84dCgnMh4gtBToOJq0aw+wJ4K862BfVnNvNy4wAc0Lt8xMKA==" />
 		<style id="user-css-output" type="text/css"></style>
 	</head>
 	<body>
@@ -46,7 +46,7 @@
 <p style='font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400;  font-family: "Open Sans", sans-serif;'>      more quickly</p>
 
 <ul>
-	<li style='font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; font-family: "Open Sans", sans-serif;'>Simple Architecture code</li>
+	<li style='font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; font-family: "Open Sans", sans-serif;'>Simple Architecture</li>
 </ul>
 
 <p> </p>
@@ -127,12 +127,12 @@
 <div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 55px; top: 121px;" data-block-id="3f7ce6ed6c89c3d37e8d2c377d3644d2"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
 <p style="text-align: left;">Function</p>
 </div></div>
-<div class="sl-block" data-block-type="text" style="height: auto; width: 837px; left: -144px; top: 132px;" data-block-id="6664ce7d0616c09b66e8a384271cc33f"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11;" dir="ui">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 837px; left: -182px; top: 132px;" data-block-id="6664ce7d0616c09b66e8a384271cc33f"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11;" dir="ui">
 <p style="text-align:left"> </p>
 
 <ul>
-	<li style="text-align: left;"><span style="font-size:0.9em">Parameters are String and Int</span></li>
-	<li style="text-align: left;"><span style="font-size:0.9em">Returns a Boolean</span></li>
+	<li style="text-align:left"><span style="font-size:0.9em">Parameters is int</span></li>
+	<li style="text-align:left"><span style="font-size:0.9em">Returns an int</span></li>
 </ul>
 
 <p> </p>
@@ -153,33 +153,42 @@
 
 <p style="text-align:left"> </p>
 </div></div>
-<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 249px; height: 104px; left: 680px; top: 420px;" data-block-id="0fc216eaf9b194c4c2f3fdf2814194c1"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 18; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>half : Float -&gt; Float
+<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 249px; height: 104px; left: 631px; top: 420px;" data-block-id="0fc216eaf9b194c4c2f3fdf2814194c1"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 18; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>half : Float -&gt; Float
 half n =
   n / 2</code></pre></div></div>
-<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 353px; height: 39px; left: 582px; top: 201px;" data-block-id="de75a5a468db7a79e3520ac644f6e35d"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 19; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>nameAge : String -&gt; Int -&gt; Bool</code></pre></div></div></section><section data-id="fef5be1ded4fb61e786ab7c53f9a06a3"><div class="sl-block" data-block-type="text" style="height: auto; width: 432px; left: -112px; top: 31px;" data-block-id="64e141e8239a1ca6ca0cf53e74547bad"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%;" data-has-custom-html="">
+<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 353px; height: 210px; left: 576px; top: 132px;" data-block-id="de75a5a468db7a79e3520ac644f6e35d"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 19; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>--Simple Function
+square : int -&gt; int
+square n = n ^ 2
+
+--Higher Order Function
+applyTwice : (a -&gt; a) -&gt; a -&gt; a
+applyTwice f x = f (f x)
+
+--Currying
+squareTwice = applyTwice square</code></pre></div></div></section><section data-id="fef5be1ded4fb61e786ab7c53f9a06a3"><div class="sl-block" data-block-type="text" style="height: auto; width: 432px; left: -112px; top: 31px;" data-block-id="64e141e8239a1ca6ca0cf53e74547bad"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 10; font-size: 50%;" data-has-custom-html="">
 <h1>Types</h1>
 </div></div>
-<div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 41px; top: 92px;" data-block-id="1f0c2ab00e64dbe62c704639c884399c"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 12;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
-<div class="sl-block" data-block-type="text" style="height: auto; width: 800px; left: 80px; top: 146px;" data-block-id="57f326e62394ad58725bb9e105dfa731"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13; text-align: left;" data-has-custom-html="" dir="ui"></div></div>
+<div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 41px; top: 92px;" data-block-id="1f0c2ab00e64dbe62c704639c884399c"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 11;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
+<div class="sl-block" data-block-type="text" style="height: auto; width: 800px; left: 80px; top: 146px;" data-block-id="57f326e62394ad58725bb9e105dfa731"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 12; text-align: left;" data-has-custom-html="" dir="ui"></div></div>
 
 
 
-<div class="sl-block" data-block-type="text" style="height: auto; width: 837px; left: 62px; top: 365px;" data-block-id="3e39f48b80af8346455bc0d3cc65c2a6"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14; text-align: left;" dir="ui">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 837px; left: 62px; top: 365px;" data-block-id="3e39f48b80af8346455bc0d3cc65c2a6"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 13; text-align: left;" dir="ui">
 <p>Union Types</p>
 
 <p> </p>
 </div></div>
-<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 59px; top: 121px;" data-block-id="78a7ef544beed99cb8aa389f52063ff5"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15; text-align: left;" dir="ui">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 59px; top: 121px;" data-block-id="78a7ef544beed99cb8aa389f52063ff5"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 14; text-align: left;" dir="ui">
 <p>Type Aliases</p>
 </div></div>
-<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 210px;" data-block-id="aa3a07443359adb09dc17cb6225e4df6"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 16;">
+<div class="sl-block" data-block-type="text" style="height: auto; width: 600px; left: 0px; top: 210px;" data-block-id="aa3a07443359adb09dc17cb6225e4df6"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 15;">
 <ul>
 	<li style="text-align: left;"><span style="font-size:0.9em">Similar to Struct in C Language</span></li>
 </ul>
 
 <p style="text-align:left"> </p>
 </div></div>
-<div class="sl-block" data-block-type="code" style="width: 252px; height: 136px; left: 648px; top: 175px;" data-block-id="9fe9f2fa28fd9b9a247dee3d7842945c"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 17; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>type alias Dog =
+<div class="sl-block" data-block-type="code" style="width: 190px; height: 136px; left: 759px; top: 175px;" data-block-id="9fe9f2fa28fd9b9a247dee3d7842945c"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 16; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>type alias Dog =
 { name : String
 , age : Int
 , gender : String
@@ -187,18 +196,24 @@ half n =
 }</code></pre></div></div>
 <div class="sl-block" data-block-type="text" style="height: auto; min-width: 30px; min-height: 30px; width: 600px; left: -11px; top: 449px;" data-block-id="0694bed1a4d7b53f2636fe67227767c8"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 18;">
 <ul>
-	<li style="text-align: left;"><span style="font-size:0.9em">A type with multiple identities</span></li>
-	<li style="text-align: left;"><span style="font-size:0.9em">Useful for case matching</span></li>
+	<li style="text-align:left"><span style="font-size:0.9em">A type with multiple identities</span></li>
+	<li style="text-align:left"><span style="font-size:0.9em">Useful for pattern matching</span></li>
 </ul>
 
 <p style="text-align:left"> </p>
 
 <p style="text-align:left"> </p>
 </div></div>
-<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 348px; height: 106px; left: 600px; top: 449px;" data-block-id="d1669f6c77a8c4b78edc36d5a320eec3"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 19; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>type Action
+<div class="sl-block" data-block-type="code" style="min-width: 30px; min-height: 30px; width: 388px; height: 105px; left: 560px; top: 437px;" data-block-id="d1669f6c77a8c4b78edc36d5a320eec3"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 19; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>type Action
     = SetQuestion String
     | SetAnswer Int String
-    | SetCorrectAnswer Bool Int</code></pre></div></div></section><section data-id="25a5fe441b12d1991f597fe13f9f17f2"><div class="sl-block" data-block-type="text" style="height: auto; width: 432px; left: -93px; top: 31px;" data-block-id="2ca371d68fffd5c77e1af26ecbe51a48"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%;" data-has-custom-html="">
+    | SetCorrectAnswer Bool Int</code></pre></div></div>
+<div class="sl-block" data-block-type="code" style="width: 190px; height: 136px; left: 564px; top: 175px;" data-block-id="8bc4623046363071eb6db8071e2bc6a6"><div class="sl-block-content notranslate" data-highlight-theme="xcode" style="z-index: 20; border-style: solid; border-width: 1px; border-color: rgb(0, 0, 0);"><pre class="elm"><code>struct dog {
+    string name;
+    int age;
+    string gender;
+    string color;
+};</code></pre></div></div></section><section data-id="25a5fe441b12d1991f597fe13f9f17f2"><div class="sl-block" data-block-type="text" style="height: auto; width: 432px; left: -93px; top: 31px;" data-block-id="2ca371d68fffd5c77e1af26ecbe51a48"><div class="sl-block-content" data-placeholder-tag="p" data-placeholder-text="Text" style="z-index: 11; font-size: 50%;" data-has-custom-html="">
 <h1>Signals </h1>
 </div></div>
 <div class="sl-block" data-block-type="line" style="width: auto; height: auto; left: 41px; top: 92px;" data-block-id="6fa239b1839b2f6ed7c31de10caeeae6"><div class="sl-block-content" data-line-x1="-324" data-line-y1="-110" data-line-x2="340" data-line-y2="-110" data-line-color="#000000" data-line-start-type="none" data-line-end-type="none" style="z-index: 12;"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" preserveaspectratio="xMidYMid" width="664" height="1" viewbox="-324 -110 664 1"><line stroke="rgba(0,0,0,0)" stroke-width="15" x1="-324" y1="-110" x2="340" y2="-110"></line><line stroke="#000000" stroke-width="2" x1="-324" y1="-110" x2="340" y2="-110"></line></svg></div></div>
@@ -351,11 +366,11 @@ view actionAddress model =
         , questionMaker actionAddress choice3 3
         , questionMaker actionAddress choice4 4
         , button [ onClick actionAddress Vote][text "Vote"]
-        , button [ onClick proxy.address [(actionAddress, ClearVotes), 
-          (actionAddress, AddParamsChoices "1"), 
-          (actionAddress, AddParamsChoices "2") 
-        ,(actionAddress, AddParamsChoices "3"), 
-         (actionAddress, AddParamsChoices "4")]]
+        , button [ onClick proxy.address [(actionAddress, ClearVotes)
+          ,(actionAddress, AddParamsChoices "1")
+          ,(actionAddress, AddParamsChoices "2")
+          ,(actionAddress, AddParamsChoices "3")
+          ,(actionAddress, AddParamsChoices "4")]]
          [text "Clear All Votes"]
       ]
     ]</code></pre></div></div></div>
@@ -461,7 +476,7 @@ view actionAddress model =
 
 		
 <script>
-	var SLConfig = {"current_user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null,"editor_grid":true,"editor_snap":true,"developer_mode":false,"speaker_layout":null,"phone_number":null,"phone_country_code":null,"media_sources":null},"email":"johnjunjielau@hotmail.com","notify_on_receipt":true,"billing_address":null,"billing_vat_id":null,"editor_tutorial_completed":true,"manually_upgraded":false,"deck_user_editor_limit":1,"storage_used":254377,"storage_limit":262144000},"deck":{"id":1243579,"slug":"cs152-project","title":"CS152 Project","description":"","width":960,"height":700,"visibility":"all","published_at":"2018-05-01T05:38:58.504Z","sanitize_messages":null,"thumbnail_url":"https://s3.amazonaws.com/media-p.slid.es/thumbnails/68fd3d36d988886ab4e77af9df67c78e/thumb.jpg?1525741139","view_count":1,"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}},"background_transition":"slide","transition":"slide","theme_id":null,"theme_font":"montserrat","theme_color":"blue-yellow","auto_slide_interval":0,"comments_enabled":true,"forking_enabled":true,"rolling_links":false,"center":false,"shuffle":null,"should_loop":false,"share_notes":null,"slide_number":null,"slide_count":16,"rtl":false,"version":2,"collaborative":true,"deck_user_editor_limit":1,"data_updated_at":1525841730108,"font_typekit":null,"font_google":null,"notes":{}},"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}}};
+	var SLConfig = {"current_user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null,"editor_grid":true,"editor_snap":true,"developer_mode":false,"speaker_layout":null,"phone_number":null,"phone_country_code":null,"media_sources":null},"email":"johnjunjielau@hotmail.com","notify_on_receipt":true,"billing_address":null,"billing_vat_id":null,"editor_tutorial_completed":true,"manually_upgraded":false,"deck_user_editor_limit":1,"storage_used":254377,"storage_limit":262144000},"deck":{"id":1243579,"slug":"cs152-project","title":"CS152 Project","description":"","width":960,"height":700,"visibility":"all","published_at":"2018-05-01T05:38:58.504Z","sanitize_messages":null,"thumbnail_url":"https://s3.amazonaws.com/media-p.slid.es/thumbnails/68fd3d36d988886ab4e77af9df67c78e/thumb.jpg?1525741139","view_count":1,"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}},"background_transition":"slide","transition":"slide","theme_id":null,"theme_font":"montserrat","theme_color":"blue-yellow","auto_slide_interval":0,"comments_enabled":true,"forking_enabled":true,"rolling_links":false,"center":false,"shuffle":null,"should_loop":false,"share_notes":null,"slide_number":null,"slide_count":16,"rtl":false,"version":2,"collaborative":true,"deck_user_editor_limit":1,"data_updated_at":1525847871433,"font_typekit":null,"font_google":null,"notes":{}},"user":{"id":870892,"username":"jolau2","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/0408d0477f2baf9e156412720587554c?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","paid":false,"pro":false,"lite":false,"team_id":null,"settings":{"id":1183753,"present_controls":true,"present_upsizing":true,"present_pointer":false,"present_notes":true,"default_deck_tag_id":null}}};
 </script>
 
 		<script>
