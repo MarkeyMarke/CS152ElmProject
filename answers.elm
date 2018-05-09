@@ -1,4 +1,4 @@
-module Questions where
+module Answers where
 
 import Result
 import Dict exposing (Dict)
