@@ -1,18 +1,5 @@
 module Questions where
 
-{-| TodoMVC implemented in Elm
-    using Firebase for storage
-
-    2015 Thomas Weiser
-         based on work by Evan Czaplicki and the TodoMVC project
-
-    - [Github Repo](https://github.com/ThomasWeiser/todomvc-elmfire)
-    - [Original Elm Implementation by Evan Czaplicki](https://github.com/evancz/elm-todomvc)
-    - [ElmFire](https://github.com/ThomasWeiser/elmfire)
-    - [Elm Language](http://elm-lang.org/)
-    - [TodoMVC Project](http://todomvc.com/)
--}
-
 import Result
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -46,7 +33,6 @@ firebase_foreign = "https://elmproj.firebaseio.com/Questions"
 firebase_test : String
 firebase_test = "https://elmproj.firebaseio.com/Questions"
 
--- But lets use our own
 firebaseUrl : String
 firebaseUrl = firebase_test
 
@@ -66,20 +52,24 @@ app = StartApp.start config
 port runEffects : Signal (Task Never ())
 port runEffects = app.tasks
 
+proxy : Mailbox (List (Address a, a))
+proxy =
+  mailbox []
+
+port broadcast : Signal (Task x (List ()))
+port broadcast =
+  let
+    tasks = List.map (uncurry Signal.send)
+  in
+    Signal.map (Task.sequence << tasks) proxy.signal
+
 main : Signal Html
 main = app.html
 
 --------------------------------------------------------------------------------
 
--- The model comprises two parts:
---   - Shared persistent state: A list of items together with their ids
---   - Local State: Filtering and editing
-
 type alias Model =
   { items: Items
-  , filter: Filter
-  , addField: Content
-  , editingItem: EditingItem
   , apiKey: Content
   , modAnswerIndex: Int
   }
@@ -100,44 +90,15 @@ type alias Item2 =
 
 type alias Content = String
 
-type Filter = All | Active | Completed
-
-type alias EditingItem = Maybe (Id, Content)
 
 initialModel : Model
 initialModel =
   { items = Dict.empty
-  , filter = All
-  , addField = ""
-  , editingItem = Nothing
   , apiKey = ""
   , modAnswerIndex = 0
   }
 
-
---------------------------------------------------------------------------------
-
--- Events originating from the user interacting with the html page
-
---type GuiEvent
---  = NoGuiEvent
---    -- operations on the item list
---  | AddItem
---  | UpdateItem Id
---  | DeleteItem Id
---  | DeleteCompletedItems
---  | CheckItem Id Bool
---  | CheckAllItems Bool
---    -- operating on local state
---  | EditExistingItem EditingItem
---  | EditAddField Content
---  | SetFilter Filter
-
---type alias GuiAddress = Address GuiEvent
-
---------------------------------------------------------------------------------
-
--- Mirror Firbase's content as the model's items
+-- Mirror Firebase's content as the model's items
 
 -- initialTask : Task Error (Task Error ())
 -- inputItems : Signal Items
@@ -239,17 +200,13 @@ kickOff =
 --------------------------------------------------------------------------------
 
 type Action =
-  --= FromGui GuiEvent
    FromServer Items
   | FromEffect -- no specific actions from effects here
   | SetAPIKey String
   | SetTempAnswer Bool Int
   | Vote
   | ClearVotes
-  | EditVote
-
-
--- Process gui events and server events yielding model updates and effects
+  | AddParamsChoices String
 
 updateState : Action -> Model -> (Model, Effects Action)
 updateState action model =
@@ -287,30 +244,11 @@ updateState action model =
 
     ClearVotes -> (model, effectItemsString model.apiKey <| ElmFire.Op.remove "Votes")
 
-    EditVote -> 
-      ( model
-      , case model.editingItem of
-          Just (id1, title) ->
-            if (id == id1)
-            then
-              if title |> String.trim |> String.isEmpty
-              then
-                effectItems <| ElmFire.Op.remove id
-              else
-                effectItems <| ElmFire.Op.update id
-                  ( Maybe.map
-                      (\item -> { item | title = title |> String.trim })
-                  )
-            else Effects.none
-          Nothing -> Effects.none
-
-
-
+    AddParamsChoices indexStr ->
+        ( model, effectItemsDblString model.apiKey indexStr (ElmFire.Op.push {sixtynine = "Sixtynine"})
+        )
    
 --------------------------------------------------------------------------------
-
- --Pre-calculate some values derived from model
- --for more efficient view code
 
 type alias AugModel = {
   itemList: List (Id, Item)
@@ -384,7 +322,8 @@ view actionAddress model =
         , br [] []
         , br [] [] 
         , button [ onClick actionAddress Vote][text "Vote"]
-        , button [ onClick actionAddress ClearVotes][text "Clear All Votes"]
+        , button [ onClick proxy.address [(actionAddress, ClearVotes), (actionAddress, AddParamsChoices "1"), (actionAddress, AddParamsChoices "2") 
+                                          ,(actionAddress, AddParamsChoices "3"), (actionAddress, AddParamsChoices "4")]][text "Clear All Votes"]
       ]
     ]
 

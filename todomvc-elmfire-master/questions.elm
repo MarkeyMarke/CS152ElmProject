@@ -1,18 +1,5 @@
 module Questions where
 
-{-| TodoMVC implemented in Elm
-    using Firebase for storage
-
-    2015 Thomas Weiser
-         based on work by Evan Czaplicki and the TodoMVC project
-
-    - [Github Repo](https://github.com/ThomasWeiser/todomvc-elmfire)
-    - [Original Elm Implementation by Evan Czaplicki](https://github.com/evancz/elm-todomvc)
-    - [ElmFire](https://github.com/ThomasWeiser/elmfire)
-    - [Elm Language](http://elm-lang.org/)
-    - [TodoMVC Project](http://todomvc.com/)
--}
-
 import Result
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -44,7 +31,6 @@ firebase_foreign = "https://elmproj.firebaseio.com/Questions"
 firebase_test : String
 firebase_test = "https://elmproj.firebaseio.com/Questions"
 
--- But lets use our own
 firebaseUrl : String
 firebaseUrl = firebase_test
 
@@ -64,6 +50,17 @@ app = StartApp.start config
 port runEffects : Signal (Task Never ())
 port runEffects = app.tasks
 
+proxy : Mailbox (List (Address a, a))
+proxy =
+  mailbox []
+
+port broadcast : Signal (Task x (List ()))
+port broadcast =
+  let
+    tasks = List.map (uncurry Signal.send)
+  in
+    Signal.map (Task.sequence << tasks) proxy.signal
+
 main : Signal Html
 main = app.html
 
@@ -75,9 +72,6 @@ main = app.html
 
 type alias Model =
   { items: Items
-  , filter: Filter
-  , addField: Content
-  , editingItem: EditingItem
   , apiKey: Content
   , modQuestion: Content
   , modChoice1: Content
@@ -97,6 +91,12 @@ type alias Item =
   , choice4: Content
   , answerIndex: Content
   }
+
+type alias Item2 =
+  { sixtynine: Content
+  }
+
+
 type alias Content = String
 
 type Filter = All | Active | Completed
@@ -106,42 +106,15 @@ type alias EditingItem = Maybe (Id, Content)
 initialModel : Model
 initialModel =
   { items = Dict.empty
-  , filter = All
-  , addField = ""
-  , editingItem = Nothing
   , apiKey = ""
   , modQuestion = ""
   , modChoice1 = ""
   , modChoice2 = ""
   , modChoice3 = ""
   , modChoice4 = ""
-  , modAnswerIndex = 0
+  , modAnswerIndex = 4
   }
 
-
---------------------------------------------------------------------------------
-
--- Events originating from the user interacting with the html page
-
---type GuiEvent
---  = NoGuiEvent
---    -- operations on the item list
---  | AddItem
---  | UpdateItem Id
---  | DeleteItem Id
---  | DeleteCompletedItems
---  | CheckItem Id Bool
---  | CheckAllItems Bool
---    -- operating on local state
---  | EditExistingItem EditingItem
---  | EditAddField Content
---  | SetFilter Filter
-
---type alias GuiAddress = Address GuiEvent
-
---------------------------------------------------------------------------------
-
--- Mirror Firbase's content as the model's items
 
 -- initialTask : Task Error (Task Error ())
 -- inputItems : Signal Items
@@ -188,6 +161,29 @@ effectItems operation =
 
 --------------------------------------------------------------------------------
 
+syncConfigDblString : String -> String -> ElmFire.Dict.Config Item2
+syncConfigDblString apiKey choiceIndex =
+  { location = ElmFire.fromUrl (firebaseUrl ++ "/" ++ apiKey ++ "/Votes/C" ++ choiceIndex)
+  , orderOptions = ElmFire.noOrder
+  , encoder =
+      \item -> JE.object
+        [ ("Sixtynine", JE.string item.sixtynine)
+        ]
+  , decoder =
+      ( JD.object1 Item2
+          ("Sixtynine" := JD.string)
+      )
+  }
+
+effectItemsDblString : String -> String -> ElmFire.Op.Operation Item2 -> Effects Action
+effectItemsDblString str str2 operation =
+  ElmFire.Op.operate
+    (syncConfigDblString str str2)
+    operation
+  |> kickOff
+
+ --------------------------------------------------------------------------------
+
 -- Map any task to an effect, discarding any direct result or error value
 kickOff : Task x a -> Effects Action
 kickOff =
@@ -196,8 +192,8 @@ kickOff =
 --------------------------------------------------------------------------------
 
 type Action =
-  --= FromGui GuiEvent
-   FromServer Items
+  NoOp
+  | FromServer Items
   | FromEffect -- no specific actions from effects here
   | SetAPIKey String
   | SetQuestion String
@@ -208,12 +204,18 @@ type Action =
   | SetIndex Int String
   | SetCorrectAnswer Bool Int
   | AddParams
+  | AddParamsChoices String
 
 -- Process gui events and server events yielding model updates and effects
 
 updateState : Action -> Model -> (Model, Effects Action)
 updateState action model =
   case action of
+
+    NoOp -> (
+       model
+      , Effects.none
+      )
 
     FromEffect ->
       ( model
@@ -278,40 +280,13 @@ updateState action model =
       , if model.modQuestion |> String.trim |> String.isEmpty
         then Effects.none
         else
-          effectItems (ElmFire.Op.insert model.apiKey { question = model.modQuestion, choice1 = model.modChoice1 
-            , choice2 = model.modChoice2, choice3 = model.modChoice3, choice4 = model.modChoice4, answerIndex = toString (model.modAnswerIndex)})
+          (effectItems (ElmFire.Op.insert model.apiKey { question = model.modQuestion, choice1 = model.modChoice1 
+            , choice2 = model.modChoice2, choice3 = model.modChoice3, choice4 = model.modChoice4, answerIndex = toString (model.modAnswerIndex)}))
       )
 
-
-   
---------------------------------------------------------------------------------
-
--- Pre-calculate some values derived from model
--- for more efficient view code
-
---type alias AugModel = {
---  itemList: List (Id, Item),
---  count: { total: Int, completed: Int }
---}
-
---augment : Model -> AugModel
---augment model =
---  let
---    itemList = model.items |> Dict.toList
---    (itemsTotal, itemsCompleted) =
---      List.foldl
---        (\(_, item) (total, completed) ->
---          (total + 1, completed + if item.completed then 1 else 0)
---        )
---        (0, 0)
---        itemList
---  in
---    {
---      itemList = itemList,
---      count = { total = itemsTotal, completed = itemsCompleted }
---    }
-
---------------------------------------------------------------------------------
+    AddParamsChoices indexStr ->
+        ( model, effectItemsDblString model.apiKey indexStr (ElmFire.Op.push {sixtynine = "Sixtynine"})
+        )
 
 view : Address Action -> Model -> Html
 view actionAddress model = 
@@ -339,7 +314,8 @@ view actionAddress model =
         , br [] []
         , question actionAddress "D)" 4
         , br [] []
-        , button [ onClick actionAddress AddParams][text "Submit"]
+        , button [ onClick proxy.address [(actionAddress, AddParams), (actionAddress, AddParamsChoices "1"), (actionAddress, AddParamsChoices "2") 
+                                          ,(actionAddress, AddParamsChoices "3"), (actionAddress, AddParamsChoices "4")]] [text "Submit"]
         , br [] []
         , br [] []
       ]
@@ -384,164 +360,3 @@ question address textValue newAnswerIndex =
           --ending of radio button
         , input [ placeholder "Enter your answer here.", on "input" targetValue (\str -> Signal.message address (SetIndex newAnswerIndex str)) ] []
         ]
-  
-
-
---viewItemList : GuiAddress -> Model -> AugModel -> Html
---viewItemList guiAddress model augModel =
---  let
---    visible = True
---    allCompleted = augModel.count.total == augModel.count.completed
---    isVisibleItem (_, item) =
---      case model.filter of
---        All -> True
---        Active -> not item.completed
---        Completed -> item.completed
---    visibleItemList = List.filter isVisibleItem augModel.itemList
---  in
---    section
---      [ class "main"
---      , showBlock <| not <| List.isEmpty visibleItemList
---      ]
---      [ input
---          [ id "toggle-all"
---          , class "toggle-all"
---          , type' "checkbox"
---          , checked allCompleted
---          , onClick guiAddress (CheckAllItems (not allCompleted))
---          ] []
---      , label
---          [ for "toggle-all" ]
---          [ text "Mark all as complete" ]
---      , ul
---          [ class "todo-list" ]
---          ( List.map (viewItem guiAddress model.editingItem) visibleItemList )
---      ]
-
---viewItem : GuiAddress -> EditingItem -> (Id, Item) -> Html
---viewItem guiAddress editingItem (id, item) =
---  let
---    isEditing = case editingItem of
---      Just (id1, v) -> if id == id1 then (True, v) else (False, "")
---      Nothing -> (False, "")
---  in
---    li
---      [ classList
---          [ ("completed", item.completed)
---          , ("editing", fst isEditing)
---          ]
---      , key id
---      ]
---      [ div
---          [ class "view" ]
---          [ input
---              [ class "toggle"
---              , type' "checkbox"
---              , checked item.completed
---              , onClick guiAddress (CheckItem id (not item.completed))
---              ]
---              []
---          , label
---              [ onDoubleClick guiAddress
---                  (EditExistingItem (Just (id, item.title))) ]
---              [ text item.title ]
---          , button
---              [ class "destroy"
---              , onClick guiAddress (DeleteItem id)
---              ]
---              []
---          ]
---      , input
---          ( [ class "edit"
---            , Html.Attributes.id ("todo-" ++ id)
---            , value (if fst isEditing then snd isEditing else "")
---            , on "input" targetValue
---                (\val -> message guiAddress (EditExistingItem (Just (id, val))))
---            , onBlur guiAddress (UpdateItem id)
---            , onEnter guiAddress (UpdateItem id)
---            ]
---          )
---          []
---      ]
-
-
---viewControls : GuiAddress -> Model -> AugModel -> Html
---viewControls guiAddress model augModel =
---  let
---    countCompleted = augModel.count.completed
---    countLeft = augModel.count.total - augModel.count.completed
---    itemNoun = if countLeft == 1 then " item" else " items"
---    visible = True
---  in
---  footer
---    [ class "footer"
---    , showBlock visible
---    ]
---    [ span
---        [ class "todo-count" ]
---        [ strong [] [ text (toString countLeft) ]
---        , text (itemNoun ++ " left")
---        ]
---    , ul
---        [ class "filters" ]
---        [ li
---            [ onClick guiAddress (SetFilter All) ]
---            [ a [ href "#/", classList [("selected", model.filter == All)] ]
---                [ text "All" ]
---            , text " "
---            ]
---        , li
---            [ onClick guiAddress (SetFilter Active) ]
---            [ a [ href "#/active"
---                , classList [("selected", model.filter == Active)]
---                ]
---                [ text "Active" ]
---            , text " "
---            ]
---        , li
---            [ onClick guiAddress (SetFilter Completed) ]
---            [ a [ href "#/completed"
---                , classList [("selected", model.filter == Completed)]
---                ]
---                [ text "Completed" ]
---            ]
---        ]
---    , button
---        [ class "clear-completed"
---        , hidden (countCompleted == 0)
---        , onClick guiAddress DeleteCompletedItems
---        ]
---        [ text ("Clear completed") ]
---    ]
-
---viewInfoFooter : GuiAddress -> Html
---viewInfoFooter guiAddress =
---  footer [ class "info" ]
---    [ p [] [ text "Double-click to edit a todo" ]
---    , p [] [ text "Created by "
---           , a [ href "https://github.com/evancz" ]
---               [ text "Evan Czaplicki" ]
---           , text " and "
---           , a [ href "https://github.com/ThomasWeiser" ]
---               [ text "Thomas Weiser" ]
---           ]
---    , p [] [ text "Part of "
---           , a [ href "http://todomvc.com" ]
---               [ text "TodoMVC" ]
---           ]
---    , p [] [ a [ href "https://github.com/ThomasWeiser/todomvc-elmfire" ]
---               [ text "Source code at GitHub" ]
---           ]
---    ]
-
---------------------------------------------------------------------------------
-
--- Use auxiliary JS code to set the focus to double-clicked input fields
-
-focus : Mailbox Id
-focus = mailbox ""
-
-port runFocus : Signal Id
-port runFocus = Signal.map ((++) "#todo-") focus.signal
-
---------------------------------------------------------------------------------

@@ -1,18 +1,5 @@
 module Questions where
 
-{-| TodoMVC implemented in Elm
-    using Firebase for storage
-
-    2015 Thomas Weiser
-         based on work by Evan Czaplicki and the TodoMVC project
-
-    - [Github Repo](https://github.com/ThomasWeiser/todomvc-elmfire)
-    - [Original Elm Implementation by Evan Czaplicki](https://github.com/evancz/elm-todomvc)
-    - [ElmFire](https://github.com/ThomasWeiser/elmfire)
-    - [Elm Language](http://elm-lang.org/)
-    - [TodoMVC Project](http://todomvc.com/)
--}
-
 import Result
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -48,7 +35,6 @@ firebase_foreign = "https://elmproj.firebaseio.com/Questions"
 firebase_test : String
 firebase_test = "https://elmproj.firebaseio.com/Questions"
 
- --But lets use our own
 firebaseUrl : String
 firebaseUrl = firebase_test
 
@@ -73,15 +59,8 @@ main = app.html
 
 --------------------------------------------------------------------------------
 
--- The model comprises two parts:
---   - Shared persistent state: A list of items together with their ids
---   - Local State: Filtering and editing
-
 type alias Model =
   { items: Items
-  , filter: Filter
-  , addField: Content
-  , editingItem: EditingItem
   , apiKey: Content
   }
 
@@ -94,16 +73,9 @@ type alias Id = String
 
 type alias Content = String
 
-type Filter = All | Active | Completed
-
-type alias EditingItem = Maybe (Id, Content)
-
 initialModel : Model
 initialModel =
   { items = Dict.empty
-  , filter = All
-  , addField = ""
-  , editingItem = Nothing
   , apiKey = ""
   }
 
@@ -156,20 +128,6 @@ syncConfig =
 
   }
 
-
---syncConfigVotes : String -> String -> ElmFire.Dict.Config Item2
---syncConfigVotes apiKey choiceIndex =
---  { location = ElmFire.fromUrl ("https://elmproj.firebaseio.com/Questions/")
---  , orderOptions = ElmFire.noOrder
---  , encoder =
---      \item2 -> JE.object
---        [ ("Sixtynine", JE.string item2.sixtynine)
---        ]
---  , decoder =
---      ( JD.object1 Item2
---          ("Sixtynine" := JD.string)
---      )
---  }
  --------------------------------------------------------------------------------
 -- Map any task to an effect, discarding any direct result or error value
 kickOff : Task x a -> Effects Action
@@ -179,7 +137,6 @@ kickOff =
 --------------------------------------------------------------------------------
 
 type Action =
-  --= FromGui GuiEvent
    FromServer Items
   | FromEffect -- no specific actions from effects here
   | SetAPIKey String
@@ -250,18 +207,20 @@ view actionAddress model =
     choice2 = item.choice2
     choice3 = item.choice3
     choice4 = item.choice4
-    c1Votes = item.c1Votes
-    c2Votes = item.c2Votes
-    c3Votes = item.c3Votes
-    c4Votes = item.c4Votes
 
 
-    --(initialTasks2, inputs) = ElmFire.Dict.mirror (syncConfigVotes code "1")
+    convertStr : Int -> String
+    convertStr int = 
+      case int of 
+        0 -> "0"
+        _ -> toString (int - 1)
 
-    --signal = Signal.map SetVotes inputs
-    --actn = VoteKickOff initialTasks2
 
-    --c1List = model.votes |> Dict.toList
+    c1Votes = convertStr (List.length item.c1Votes)
+    c2Votes = convertStr (List.length item.c2Votes)
+    c3Votes = convertStr (List.length item.c3Votes)
+    c4Votes = convertStr (List.length item.c4Votes)
+
   in
     div [] [
       fieldset []
@@ -281,19 +240,19 @@ view actionAddress model =
       , fieldset []
         --, div [] [ text ("A) " ++ toString (List.length c1List))]
         [ div [] [ text ("A) " ++ choice1)]
-        , div [] [ text ("# of Votes: " ++ toString (List.length c1Votes))]
+        , div [] [ text ("# of Votes: " ++ c1Votes)]
         , br [] []
         , br [] []
         , div [] [ text ("B) " ++ choice2)]
-        , div [] [ text ("# of Votes: " ++ toString (List.length c2Votes))]
+        , div [] [ text ("# of Votes: " ++ c2Votes)]
         , br [] []
         , br [] []
         , div [] [ text ("C) " ++ choice3)]
-        , div [] [ text ("# of Votes: " ++ toString (List.length c3Votes))]
+        , div [] [ text ("# of Votes: " ++ c3Votes)]
         , br [] []
         , br [] []
         , div [] [ text ("D) " ++ choice4)]
-        , div [] [ text ("# of Votes: " ++ toString (List.length c4Votes))]
+        , div [] [ text ("# of Votes: " ++ c4Votes)]
 
       ]
     ]

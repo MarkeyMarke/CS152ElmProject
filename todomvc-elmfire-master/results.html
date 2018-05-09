@@ -12556,10 +12556,11 @@ Elm.Questions.make = function (_elm) {
    });
    var SetAPIKey = function (a) {    return {ctor: "SetAPIKey",_0: a};};
    var view = F2(function (actionAddress,model) {
+      var convertStr = function ($int) {    var _p4 = $int;if (_p4 === 0) {    return "0";} else {    return $Basics.toString($int - 1);}};
       var augmodel = augment(model);
       var itemList = augmodel.itemList;
       var code = model.apiKey;
-      var codeChecker = function (_p4) {    var _p5 = _p4;return _U.eq(_p5._0,code) ? true : false;};
+      var codeChecker = function (_p5) {    var _p6 = _p5;return _U.eq(_p6._0,code) ? true : false;};
       var codeList = A2($List.filter,codeChecker,itemList);
       var array = $Array.fromList(codeList);
       var tuple = A2($Maybe.withDefault,
@@ -12572,10 +12573,10 @@ Elm.Questions.make = function (_elm) {
       var choice2 = item.choice2;
       var choice3 = item.choice3;
       var choice4 = item.choice4;
-      var c1Votes = item.c1Votes;
-      var c2Votes = item.c2Votes;
-      var c3Votes = item.c3Votes;
-      var c4Votes = item.c4Votes;
+      var c1Votes = convertStr($List.length(item.c1Votes));
+      var c2Votes = convertStr($List.length(item.c2Votes));
+      var c3Votes = convertStr($List.length(item.c3Votes));
+      var c4Votes = convertStr($List.length(item.c4Votes));
       return A2($Html.div,
       _U.list([]),
       _U.list([A2($Html.fieldset,
@@ -12588,8 +12589,8 @@ Elm.Questions.make = function (_elm) {
                               ,A3($Html$Events.on,
                               "input",
                               $Html$Events.targetValue,
-                              function (_p6) {
-                                 return A2($Signal.message,actionAddress,SetAPIKey(_p6));
+                              function (_p7) {
+                                 return A2($Signal.message,actionAddress,SetAPIKey(_p7));
                               })]),
                       _U.list([]))]))
                       ,A2($Html.br,_U.list([]),_U.list([]))]))
@@ -12598,29 +12599,26 @@ Elm.Questions.make = function (_elm) {
               ,A2($Html.fieldset,
               _U.list([]),
               _U.list([A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"A) ",choice1))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",$Basics.toString($List.length(c1Votes))))]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c1Votes))]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"B) ",choice2))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",$Basics.toString($List.length(c2Votes))))]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c2Votes))]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"C) ",choice3))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",$Basics.toString($List.length(c3Votes))))]))
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c3Votes))]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.br,_U.list([]),_U.list([]))
                       ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"D) ",choice4))]))
-                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",$Basics.toString($List.length(c4Votes))))]))]))]));
+                      ,A2($Html.div,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],"# of Votes: ",c4Votes))]))]))]));
    });
    var FromEffect = {ctor: "FromEffect"};
    var FromServer = function (a) {    return {ctor: "FromServer",_0: a};};
-   var kickOff = function (_p7) {    return $Effects.task(A2($Task.map,$Basics.always(FromEffect),$Task.toMaybe(_p7)));};
+   var kickOff = function (_p8) {    return $Effects.task(A2($Task.map,$Basics.always(FromEffect),$Task.toMaybe(_p8)));};
    var Item = F8(function (a,b,c,d,e,f,g,h) {    return {choice1: a,choice2: b,choice3: c,choice4: d,c1Votes: e,c2Votes: f,c3Votes: g,c4Votes: h};});
-   var Completed = {ctor: "Completed"};
-   var Active = {ctor: "Active"};
-   var All = {ctor: "All"};
-   var initialModel = {items: $Dict.empty,filter: All,addField: "",editingItem: $Maybe.Nothing,apiKey: ""};
-   var Model = F5(function (a,b,c,d,e) {    return {items: a,filter: b,addField: c,editingItem: d,apiKey: e};});
+   var initialModel = {items: $Dict.empty,apiKey: ""};
+   var Model = F2(function (a,b) {    return {items: a,apiKey: b};});
    var firebase_test = "https://elmproj.firebaseio.com/Questions";
    var firebaseUrl = firebase_test;
    var syncConfig = {location: $ElmFire.fromUrl(firebaseUrl)
@@ -12649,9 +12647,9 @@ Elm.Questions.make = function (_elm) {
                     A2($Json$Decode.at,
                     _U.list(["Votes","C4"]),
                     A2($Json$Decode.map,$List.map($Basics.fst),$Json$Decode.keyValuePairs($Json$Decode.succeed({ctor: "_Tuple0"})))))};
-   var _p8 = $ElmFire$Dict.mirror(syncConfig);
-   var initialTask = _p8._0;
-   var inputItems = _p8._1;
+   var _p9 = $ElmFire$Dict.mirror(syncConfig);
+   var initialTask = _p9._0;
+   var inputItems = _p9._1;
    var initialEffect = kickOff(initialTask);
    var config = {init: {ctor: "_Tuple2",_0: initialModel,_1: initialEffect}
                 ,update: updateState
@@ -12669,9 +12667,6 @@ Elm.Questions.make = function (_elm) {
                                   ,app: app
                                   ,main: main
                                   ,Model: Model
-                                  ,All: All
-                                  ,Active: Active
-                                  ,Completed: Completed
                                   ,initialModel: initialModel
                                   ,initialTask: initialTask
                                   ,inputItems: inputItems
