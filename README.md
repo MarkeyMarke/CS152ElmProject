@@ -15,13 +15,20 @@ $ evm use 0.16.0
 
 ## Elm to HTML
 
-To compile Elm into an HTML, run this in terminal.
+To compile Elm into an HTML: 
 
-Example : 
-$ elm make (Name of File).elm --output (Name of Application).html
+1) If you have a folder called elm-make, delete it.
+2) Run this in terminal.
+```
+$ elm-make (Name of File).elm --output=(Name of Application).html
+```
+3) When it asks you to approve of downloading files, type "y" and hit enter
+4) Repeat from step 1 for all .elm files
 
 We will compile by running in terminal :
-$ elm make questions.elm --output questions.html
-$ elm make answers.elm --output answers.html
-$ elm make results.elm --output results.html
+```
+$ elm-make questions.elm --output=questions.html
+$ elm-make answers.elm --output=answers.html
+$ elm-make results.elm --output=results.html
+```
 
