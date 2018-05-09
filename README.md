@@ -25,8 +25,9 @@ To compile Elm into an HTML:
 ```
 $ elm-make (Name of File).elm --output=(Name of Application).html
 ```
-3) If it asks you to approve of downloading files, type "y" and hit enter
-4) Repeat from step 1 for all .elm files
+2) If it asks you to approve of downloading files, type "y" and hit enter
+  -This will create a folder called elm-stuff
+3) Repeat from step 1 for all .elm files
 
 We will compile by running in terminal :
 ```
