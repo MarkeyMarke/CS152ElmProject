@@ -21,7 +21,7 @@ $ evm use 0.16.0
 
 To compile Elm into an HTML: 
 
-1) If you have a folder called elm-make, delete it.
+1) If you have a folder called elm-stuff, delete it.
 2) Run this in terminal.
 ```
 $ elm-make (Name of File).elm --output=(Name of Application).html
