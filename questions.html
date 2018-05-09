@@ -13903,13 +13903,7 @@ Elm.Questions.make = function (_elm) {
                  return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
               }
          case "AddParams": return {ctor: "_Tuple2"
-                                  ,_0: _U.update(model,
-                                  {modQuestion: ""
-                                  ,modChoice1: ""
-                                  ,modChoice2: ""
-                                  ,modChoice3: ""
-                                  ,modChoice4: ""
-                                  ,modAnswerIndex: 4})
+                                  ,_0: model
                                   ,_1: $String.isEmpty($String.trim(model.modQuestion)) ? $Effects.none : effectItems(A2($ElmFire$Op.insert,
                                   model.apiKey,
                                   {question: model.modQuestion

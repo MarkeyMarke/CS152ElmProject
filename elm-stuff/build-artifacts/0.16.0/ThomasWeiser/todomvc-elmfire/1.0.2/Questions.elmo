@@ -1,0 +1,425 @@
+Elm.Questions = Elm.Questions || {};
+Elm.Questions.make = function (_elm) {
+   "use strict";
+   _elm.Questions = _elm.Questions || {};
+   if (_elm.Questions.values) return _elm.Questions.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $ElmFire = Elm.ElmFire.make(_elm),
+   $ElmFire$Dict = Elm.ElmFire.Dict.make(_elm),
+   $ElmFire$Op = Elm.ElmFire.Op.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $StartApp = Elm.StartApp.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var indexToLetter = function (index) {
+      var _p0 = index;
+      switch (_p0)
+      {case 1: return "A";
+         case 2: return "B";
+         case 3: return "C";
+         case 4: return "D";
+         default: return "Answer out of bounds.";}
+   };
+   var AddParamsChoices = function (a) {
+      return {ctor: "AddParamsChoices",_0: a};
+   };
+   var AddParams = {ctor: "AddParams"};
+   var SetCorrectAnswer = F2(function (a,b) {
+      return {ctor: "SetCorrectAnswer",_0: a,_1: b};
+   });
+   var SetIndex = F2(function (a,b) {
+      return {ctor: "SetIndex",_0: a,_1: b};
+   });
+   var question = F3(function (address,textValue,newAnswerIndex) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.label,
+              _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
+                                                       ,_0: "padding"
+                                                       ,_1: "20px"}]))]),
+              _U.list([A2($Html.input,
+                      _U.list([$Html$Attributes.type$("radio")
+                              ,$Html$Attributes.name("question")
+                              ,$Html$Attributes.checked(true)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetChecked,
+                              function (bool) {
+                                 return A2($Signal.message,
+                                 address,
+                                 A2(SetCorrectAnswer,bool,newAnswerIndex));
+                              })]),
+                      _U.list([]))
+                      ,$Html.text(textValue)]))
+              ,A2($Html.input,
+              _U.list([$Html$Attributes.placeholder("Enter your answer here.")
+                      ,A3($Html$Events.on,
+                      "input",
+                      $Html$Events.targetValue,
+                      function (str) {
+                         return A2($Signal.message,
+                         address,
+                         A2(SetIndex,newAnswerIndex,str));
+                      })]),
+              _U.list([]))]));
+   });
+   var SetChoice4 = function (a) {
+      return {ctor: "SetChoice4",_0: a};
+   };
+   var SetChoice3 = function (a) {
+      return {ctor: "SetChoice3",_0: a};
+   };
+   var SetChoice2 = function (a) {
+      return {ctor: "SetChoice2",_0: a};
+   };
+   var SetChoice1 = function (a) {
+      return {ctor: "SetChoice1",_0: a};
+   };
+   var SetQuestion = function (a) {
+      return {ctor: "SetQuestion",_0: a};
+   };
+   var SetAPIKey = function (a) {
+      return {ctor: "SetAPIKey",_0: a};
+   };
+   var FromEffect = {ctor: "FromEffect"};
+   var FromServer = function (a) {
+      return {ctor: "FromServer",_0: a};
+   };
+   var NoOp = {ctor: "NoOp"};
+   var kickOff = function (_p1) {
+      return $Effects.task(A2($Task.map,
+      $Basics.always(FromEffect),
+      $Task.toMaybe(_p1)));
+   };
+   var initialModel = {items: $Dict.empty
+                      ,apiKey: ""
+                      ,modQuestion: ""
+                      ,modChoice1: ""
+                      ,modChoice2: ""
+                      ,modChoice3: ""
+                      ,modChoice4: ""
+                      ,modAnswerIndex: 4};
+   var Completed = {ctor: "Completed"};
+   var Active = {ctor: "Active"};
+   var All = {ctor: "All"};
+   var Item2 = function (a) {    return {cs152: a};};
+   var Item = F6(function (a,b,c,d,e,f) {
+      return {question: a
+             ,choice1: b
+             ,choice2: c
+             ,choice3: d
+             ,choice4: e
+             ,answerIndex: f};
+   });
+   var Model = F8(function (a,b,c,d,e,f,g,h) {
+      return {items: a
+             ,apiKey: b
+             ,modQuestion: c
+             ,modChoice1: d
+             ,modChoice2: e
+             ,modChoice3: f
+             ,modChoice4: g
+             ,modAnswerIndex: h};
+   });
+   var proxy = $Signal.mailbox(_U.list([]));
+   var broadcast = Elm.Native.Task.make(_elm).performSignal("broadcast",
+   function () {
+      var tasks = $List.map($Basics.uncurry($Signal.send));
+      return A2($Signal.map,
+      function (_p2) {
+         return $Task.sequence(tasks(_p2));
+      },
+      proxy.signal);
+   }());
+   var view = F2(function (actionAddress,model) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.fieldset,
+              _U.list([]),
+              _U.list([A2($Html.div,
+                      _U.list([]),
+                      _U.list([A2($Html.input,
+                      _U.list([$Html$Attributes.placeholder("API KEY HERE")
+                              ,$Html$Attributes.autofocus(true)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (_p3) {
+                                 return A2($Signal.message,actionAddress,SetAPIKey(_p3));
+                              })]),
+                      _U.list([]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text("Question ")
+                              ,A2($Html.input,
+                              _U.list([$Html$Attributes.placeholder("Enter your question here.")
+                                      ,A3($Html$Events.on,
+                                      "input",
+                                      $Html$Events.targetValue,
+                                      function (str) {
+                                         return A2($Signal.message,actionAddress,SetQuestion(str));
+                                      })]),
+                              _U.list([]))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text("Set one answer as the correct answer.")]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,actionAddress,"A)",1)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,actionAddress,"B)",2)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,actionAddress,"C)",3)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A3(question,actionAddress,"D)",4)
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,
+                      proxy.address,
+                      _U.list([{ctor: "_Tuple2",_0: actionAddress,_1: AddParams}
+                              ,{ctor: "_Tuple2",_0: actionAddress,_1: AddParamsChoices("1")}
+                              ,{ctor: "_Tuple2",_0: actionAddress,_1: AddParamsChoices("2")}
+                              ,{ctor: "_Tuple2",_0: actionAddress,_1: AddParamsChoices("3")}
+                              ,{ctor: "_Tuple2"
+                               ,_0: actionAddress
+                               ,_1: AddParamsChoices("4")}]))]),
+                      _U.list([$Html.text("Submit")]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,A2($Html.fieldset,
+              _U.list([]),
+              _U.list([A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(model.modQuestion)]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "A ) ",
+                      model.modChoice1))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "B ) ",
+                      model.modChoice2))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "C ) ",
+                      model.modChoice3))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "D ) ",
+                      model.modChoice4))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([$Html.text(A2($Basics._op["++"],
+                      "The correct answer is ",
+                      A2($Basics._op["++"],
+                      indexToLetter(model.modAnswerIndex),
+                      ".")))]))
+                      ,A2($Html.br,_U.list([]),_U.list([]))]))]));
+   });
+   var firebase_test = "https://elmproj.firebaseio.com/Questions";
+   var firebaseUrl = firebase_test;
+   var syncConfig = {location: $ElmFire.fromUrl(firebaseUrl)
+                    ,orderOptions: $ElmFire.noOrder
+                    ,encoder: function (item) {
+                       return $Json$Encode.object(_U.list([{ctor: "_Tuple2"
+                                                           ,_0: "Question"
+                                                           ,_1: $Json$Encode.string(item.question)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "Choice1"
+                                                           ,_1: $Json$Encode.string(item.choice1)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "Choice2"
+                                                           ,_1: $Json$Encode.string(item.choice2)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "Choice3"
+                                                           ,_1: $Json$Encode.string(item.choice3)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "Choice4"
+                                                           ,_1: $Json$Encode.string(item.choice4)}
+                                                          ,{ctor: "_Tuple2"
+                                                           ,_0: "AnswerIndex"
+                                                           ,_1: $Json$Encode.string(item.answerIndex)}]));
+                    }
+                    ,decoder: A7($Json$Decode.object6,
+                    Item,
+                    A2($Json$Decode._op[":="],"Question",$Json$Decode.string),
+                    A2($Json$Decode._op[":="],"Choice1",$Json$Decode.string),
+                    A2($Json$Decode._op[":="],"Choice2",$Json$Decode.string),
+                    A2($Json$Decode._op[":="],"Choice3",$Json$Decode.string),
+                    A2($Json$Decode._op[":="],"Choice4",$Json$Decode.string),
+                    A2($Json$Decode._op[":="],"AnswerIndex",$Json$Decode.string))};
+   var _p4 = $ElmFire$Dict.mirror(syncConfig);
+   var initialTask = _p4._0;
+   var inputItems = _p4._1;
+   var initialEffect = kickOff(initialTask);
+   var effectItems = function (operation) {
+      return kickOff(A2($ElmFire$Op.operate,syncConfig,operation));
+   };
+   var syncConfigDblString = F2(function (apiKey,choiceIndex) {
+      return {location: $ElmFire.fromUrl(A2($Basics._op["++"],
+             firebaseUrl,
+             A2($Basics._op["++"],
+             "/",
+             A2($Basics._op["++"],
+             apiKey,
+             A2($Basics._op["++"],"/Votes/C",choiceIndex)))))
+             ,orderOptions: $ElmFire.noOrder
+             ,encoder: function (item) {
+                return $Json$Encode.object(_U.list([{ctor: "_Tuple2"
+                                                    ,_0: "cs152"
+                                                    ,_1: $Json$Encode.string(item.cs152)}]));
+             }
+             ,decoder: A2($Json$Decode.object1,
+             Item2,
+             A2($Json$Decode._op[":="],"cs152",$Json$Decode.string))};
+   });
+   var effectItemsDblString = F3(function (str,str2,operation) {
+      return kickOff(A2($ElmFire$Op.operate,
+      A2(syncConfigDblString,str,str2),
+      operation));
+   });
+   var updateState = F2(function (action,model) {
+      var _p5 = action;
+      switch (_p5.ctor)
+      {case "NoOp": return {ctor: "_Tuple2"
+                           ,_0: model
+                           ,_1: $Effects.none};
+         case "FromEffect": return {ctor: "_Tuple2"
+                                   ,_0: model
+                                   ,_1: $Effects.none};
+         case "FromServer": return {ctor: "_Tuple2"
+                                   ,_0: _U.update(model,{items: _p5._0})
+                                   ,_1: $Effects.none};
+         case "SetAPIKey": return {ctor: "_Tuple2"
+                                  ,_0: _U.update(model,{apiKey: _p5._0})
+                                  ,_1: $Effects.none};
+         case "SetQuestion": return {ctor: "_Tuple2"
+                                    ,_0: _U.update(model,{modQuestion: _p5._0})
+                                    ,_1: $Effects.none};
+         case "SetChoice1": return {ctor: "_Tuple2"
+                                   ,_0: _U.update(model,{modChoice1: _p5._0})
+                                   ,_1: $Effects.none};
+         case "SetChoice2": return {ctor: "_Tuple2"
+                                   ,_0: _U.update(model,{modChoice2: _p5._0})
+                                   ,_1: $Effects.none};
+         case "SetChoice3": return {ctor: "_Tuple2"
+                                   ,_0: _U.update(model,{modChoice3: _p5._0})
+                                   ,_1: $Effects.none};
+         case "SetChoice4": return {ctor: "_Tuple2"
+                                   ,_0: _U.update(model,{modChoice4: _p5._0})
+                                   ,_1: $Effects.none};
+         case "SetIndex": var _p7 = _p5._1;
+           var _p6 = _p5._0;
+           switch (_p6)
+           {case 1: return {ctor: "_Tuple2"
+                           ,_0: _U.update(model,{modChoice1: _p7})
+                           ,_1: $Effects.none};
+              case 2: return {ctor: "_Tuple2"
+                             ,_0: _U.update(model,{modChoice2: _p7})
+                             ,_1: $Effects.none};
+              case 3: return {ctor: "_Tuple2"
+                             ,_0: _U.update(model,{modChoice3: _p7})
+                             ,_1: $Effects.none};
+              case 4: return {ctor: "_Tuple2"
+                             ,_0: _U.update(model,{modChoice4: _p7})
+                             ,_1: $Effects.none};
+              default: return {ctor: "_Tuple2"
+                              ,_0: _U.update(model,{modChoice1: _p7})
+                              ,_1: $Effects.none};}
+         case "SetCorrectAnswer": var _p8 = _p5._0;
+           if (_p8 === true) {
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{modAnswerIndex: _p5._1})
+                        ,_1: $Effects.none};
+              } else {
+                 return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+              }
+         case "AddParams": return {ctor: "_Tuple2"
+                                  ,_0: model
+                                  ,_1: $String.isEmpty($String.trim(model.modQuestion)) ? $Effects.none : effectItems(A2($ElmFire$Op.insert,
+                                  model.apiKey,
+                                  {question: model.modQuestion
+                                  ,choice1: model.modChoice1
+                                  ,choice2: model.modChoice2
+                                  ,choice3: model.modChoice3
+                                  ,choice4: model.modChoice4
+                                  ,answerIndex: $Basics.toString(model.modAnswerIndex)}))};
+         default: return {ctor: "_Tuple2"
+                         ,_0: model
+                         ,_1: A3(effectItemsDblString,
+                         model.apiKey,
+                         _p5._0,
+                         $ElmFire$Op.push({cs152: "cs152"}))};}
+   });
+   var config = {init: {ctor: "_Tuple2"
+                       ,_0: initialModel
+                       ,_1: initialEffect}
+                ,update: updateState
+                ,view: view
+                ,inputs: _U.list([A2($Signal.map,FromServer,inputItems)])};
+   var app = $StartApp.start(config);
+   var runEffects = Elm.Native.Task.make(_elm).performSignal("runEffects",
+   app.tasks);
+   var main = app.html;
+   var firebase_foreign = "https://elmproj.firebaseio.com/Questions";
+   return _elm.Questions.values = {_op: _op
+                                  ,firebase_foreign: firebase_foreign
+                                  ,firebase_test: firebase_test
+                                  ,firebaseUrl: firebaseUrl
+                                  ,config: config
+                                  ,app: app
+                                  ,proxy: proxy
+                                  ,main: main
+                                  ,Model: Model
+                                  ,Item: Item
+                                  ,Item2: Item2
+                                  ,All: All
+                                  ,Active: Active
+                                  ,Completed: Completed
+                                  ,initialModel: initialModel
+                                  ,initialTask: initialTask
+                                  ,inputItems: inputItems
+                                  ,initialEffect: initialEffect
+                                  ,syncConfig: syncConfig
+                                  ,effectItems: effectItems
+                                  ,syncConfigDblString: syncConfigDblString
+                                  ,effectItemsDblString: effectItemsDblString
+                                  ,kickOff: kickOff
+                                  ,NoOp: NoOp
+                                  ,FromServer: FromServer
+                                  ,FromEffect: FromEffect
+                                  ,SetAPIKey: SetAPIKey
+                                  ,SetQuestion: SetQuestion
+                                  ,SetChoice1: SetChoice1
+                                  ,SetChoice2: SetChoice2
+                                  ,SetChoice3: SetChoice3
+                                  ,SetChoice4: SetChoice4
+                                  ,SetIndex: SetIndex
+                                  ,SetCorrectAnswer: SetCorrectAnswer
+                                  ,AddParams: AddParams
+                                  ,AddParamsChoices: AddParamsChoices
+                                  ,updateState: updateState
+                                  ,view: view
+                                  ,indexToLetter: indexToLetter
+                                  ,question: question};
+};
