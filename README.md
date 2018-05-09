@@ -11,11 +11,11 @@ The following links show the changes from ELM 0.18.0 to 0.17.0 and from 0.17.0 t
 This guide will give you instructions on how to install Elm :  
 - https://guide.elm-lang.org/install.html    
 
-In order to use ELM Environment 0.16.0, please install Elm version manager :   
-- https://www.npmjs.com/package/elm-version-manager
-
 Please also ensure that you have NPM installed :
 - https://www.npmjs.com/get-npm
+
+In order to use ELM Environment 0.16.0, please install Elm version manager :   
+- https://www.npmjs.com/package/elm-version-manager
 
 It is worth noting that some of the commands may need to be run from root, in which case just add 'sudo' at the far left.
 
